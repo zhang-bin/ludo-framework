@@ -1,0 +1,27 @@
+{
+  "name": "ludo/framework",
+  "description": "The Ludo-PHP Framework",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "zhang bin",
+      "email": "hunter.zhangbin@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "monolog/monolog": "1.*",
+    "phpunit/phpunit": ">=4.5",
+    "ezyang/htmlpurifier": ">=4.6",
+    "phpmailer/phpmailer": "5.2.*"
+  },
+  "autoload": {
+    "files": [
+      "src/Ludo/Support/helpers.php"
+    ],
+    "psr-0": {
+      "Ludo": "src/"
+    }
+  },
+  "minimum-stability": "dev"
+}
