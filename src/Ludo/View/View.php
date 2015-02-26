@@ -83,10 +83,24 @@ class View {
 
 	/**
 	 * Clear all Js, Css files in template
+	 *
+	 * @param string $type
 	 */
-	public static function clearResource() {
-		self::$_jsFiles = array();
-		self::$_cssFiles = array();
+	public static function clearResource($type = '') {
+		switch ($type) {
+			case 'js':
+				self::$_jsFiles = array();
+				self::$_jsStrings = array();
+				break;
+			case 'css':
+				self::$_cssFiles = array();
+				break;
+			default:
+				self::$_jsFiles = array();
+				self::$_jsStrings = array();
+				self::$_cssFiles = array();
+				break;
+		}
 	}
 
 	/**
@@ -95,6 +109,7 @@ class View {
 	public static function loadJs() {
 		echo implode("\n", self::$_jsFiles);
 		echo implode("\n", self::$_jsStrings);
+		self::clearResource('js');
 	}
 
 	/**
@@ -102,6 +117,7 @@ class View {
 	 */
 	public static function loadCss() {
 		echo implode("\n", self::$_cssFiles);
+		self::clearResource('css');
 	}
 
 	/**
