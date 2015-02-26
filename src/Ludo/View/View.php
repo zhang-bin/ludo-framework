@@ -6,9 +6,24 @@ class View {
 	private $tplFile = '';
 
 	/** all data used in template */
-	private $assignValues = array();
+	private $_assignValues = array();
 
-	function __construct() {
+	/**
+	 * @var Array  javascript blocks needed by this template
+	 */
+	private static $_jsStrings = array();
+
+	/**
+	 * @var Array  javascript files needed by this template
+	 */
+	private static $_jsFiles = array();
+
+	/**
+	 * @var Array  css files needed by this template
+	 */
+	private static $_cssFiles = array();
+
+	public function __construct() {
 
 	}
 
@@ -21,22 +36,22 @@ class View {
 	 * @param String $varValue variable value
 	 * @return $this
 	 */
-	function assign($varName, $varValue = '') {
+	public function assign($varName, $varValue = '') {
 		$argNumbers = func_num_args();
 		if ($argNumbers == 2) {
-			$this->assignValues[$varName] = $varValue;
+			$this->_assignValues[$varName] = $varValue;
 		} else {
-			$this->assignValues = array_merge($this->assignValues, $varName);
+			$this->_assignValues = array_merge($this->_assignValues, $varName);
 		}
 		return $this;
 	}
 
-	function display() {
+	public function display() {
 		$templateFileWithFullPath = TPL_ROOT.'/'.$this->tplFile.php;
 		if (!file_exists($templateFileWithFullPath)) {
 			throw new \Exception("File [$templateFileWithFullPath] Not Found");
 		}
-		extract($this->assignValues);
+		extract($this->_assignValues);
 		include $templateFileWithFullPath;
 	}
 
@@ -46,9 +61,60 @@ class View {
 	 * @param String $tplFile relative path to TPL_ROOT. eg. user/login, user/register
 	 * @return $this
 	 */
-	function setFile($tplFile) {
+	public function setFile($tplFile) {
 		$this->tplFile = $tplFile;
-		$this->assignValues = array();
+		$this->_assignValues = array();
 		return $this;
+	}
+
+	/**
+	 * add Js, Css files to the template
+	 * @param String $type  type of file: 'css' or 'js'
+	 * @param String $file  file string
+	 */
+	public static function addResource($file, $type = 'css') {
+		$file = trim($file);
+		if ($type == 'js') {
+			self::$_jsFiles[$file] = $file;
+		} else {
+			self::$_cssFiles[$file] = $file;
+		}
+	}
+
+	/**
+	 * Clear all Js, Css files in template
+	 */
+	public static function clearResource() {
+		self::$_jsFiles = array();
+		self::$_cssFiles = array();
+	}
+
+	/**
+	 * Load all js files used by this template.
+	 */
+	public static function loadJs() {
+		echo implode("\n", self::$_jsFiles);
+		echo implode("\n", self::$_jsStrings);
+	}
+
+	/**
+	 * Load all css files used by this template.
+	 */
+	public static function loadCss() {
+		echo implode("\n", self::$_cssFiles);
+	}
+
+	/**
+	 * start to cache js block contents
+	 */
+	public static function startJs() {
+		ob_start();
+	}
+
+	/**
+	 * start to cache js block contents
+	 */
+	public static function endJs() {
+		self::$_jsStrings[] = ob_get_clean();
 	}
 }
