@@ -10,9 +10,17 @@ use Ludo\Foundation\Lang;
  * The kernel of the framework which holds all available resource
  */
 class ServiceProvider {
-	private $_db = null;
+	private $_db = array();
 	private $_config = array();
+
+	/**
+	 * @var \Ludo\View\View
+	 */
 	private $_tpl = null;
+
+	/**
+	 * @var \Ludo\Database\DatabaseManager
+	 */
 	private $_dbManager = null;
 
 	static private $_instance = null;
@@ -39,11 +47,12 @@ class ServiceProvider {
 	 * @return \Ludo\Database\Connection an instance of DBHandler
 	 */
 	public function getDBHandler($name = '') {
-		if (empty($this->_db)) {
-			$this->_dbManager = new DatabaseManager($this->_config, new ConnectionFactory());
-			$this->_db = $this->_dbManager->connection($name);
+		$this->getDBManagerHandler();
+		$name = $name ?: $this->_dbManager->getDefaultConnection();
+		if (empty($this->_db[$name])) {
+			$this->_db[$name] = $this->_dbManager->connection($name);
 		}
-		return $this->_db;
+		return $this->_db[$name];
 	}
 
 	/**
@@ -51,7 +60,7 @@ class ServiceProvider {
 	 */
 	public function getDBManagerHandler() {
 		if (empty($this->_dbManager)) {
-			$this->getDBHandler();
+			$this->_dbManager = new DatabaseManager($this->_config, new ConnectionFactory());
 		}
 		return $this->_dbManager;
 	}
