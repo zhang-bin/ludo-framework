@@ -57,7 +57,7 @@ function redirectOut($outUrl) {
 	}
 }
 function isAjax() {
-	return 	isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
 /**
  * get the extension for a file
@@ -511,7 +511,7 @@ function str_random($length = 16) {
 	if (function_exists('openssl_random_pseudo_bytes')) {
 		$bytes = openssl_random_pseudo_bytes($length * 2);
 		if ($bytes === false) {
-			throw new LdException('Unable to generate random string.');
+			throw new Exception('Unable to generate random string.');
 		}
 		return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $length);
 	}

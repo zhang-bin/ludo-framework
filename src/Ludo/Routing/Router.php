@@ -6,7 +6,12 @@ class Router {
         $ctrl = 'Index';
         $act = 'index';
 
-        if (!empty($_SERVER['PATH_INFO'])) $pathInfo = str_replace('.html', '', $_SERVER['PATH_INFO']);
+        if (PHP_SAPI != 'cli') {
+            $pathInfo = str_replace('.html', '', $_SERVER['PATH_INFO']);
+        } else {
+            $pathInfo = $_SERVER['argv'][1];
+        }
+
         if (!empty($pathInfo)) {
             $pathInfo = explode('/', trim($pathInfo, '/'));
 

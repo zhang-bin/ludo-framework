@@ -275,6 +275,8 @@ abstract class Dao {
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllUnique();
     }
 
+
+
     /**
      * get key=>value formatted result from table
      *
