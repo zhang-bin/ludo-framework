@@ -9,22 +9,29 @@ namespace Ludo\Log;
  *		$log->debug("x = 5");					//Prints nothing due to priority setting
 */
 
-use Monolog\Logger;
+use Monolog\Logger as MonoLog;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\ChromePHPHandler;
 
-class LdLogger {
+class Logger {
+    /**
+     * @var MonoLog
+     */
     private $_logger;
+
+    /**
+     * @var Logger
+     */
     private static $_instance;
 
-    public function __construct($level = Logger::DEBUG) {
-        $this->_logger = new Logger('log');
+    public function __construct($level = MonoLog::DEBUG) {
+        $this->_logger = new MonoLog('log');
         $this->_logger->pushHandler(new StreamHandler(SITE_ROOT.'/log/access.log', $level));
         $this->_logger->pushHandler(new ChromePHPHandler($level));
     }
 
     /**
-     * @return LdLogger
+     * @return Logger
      */
     public static function getInstance() {
         if (is_null(self::$_instance)) {
@@ -40,7 +47,7 @@ class LdLogger {
      * @param array $context
      * @param string $file 文件名
      * @param string $line 行号
-     * @return LdLogger
+     * @return Logger
      */
     public function info($info, $context = array(), $file = '', $line = '') {
         if (!DEBUG) return;
@@ -56,7 +63,7 @@ class LdLogger {
      * @param array $context
      * @param string $file 文件名
      * @param string $line 行号
-     * @return LdLogger
+     * @return Logger
      */
     public function debug($info, $context = array(), $file = '', $line = '') {
         if (!DEBUG) return;
@@ -72,7 +79,7 @@ class LdLogger {
      * @param array $context
      * @param string $file 文件名
      * @param string $line 行号
-     * @return LdLogger
+     * @return Logger
      */
     public function warn($info, $context = array(), $file = '', $line = '') {
         if (!DEBUG) return;
@@ -88,7 +95,7 @@ class LdLogger {
      * @param array $context
      * @param string $file 文件名
      * @param string $line 行号
-     * @return LdLogger
+     * @return Logger
      */
     public function error($info, $context = array(), $file = '', $line = '') {
         if (!DEBUG) return;
@@ -104,7 +111,7 @@ class LdLogger {
      * @param array $context
      * @param string $file 文件名
      * @param string $line 行号
-     * @return LdLogger
+     * @return Logger
      */
     public function fatal($info, $context = array(), $file = '', $line = '') {
         if (!DEBUG) return;
