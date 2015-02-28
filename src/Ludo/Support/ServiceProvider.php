@@ -46,7 +46,7 @@ class ServiceProvider {
 	 * @param string $name db instance in database config
 	 * @return \Ludo\Database\Connection an instance of DBHandler
 	 */
-	public function getDBHandler($name = '') {
+	public function getDBHandler($name = null) {
 		$this->getDBManagerHandler();
 		$name = $name ?: $this->_dbManager->getDefaultConnection();
 		if (empty($this->_db[$name])) {

@@ -3,6 +3,7 @@ namespace Ludo\Database\Connectors;
 
 use PDO;
 use Ludo\Database\MySqlConnection;
+use Ludo\Database\PgSqlConnection;
 
 class ConnectionFactory {
 	/**
@@ -129,6 +130,8 @@ class ConnectionFactory {
 		switch ($config['driver']) {
 			case 'mysql':
 				return new MySqlConnector;
+			case 'pgsql':
+				return new PgSqlConnector;
 		}
 
 		throw new \InvalidArgumentException("Unsupported driver [{$config['driver']}]");
@@ -150,6 +153,8 @@ class ConnectionFactory {
 		switch ($driver) {
 			case 'mysql':
 				return new MySqlConnection($connection, $database, $prefix, $config);
+			case 'pgsql':
+				return new PgSqlConnection($connection, $database, $prefix, $config);
 		}
 
 		throw new \InvalidArgumentException("Unsupported driver [$driver]");

@@ -19,6 +19,8 @@ class BuilderFactory {
         switch ($driver) {
             case 'mysql':
                 return new MySqlBuilder($connection, $tableName, $tableAlias);
+            case 'pgsql':
+                return new PgSqlBuilder($connection, $tableName, $tableAlias);
         }
 
         throw new \InvalidArgumentException("Unsupported driver [$driver]");
