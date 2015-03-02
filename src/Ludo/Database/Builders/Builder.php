@@ -401,7 +401,7 @@ class Builder {
      * @return array represents an table
      */
     public function fetchAllKvPair($multi_call_params = null) {
-        return $this->select($multi_call_params, PDO::FETCH_COLUMN|PDO::FETCH_GROUP, 0);
+        return $this->select($multi_call_params, PDO::FETCH_KEY_PAIR);
     }
 
     /**
