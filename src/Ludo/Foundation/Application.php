@@ -6,9 +6,14 @@ use Ludo\Support\ServiceProvider;
 use ReflectionMethod;
 
 class Application {
-    public function run() {
+    public function run($path = '') {
         try {
-            list($ctrl, $act) = Router::parse();
+            if (PHP_SAPI != 'cli') {
+                $pathInfo = str_replace('.html', '', $_SERVER['PATH_INFO']);
+            } else {
+                $pathInfo = $path;
+            }
+            list($ctrl, $act) = Router::parse($pathInfo);
             $ctrlFile = LD_CTRL_PATH.'/'.$ctrl.php;
             if (file_exists($ctrlFile)) {
                 include_once $ctrlFile;

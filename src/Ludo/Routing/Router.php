@@ -2,16 +2,9 @@
 namespace Ludo\Routing;
 
 class Router {
-    public static function parse() {
+    public static function parse($pathInfo) {
         $ctrl = 'Index';
         $act = 'index';
-
-        if (PHP_SAPI != 'cli') {
-            $pathInfo = str_replace('.html', '', $_SERVER['PATH_INFO']);
-        } else {
-            $pathInfo = $_SERVER['argv'][1];
-        }
-
         if (!empty($pathInfo)) {
             $pathInfo = explode('/', trim($pathInfo, '/'));
 
