@@ -7,6 +7,7 @@ class Config {
     public static function init() {
         if (empty(self::$config)) {
             self::database();
+            self::server();
         }
         return self::$config;
     }
@@ -17,6 +18,16 @@ class Config {
             $database = require $file;
             foreach ($database as $k => $v) {
                 self::$config['database.'.$k] = $v;
+            }
+        }
+    }
+
+    public static function server() {
+        if (empty(self::$config['server'])) {
+            $file = SITE_ROOT.'/config/server.php';
+            $database = require $file;
+            foreach ($database as $k => $v) {
+                self::$config['server.'.$k] = $v;
             }
         }
     }
