@@ -4,8 +4,8 @@ namespace Ludo\Support;
 use Ludo\Database\DatabaseManager;
 use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Config\Config;
+use Ludo\Log\Logger;
 use Ludo\View\View;
-use Ludo\Foundation\Lang;
 /**
  * The kernel of the framework which holds all available resource
  */
@@ -22,6 +22,11 @@ class ServiceProvider {
 	 * @var \Ludo\Database\DatabaseManager
 	 */
 	private $_dbManager = null;
+
+	/**
+	 * @var \Ludo\Log\Logger
+	 */
+	private $_log = null;
 
 	static private $_instance = null;
 
@@ -56,6 +61,8 @@ class ServiceProvider {
 	}
 
 	/**
+	 * get DB Manager Handler
+	 *
 	 * @return \Ludo\Database\DatabaseManager
 	 */
 	public function getDBManagerHandler() {
@@ -66,6 +73,7 @@ class ServiceProvider {
 	}
 
 	/**
+	 * get View Handler
 	 *
 	 * @return \Ludo\View\View
 	 */
@@ -74,5 +82,17 @@ class ServiceProvider {
 			$this->_tpl = new View();
 		}
 		return $this->_tpl;
+	}
+
+	/**
+	 * get Log Handler
+	 *
+	 * @return \Ludo\Log\Logger
+	 */
+	public function getLogHandler() {
+		if ($this->_log == null) {
+			$this->_log = new Logger();
+		}
+		return $this->_log;
 	}
 }
