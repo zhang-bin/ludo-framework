@@ -15,7 +15,7 @@ class Factory {
         if (file_exists($file)) {
             return new $daoName;
         } else {
-            return new BaseDao($name, $connectionName);
+            return new \BaseDao($name, $connectionName);
         }
     }
 }
