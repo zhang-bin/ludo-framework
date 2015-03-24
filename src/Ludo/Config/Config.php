@@ -38,6 +38,7 @@ class Config {
         $item = self::$config[$segments[0].'.'.$segments[1]];
         unset($segments[0], $segments[1]);
         $name = implode('.', $segments);
+        empty($name) && $name = null;
         return array_get($item, $name);
     }
 
