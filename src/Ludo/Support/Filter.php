@@ -77,7 +77,7 @@ class Filter {
      * @return clean html string
      */
     public static function html($dirtyHtml, $allowedTags='') {
-        $config = HTMLPurifier_Config::createDefault();
+        $config = \HTMLPurifier_Config::createDefault();
         $config->set('Core.Encoding', PROGRAM_CHARSET);
         $config->set('Cache.SerializerPath', LD_UPLOAD_TMP_PATH);
         if ($allowedTags) $config->set('HTML.Allowed', $allowedTags);
