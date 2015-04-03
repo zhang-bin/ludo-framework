@@ -82,7 +82,7 @@ class Filter {
         $config->set('Cache.SerializerPath', LD_UPLOAD_TMP_PATH);
         if ($allowedTags) $config->set('HTML.Allowed', $allowedTags);
 
-        $purifier = new HTMLPurifier($config);
+        $purifier = new \HTMLPurifier($config);
         return $purifier->purify(trim($dirtyHtml));
     }
 }
