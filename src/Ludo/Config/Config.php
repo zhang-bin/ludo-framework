@@ -20,6 +20,7 @@ class Config {
                 self::$config['database.'.$k] = $v;
             }
         }
+        return self::$config;
     }
 
     public static function server() {
@@ -30,6 +31,7 @@ class Config {
                 self::$config['server.'.$k] = $v;
             }
         }
+        return self::$config;
     }
 
     public static function get($name) {

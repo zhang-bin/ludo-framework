@@ -8,6 +8,7 @@ $alias = array(
     'Lang' => 'Ludo\Foundation\Lang',
     'Config' => 'Ludo\Config\Config',
     'Factory' => 'Ludo\Support\Factory',
-    'View' => 'Ludo\View\View'
+    'View' => 'Ludo\View\View',
+    'TaskQueue' => 'Ludo\Task\TaskQueue'
 );
 \Ludo\Support\AliasLoader::getInstance($alias)->register();
