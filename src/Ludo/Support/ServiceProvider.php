@@ -6,6 +6,7 @@ use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Config\Config;
 use Ludo\Log\Logger;
 use Ludo\View\View;
+use Ludo\Task\TaskQueueServer;
 /**
  * The kernel of the framework which holds all available resource
  */
@@ -95,4 +96,24 @@ class ServiceProvider {
 		}
 		return $this->_log;
 	}
+
+    public function taskQueueServer($cmd) {
+        $server = new TaskQueueServer();
+        $client = new \swoole_client(SWOOLE_TCP, SWOOLE_SOCK_SYNC);
+        switch ($cmd) {
+            case 'start':
+                $server->run();
+                break;
+            case 'stop':
+                $client->connect(Config::get('server.task_queue.host'), Config::get('server.task_queue.port'));
+                $client->send('stop');
+                break;
+            case 'reload':
+                $client->connect(Config::get('server.task_queue.host'), Config::get('server.task_queue.port'));
+                $client->send('reload');
+                break;
+            default:
+                break;
+        }
+    }
 }

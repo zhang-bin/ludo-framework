@@ -5,21 +5,24 @@ use Ludo\Support\ServiceProvider;
 
 class TaskQueueServer {
     private $_config = array();
+    /**
+     * @var swoole_server
+     */
     private $_server;
 
     public function __construct() {
         swoole_set_process_name('php task_queue manager');
-        $this->_config = Config::server();
+        $this->_config = Config::server()['server.task_queue'];
     }
 
     public function run() {
-        $this->_server = new \swoole_server($this->_config['server.task_queue.bind'], $this->_config['server.task_queue.port']);
+        $this->_server = new \swoole_server($this->_config['bind'], $this->_config['port']);
         $config = array(
-            'worker_num' => $this->_config['server.task_queue.worker_num'],
-            'log_file' => $this->_config['server.task_queue.log_file'],
-            'task_worker_num' => $this->_config['server.task_queue.task_worker_num'],
-            'user' => $this->_config['server.task_queue.user'],
-            'group' => $this->_config['server.task_queue.group'],
+            'worker_num' => $this->_config['worker_num'],
+            'log_file' => $this->_config['log_file'],
+            'task_worker_num' => $this->_config['task_worker_num'],
+            'user' => $this->_config['user'],
+            'group' => $this->_config['group'],
             'daemonize' => 1,
             'dispatch_mode' => 1,
         );
@@ -33,17 +36,26 @@ class TaskQueueServer {
     }
 
     public function receive(\swoole_server $server, $fd, $fromId, $data) {
-        $data = json_decode($data, true);
-        foreach ($data['queue'] as $item) {
-            $server->task(json_encode($item));
+        switch ($data) {
+            case 'reload':
+                $server->reload();
+                break;
+            case 'stop':
+                $server->shutdown();
+                break;
+            default:
+                $data = json_decode($data, true);
+                foreach ($data['queue'] as $item) {
+                    $server->task(json_encode($item));
+                }
+                break;
         }
-        $server->send($fd, 'ok');
     }
 
     public function task(\swoole_server $server, $taskId, $fromId, $data) {
         $data = json_decode($data, true);
         $result = curlPost($data['url'], http_build_query($data['data']));
-        $log = sprintf('%s - Task Info: %s ---- Task Result: %s', date(TIME_FORMAT), json_encode($data), $result);
+        $log = sprintf('Url: %s, Task Data: %s ---- Task Result: %s', $data['url'], json_encode($data['data'], JSON_UNESCAPED_UNICODE), $result);
         ServiceProvider::getInstance()->getLogHandler()->debug($log);
     }
 
@@ -61,13 +73,5 @@ class TaskQueueServer {
 
     public function start(\swoole_server $server) {
         swoole_set_process_name('php task_queue master');
-        //记录进程文件
-        $dir = $this->_config['pidfile'];
-        if (!is_dir($dir)) mkdir($dir);
-        $masterPidFile = $dir.'task_queue.master.pid';
-        file_put_contents($masterPidFile, $server->master_pid);
-
-        $managerPidFile = $dir.'task_queue.manager.pid';
-        file_put_contents($managerPidFile, $server->manager_pid);
     }
 }
