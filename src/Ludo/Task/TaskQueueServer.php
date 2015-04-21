@@ -3,47 +3,51 @@ namespace Ludo\Task;
 use Ludo\Config\Config;
 use Ludo\Support\ServiceProvider;
 
-class TaskQueueServer {
-    private $_config = array();
+class TaskQueueServer
+{
+    private $config = array();
     /**
-     * @var swoole_server
+     * @var \swoole_server
      */
-    private $_server;
+    private $server;
 
     /**
-     * @var Redis
+     * @var \Redis
      */
-    private $_queue;
+    private $queue;
 
-    public function __construct() {
+    public function __construct()
+    {
         swoole_set_process_name('php task_queue manager');
-        $this->_config = Config::get('server.task_queue');
-        $this->_queue = new \Redis();
-        $this->_queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
-        $this->_queue->select(3);
+        $this->config = Config::get('server.task_queue');
+        $this->queue = new \Redis();
+        $this->queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
+        $this->queue->select(3);
     }
 
-    public function run() {
-        $this->_server = new \swoole_server($this->_config['bind'], $this->_config['port']);
+    public function run()
+    {
+        $this->server = new \swoole_server($this->config['bind'], $this->config['port']);
         $config = array(
-            'worker_num' => $this->_config['worker_num'],
-            'log_file' => $this->_config['log_file'],
-            'task_worker_num' => $this->_config['task_worker_num'],
-            'user' => $this->_config['user'],
-            'group' => $this->_config['group'],
+            'worker_num' => $this->config['worker_num'],
+            'log_file' => $this->config['log_file'],
+            'task_worker_num' => $this->config['task_worker_num'],
+            'user' => $this->config['user'],
+            'group' => $this->config['group'],
             'daemonize' => 1,
             'dispatch_mode' => 1,
         );
-        $this->_server->set($config);
-        $this->_server->on('Receive', array($this, 'receive'));
-        $this->_server->on('WorkerStart', array($this, 'workerStart'));
-        $this->_server->on('Start', array($this, 'start'));
-        $this->_server->on('Task', array($this, 'task'));
-        $this->_server->on('Finish', array($this, 'finish'));
-        $this->_server->start();
+        $this->server->set($config);
+        $this->server->on('Receive', array($this, 'receive'));
+        $this->server->on('WorkerStart', array($this, 'workerStart'));
+        $this->server->on('Start', array($this, 'start'));
+        $this->server->on('Task', array($this, 'task'));
+        $this->server->on('Finish', array($this, 'finish'));
+        $this->server->start();
     }
 
-    public function receive(\swoole_server $server, $fd, $fromId, $data) {
+    public function receive(\swoole_server $server, $fd, $fromId, $data)
+    {
         switch ($data) {
             case 'reload':
                 $server->reload();
@@ -53,7 +57,7 @@ class TaskQueueServer {
                 break;
             default:
                 do {
-                    $task = json_decode($this->_queue->rPop($data), true);
+                    $task = json_decode($this->queue->rPop($data), true);
                     if (empty($task)) break;
                     $job = array('name' => $data, 'task' => $task);
                     $server->task(json_encode($job));
@@ -62,23 +66,26 @@ class TaskQueueServer {
         }
     }
 
-    public function task(\swoole_server $server, $taskId, $fromId, $data) {
+    public function task(\swoole_server $server, $taskId, $fromId, $data)
+    {
         $data = json_decode($data, true);
         $name = $data['name'];
         $data = $data['task'];
         $result = curlPost($data['url'], http_build_query($data['data']));
         if ($result === false) {
-            $this->_queue->lPush($name, json_encode($data));
+            $this->queue->lPush($name, json_encode($data));
         }
         $log = sprintf('Url: %s, Task Data: %s ---- Task Result: %s', $data['url'], json_encode($data['data'], JSON_UNESCAPED_UNICODE), $result);
         ServiceProvider::getInstance()->getLogHandler()->debug($log);
     }
 
-    public function finish(\swoole_server $server, $taskId, $data) {
+    public function finish(\swoole_server $server, $taskId, $data)
+    {
 
     }
 
-    public function workerStart(\swoole_server $server, $workerId) {
+    public function workerStart(\swoole_server $server, $workerId)
+    {
         if($workerId >= $server->setting['worker_num']) {
             swoole_set_process_name('php task_queue task worker');
         } else {
@@ -86,7 +93,8 @@ class TaskQueueServer {
         }
     }
 
-    public function start(\swoole_server $server) {
+    public function start(\swoole_server $server)
+    {
         swoole_set_process_name('php task_queue master');
     }
 }

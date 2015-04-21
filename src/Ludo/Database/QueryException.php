@@ -3,7 +3,8 @@ namespace Ludo\Database;
 
 use PDOException;
 
-class QueryException extends PDOException {
+class QueryException extends PDOException
+{
 
 	/**
 	 * The SQL for the query.
@@ -26,7 +27,8 @@ class QueryException extends PDOException {
 	 * @param  array  $params
 	 * @param  \Exception $previous
 	 */
-	public function __construct($sql, array $params, $previous) {
+	public function __construct($sql, array $params, $previous)
+    {
 		$this->sql = $sql;
 		$this->params = $params;
 		$this->previous = $previous;
@@ -46,7 +48,8 @@ class QueryException extends PDOException {
 	 * @param  \Exception $previous
 	 * @return string
 	 */
-	protected function formatMessage($sql, $params, $previous) {
+	protected function formatMessage($sql, $params, $previous)
+    {
 		return $previous->getMessage().' (SQL: '.str_replace_array('\?', $params, $sql).')';
 	}
 
@@ -55,7 +58,8 @@ class QueryException extends PDOException {
 	 *
 	 * @return string
 	 */
-	public function getSql() {
+	public function getSql()
+    {
 		return $this->sql;
 	}
 
@@ -64,8 +68,8 @@ class QueryException extends PDOException {
 	 *
 	 * @return array
 	 */
-	public function getParams() {
+	public function getParams()
+    {
 		return $this->params;
 	}
-
 }

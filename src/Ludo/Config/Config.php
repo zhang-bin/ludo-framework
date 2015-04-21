@@ -1,10 +1,12 @@
 <?php
 namespace Ludo\Config;
 
-class Config {
+class Config
+{
     public static $config = array();
 
-    public static function init() {
+    public static function init()
+    {
         if (empty(self::$config)) {
             $dir = SITE_ROOT.'/config/';
             $files = scandir($dir);
@@ -21,7 +23,8 @@ class Config {
         return self::$config;
     }
 
-    public static function get($name) {
+    public static function get($name)
+    {
         $segments = explode('.', $name);
         if (count($segments) < 2) return null;
         $item = self::$config[$segments[0].'.'.$segments[1]];
@@ -31,7 +34,8 @@ class Config {
         return array_get($item, $name);
     }
 
-    public static function getConfig() {
+    public static function getConfig()
+    {
         return self::$config;
     }
 }

@@ -5,7 +5,8 @@ use Ludo\Support\ServiceProvider;
 use Ludo\Database\Builders\BuilderFactory;
 use PDO;
 
-abstract class Dao {
+abstract class Dao
+{
     /**
      * Handler of Connection
      *
@@ -26,7 +27,8 @@ abstract class Dao {
      * @param string $tblName
      * @param string $connectionName
      */
-    public function __construct($tblName, $connectionName = null) {
+    public function __construct($tblName, $connectionName = null)
+    {
         $this->tblName = $tblName;
         $this->connection = ServiceProvider::getInstance()->getDBHandler($connectionName);
         $builderFactory = new BuilderFactory();
@@ -39,16 +41,19 @@ abstract class Dao {
      * @param Array $arr array('field'=>value, 'field2'=>value2);
      * @return int Last insert id if insert successful, else SqlException will be throw
      */
-    public function add($arr) {
+    public function add($arr)
+    {
         return $this->builder->insert($arr);
     }
+
     /**
      * identical to LdBaseDao::add($arr);
      *
      * @param Array $arr array('field'=>value, 'field2'=>value2);
      * @return int Last insert id if insert successful, else SqlException will be throw
      */
-    public function insert($arr) {
+    public function insert($arr)
+    {
         return $this->add($arr);
     }
 
@@ -62,7 +67,8 @@ abstract class Dao {
      * @param bool $ignore
      * @return true if insert successful, else SqlException will be throw
      */
-    public function batchInsert($arr, $fieldNames = array(), $ignore = false) {
+    public function batchInsert($arr, $fieldNames = array(), $ignore = false)
+    {
         if (empty($arr)) return false;
 
         $keys = '(';
@@ -113,7 +119,8 @@ abstract class Dao {
      * @param Array $arr
      * @return affected
      */
-    public function update($id, $arr) {
+    public function update($id, $arr)
+    {
         return $this->updateWhere($arr, 'id = ?', array($id));
     }
 
@@ -123,9 +130,10 @@ abstract class Dao {
      * @param Array $newData
      * @param String $condition
      * @param mixed
-     * @return affected
+     * @return int affected row
      */
-    public function updateWhere($newData, $condition, $params = array()) {
+    public function updateWhere($newData, $condition, $params = array())
+    {
         return $this->builder->update($newData, array($condition, $params));
     }
 
@@ -133,9 +141,10 @@ abstract class Dao {
      * delete record with id=$id
      *
      * @param $id
-     * @return affected
+     * @return int affected row
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         return $this->deleteWhere('id = ?', $id);
     }
 
@@ -144,9 +153,10 @@ abstract class Dao {
      *
      * @param string $condition
      * @param null|array $params
-     * @return affected
+     * @return int affected row
      */
-    public function deleteWhere($condition, $params = null) {
+    public function deleteWhere($condition, $params = null)
+    {
         return $this->builder->delete($condition, $params);
     }
 
@@ -158,7 +168,8 @@ abstract class Dao {
      * @param int $fetchMode
      * @return Array key is field name and value is field value.
      */
-    public function fetch($id, $fields = '', $fetchMode = PDO::FETCH_ASSOC) {
+    public function fetch($id, $fields = '', $fetchMode = PDO::FETCH_ASSOC)
+    {
         if (!empty($fields)) $this->builder->setField($fields);
         $this->builder->where($this->tblName.'.id = ?', $id);
         return $this->builder->fetch(null, $fetchMode);
@@ -173,7 +184,8 @@ abstract class Dao {
      * @param int $fetchMode
      * @return array|bool
      */
-    public function find($condition, $params, $fields = '', $fetchMode = PDO::FETCH_ASSOC) {
+    public function find($condition, $params, $fields = '', $fetchMode = PDO::FETCH_ASSOC)
+    {
         if (!empty($fields)) $this->builder->setField($fields);
         return $this->builder->where($condition, $params)->fetch(NULL, $fetchMode);
     }
@@ -186,7 +198,8 @@ abstract class Dao {
      * @param string $column
      * @return String
      */
-    public function findColumn($condition, $params, $column) {
+    public function findColumn($condition, $params, $column)
+    {
         if (!empty($column)) $this->builder->setField($column);
         return $this->builder->where($condition, $params)->fetchColumn();
     }
@@ -198,7 +211,8 @@ abstract class Dao {
      * @param string $column
      * @return String
      */
-    public function fetchColumn($id, $column) {
+    public function fetchColumn($id, $column)
+    {
         if (!empty($column)) $this->builder->setField($column);
         return $this->builder->where($this->tblName.'.id = ?', array($id))->fetchColumn();
     }
@@ -213,7 +227,8 @@ abstract class Dao {
      * @param int $fetchMode
      * @return array
      */
-    public function fetchAll($rows = 0, $start = 0, $order = '', $fields = '*', $fetchMode = PDO::FETCH_ASSOC) {
+    public function fetchAll($rows = 0, $start = 0, $order = '', $fields = '*', $fetchMode = PDO::FETCH_ASSOC)
+    {
         return $this->builder->field($fields)->limit($rows, $start)->orderby($order)->fetchAll(null, $fetchMode);
     }
 
@@ -226,7 +241,8 @@ abstract class Dao {
      * @param string $order
      * @return array
      */
-    public function fetchAllUnique($fields = '*', $rows = 0, $start = 0, $order = '') {
+    public function fetchAllUnique($fields = '*', $rows = 0, $start = 0, $order = '')
+    {
         return $this->builder->field($fields)->limit($rows, $start)->orderby($order)->fetchAllUnique();
     }
 
@@ -241,7 +257,8 @@ abstract class Dao {
      * @param int $fetchMode
      * @return array
      */
-    public function findAll($condition = '', $rows = 0, $start = 0, $order='', $fields = '*', $fetchMode = PDO::FETCH_ASSOC) {
+    public function findAll($condition = '', $rows = 0, $start = 0, $order='', $fields = '*', $fetchMode = PDO::FETCH_ASSOC)
+    {
         if (is_array($condition)) {
             $where = $condition[0];
             $params = $condition[1];
@@ -263,7 +280,8 @@ abstract class Dao {
      * @param string $order
      * @return array
      */
-    public function findAllUnique($condition = '', $fields = '', $rows = 0, $start = 0, $order = '') {
+    public function findAllUnique($condition = '', $fields = '', $rows = 0, $start = 0, $order = '')
+    {
         if (is_array($condition)) {
             $where = $condition[0];
             $params = $condition[1];
@@ -271,11 +289,8 @@ abstract class Dao {
             $where = $condition;
             $params = null;
         }
-
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllUnique();
     }
-
-
 
     /**
      * get key=>value formatted result from table
@@ -287,7 +302,8 @@ abstract class Dao {
      * @param string $order
      * @return array
      */
-    public function findAllKvPair($condition = '', $fields = '', $rows = 0, $start = 0, $order='') {
+    public function findAllKvPair($condition = '', $fields = '', $rows = 0, $start = 0, $order = '')
+    {
         if (is_array($condition)) {
             $where = $condition[0];
             $params = $condition[1];
@@ -295,7 +311,6 @@ abstract class Dao {
             $where = $condition;
             $params = null;
         }
-
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllKvPair();
     }
 
@@ -307,7 +322,8 @@ abstract class Dao {
      * @param bool $distinct
      * @return int
      */
-    public function count($condition = '', $params = null, $distinct = false) {
+    public function count($condition = '', $params = null, $distinct = false)
+    {
         if (!empty($condition)) {
             $this->builder->where($condition, $params);
         }
@@ -321,7 +337,8 @@ abstract class Dao {
      * @param mixed $params
      * @return boolean
      */
-    public function exists($condition = '', $params = null) {
+    public function exists($condition = '', $params = null)
+    {
         if (!is_array($params)) $params = array($params);
         $cnt = $this->builder->setField('count(*)')->where($condition, $params)->fetchColumn();
         return $cnt > 0 ? true : false;
@@ -337,7 +354,8 @@ abstract class Dao {
      * @param string $fields
      * @return Array list(exists, row) = Array(0=>true/false, 1=>rowArray/false)
      */
-    public function existsRow($condition='', $params = null, $fields = null) {
+    public function existsRow($condition='', $params = null, $fields = null)
+    {
         if (!empty($fields)) $this->builder->setField($fields);
         $row = $this->builder->where($condition, $params)->fetch(null, PDO::FETCH_BOTH);
         $exists = empty($row) ? false : true;
@@ -349,9 +367,11 @@ abstract class Dao {
      *
      * @return int the max id
      */
-    public function maxId() {
+    public function maxId()
+    {
         return $this->builder->setField('id')->orderby('id DESC')->fetchColumn();
     }
+
     /**
      * one to one relation.
      *
@@ -361,7 +381,8 @@ abstract class Dao {
      * @param String $joinType one of the three [inner, left, right]. default is left.
      * @return $this
      */
-    public function hasA($table, $fields='', $foreignKey = null, $joinType = 'left'){
+    public function hasA($table, $fields='', $foreignKey = null, $joinType = 'left')
+    {
         //if $table have alias like ('User  author'), extract the table name and alias.
         if (strpos($table, ' ') !== false) {
             $tmp = preg_split('/\s+/', str_replace(' as ', ' ', $table));
@@ -382,41 +403,54 @@ abstract class Dao {
         return $this;
     }
 
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         $this->connection->beginTransaction();
     }
 
-    public function commit() {
+    public function commit()
+    {
         $this->connection->commit();
     }
 
-    public function rollback() {
+    public function rollback()
+    {
         $this->connection->rollback();
     }
 
-    public function debug($connection = null) {
-        if (is_null($connection)) $connection = $this->connection;
+    public function debug($connection = null)
+    {
+        if (is_null($connection)) {
+            $connection = $this->connection;
+        }
         return $connection->debug();
     }
 
-    public function lastSql($builder = null) {
-        if (is_null($builder)) $builder = $this->builder;
+    public function lastSql($builder = null)
+    {
+        if (is_null($builder)) {
+            $builder = $this->builder;
+        }
         return $builder->sql();
     }
+
     /**
      * return the slave table handler object
      *
      * @return \Ludo\Database\Builders\Builder
      */
-    public function tbl() {
+    public function tbl()
+    {
         return $this->builder;
     }
 
-    public function tblName() {
+    public function tblName()
+    {
         return $this->tblName;
     }
 
-    public function daoName($trailingDao = true, $lcFirst=false) {
+    public function daoName($trailingDao = true, $lcFirst = false)
+    {
         $daoName = get_class($this);
         if (!$trailingDao) {
             $daoName = substr($daoName, 0, strpos($daoName, 'Dao'));
@@ -425,7 +459,8 @@ abstract class Dao {
         return $daoName;
     }
 
-    public function truncate() {
+    public function truncate()
+    {
         $this->connection->exec('TRUNCATE '.$this->tblName);
     }
 }

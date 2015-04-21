@@ -3,10 +3,11 @@ namespace Ludo\Foundation;
 /**
  * Class Lang
  */
-class Lang {
-    private static $_lang = array();
-    private static $_langDir;
-    private static $_language;
+class Lang
+{
+    private static $lang = array();
+    private static $langDir;
+    private static $language;
 
     /**
      * Get the translation for the given key.
@@ -17,16 +18,17 @@ class Lang {
      * @return string
      * @static
      */
-    public static function get($key, array $replace = array(), $locale = null) {
-        if (is_null($locale)) $locale = self::$_language;
+    public static function get($key, array $replace = array(), $locale = null)
+    {
+        if (is_null($locale)) $locale = self::$language;
 
         list($group, $item) = explode('.', $key);
-        if (isset(self::$_lang[$group])) {
-            $value = self::$_lang[$group][$item];
+        if (isset(self::$lang[$group])) {
+            $value = self::$lang[$group][$item];
         } else {
             $filename = LD_LANGUAGE_PATH.DIRECTORY_SEPARATOR.$locale.DIRECTORY_SEPARATOR.$group.'.lang.php';
-            file_exists($filename) && self::$_lang[$group] = include $filename;
-            $value = self::$_lang[$group][$item];
+            file_exists($filename) && self::$lang[$group] = include $filename;
+            $value = self::$lang[$group][$item];
         }
 
         if (!empty($replace)) {
@@ -37,7 +39,8 @@ class Lang {
         return $value;
     }
 
-    public static function init() {
+    public static function init()
+    {
         if (isset($_COOKIE['lang'])) {
             $language = $_COOKIE['lang'];
         } else {
@@ -55,13 +58,13 @@ class Lang {
         $defaultLangDir = LD_LANGUAGE_PATH.DIRECTORY_SEPARATOR.DEFAULT_LANGUAGE.DIRECTORY_SEPARATOR;
 
         if (file_exists($langDir)) {
-            self::$_langDir = $langDir;
+            self::$langDir = $langDir;
         } else if (file_exists($defaultLangDir)) {
-            self::$_langDir = $defaultLangDir;
+            self::$langDir = $defaultLangDir;
         } else {
             throw new \Exception("Language file for [$langDir or $defaultLangDir] does not exist!");
         }
-        self::$_language = $language;
-        include_once self::$_langDir.'base.lang.php';
+        self::$language = $language;
+        include_once self::$langDir.'base.lang.php';
     }
 }

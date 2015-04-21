@@ -4,7 +4,8 @@ namespace Ludo\Database;
 use PDO;
 use Closure;
 
-class Connection {
+class Connection
+{
 
 	/**
 	 * The active PDO connection.
@@ -70,7 +71,8 @@ class Connection {
 	 * @param  string  $tablePrefix
 	 * @param  array   $config
 	 */
-	public function __construct(PDO $pdo, $database = '', $tablePrefix = '', array $config = array()) {
+	public function __construct(PDO $pdo, $database = '', $tablePrefix = '', array $config = array())
+    {
 		$this->pdo = $pdo;
 		$this->database = $database;
 		$this->tablePrefix = $tablePrefix;
@@ -84,7 +86,8 @@ class Connection {
 	 * @param  array   $params
 	 * @return array
 	 */
-	public function selectColumn($query, $params = array()) {
+	public function selectColumn($query, $params = array())
+    {
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -102,7 +105,8 @@ class Connection {
 	 * @param  array   $params
 	 * @return array
 	 */
-	public function selectOne($query, $params = array()) {
+	public function selectOne($query, $params = array())
+    {
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -120,7 +124,8 @@ class Connection {
 	 * @param  array   $params
 	 * @return array
 	 */
-	public function select($query, $params = array()) {
+	public function select($query, $params = array())
+    {
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -142,7 +147,8 @@ class Connection {
 	 * @param  array   $params
 	 * @return bool
 	 */
-	public function insert($query, $params = array()) {
+	public function insert($query, $params = array())
+    {
 		return $this->statement($query, $params);
 	}
 
@@ -151,9 +157,10 @@ class Connection {
 	 *
 	 * @param  string  $query
 	 * @param  array   $params
-	 * @return int
+	 * @return int affected row
 	 */
-	public function update($query, $params = array()) {
+	public function update($query, $params = array())
+    {
 		return $this->affectingStatement($query, $params);
 	}
 
@@ -162,9 +169,10 @@ class Connection {
 	 *
 	 * @param  string  $query
 	 * @param  array   $params
-	 * @return int
+	 * @return int affected row
 	 */
-	public function delete($query, $params = array()) {
+	public function delete($query, $params = array())
+    {
 		return $this->affectingStatement($query, $params);
 	}
 
@@ -175,7 +183,8 @@ class Connection {
 	 * @param  array   $params
 	 * @return bool
 	 */
-	public function statement($query, $params = array()) {
+	public function statement($query, $params = array())
+    {
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -191,7 +200,8 @@ class Connection {
 	 * @param  array   $params
 	 * @return int
 	 */
-	public function affectingStatement($query, $params = array()) {
+	public function affectingStatement($query, $params = array())
+    {
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -208,7 +218,8 @@ class Connection {
 	 * @param  string  $query
 	 * @return bool
 	 */
-	public function unprepared($query) {
+	public function unprepared($query)
+    {
 		return $this->run($query, array(), function($me, $query) {
 			/**
 			 * @var Connection $me
@@ -221,9 +232,10 @@ class Connection {
 	 * get last insert id
 	 *
 	 * @param string $name
-	 * @return last insert id
+	 * @return string insert id
 	 */
-	public function lastInsertId($name = 'id') {
+	public function lastInsertId($name = 'id')
+    {
 		return $this->getReadPdo()->lastInsertId($name);
 	}
 
@@ -236,7 +248,8 @@ class Connection {
 	 *
 	 * @throws \Exception
 	 */
-	public function transaction(Closure $callback) {
+	public function transaction(Closure $callback)
+    {
 		$this->beginTransaction();
 
 		try {
@@ -254,7 +267,8 @@ class Connection {
 	 *
 	 * @return void
 	 */
-	public function beginTransaction() {
+	public function beginTransaction()
+    {
 		$this->pdo->beginTransaction();
 	}
 
@@ -263,7 +277,8 @@ class Connection {
 	 *
 	 * @return void
 	 */
-	public function commit() {
+	public function commit()
+    {
 		$this->pdo->commit();
 	}
 
@@ -272,7 +287,8 @@ class Connection {
 	 *
 	 * @return void
 	 */
-	public function rollBack() {
+	public function rollBack()
+    {
 		$this->pdo->rollBack();
 	}
 
@@ -286,7 +302,8 @@ class Connection {
 	 *
 	 * @throws QueryException
 	 */
-	protected function run($query, $params, Closure $callback) {
+	protected function run($query, $params, Closure $callback)
+    {
 		$start = microtime(true);
 
 		// To execute the statement, we'll simply call the callback, which will actually
@@ -318,7 +335,8 @@ class Connection {
 	 * @param  $err
 	 * @return void
 	 */
-	public function logQuery($query, $params, $time = null, $err = null) {
+	public function logQuery($query, $params, $time = null, $err = null)
+    {
 		if (!DEBUG) return;
 		$this->queryLog[] = compact('query', 'params', 'time', 'err');
 	}
@@ -329,7 +347,8 @@ class Connection {
 	 * @param  int    $start
 	 * @return float
 	 */
-	protected function getElapsedTime($start) {
+	protected function getElapsedTime($start)
+    {
 		return microtime(true) - $start;
 	}
 
@@ -338,7 +357,8 @@ class Connection {
 	 *
 	 * @return PDO
 	 */
-	public function getPdo() {
+	public function getPdo()
+    {
 		return $this->pdo;
 	}
 
@@ -347,7 +367,8 @@ class Connection {
 	 *
 	 * @return PDO
 	 */
-	public function getReadPdo() {
+	public function getReadPdo()
+    {
 		return $this->readPdo ?: $this->pdo;
 	}
 
@@ -357,7 +378,8 @@ class Connection {
 	 * @param  PDO  $pdo
 	 * @return \Ludo\Database\Connection
 	 */
-	public function setPdo(PDO $pdo) {
+	public function setPdo(PDO $pdo)
+    {
 		$this->pdo = $pdo;
 		return $this;
 	}
@@ -368,7 +390,8 @@ class Connection {
 	 * @param  PDO  $pdo
 	 * @return \Ludo\Database\Connection
 	 */
-	public function setReadPdo(PDO $pdo) {
+	public function setReadPdo(PDO $pdo)
+    {
 		$this->readPdo = $pdo;
 		return $this;
 	}
@@ -378,7 +401,8 @@ class Connection {
 	 *
 	 * @return string|null
 	 */
-	public function getName() {
+	public function getName()
+    {
 		return $this->getConfig('name');
 	}
 
@@ -388,7 +412,8 @@ class Connection {
 	 * @param  string  $option
 	 * @return mixed
 	 */
-	public function getConfig($option) {
+	public function getConfig($option)
+    {
 		return array_get($this->config, $option);
 	}
 
@@ -397,7 +422,8 @@ class Connection {
 	 *
 	 * @return string
 	 */
-	public function getDriverName() {
+	public function getDriverName()
+    {
 		return $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 	}
 
@@ -406,7 +432,8 @@ class Connection {
 	 *
 	 * @return int
 	 */
-	public function getFetchMode() {
+	public function getFetchMode()
+    {
 		return $this->fetchMode;
 	}
 
@@ -416,7 +443,8 @@ class Connection {
 	 * @param  int  $fetchMode
 	 * @return int
 	 */
-	public function setFetchMode($fetchMode) {
+	public function setFetchMode($fetchMode)
+    {
 		$this->fetchMode = $fetchMode;
 	}
 
@@ -425,7 +453,8 @@ class Connection {
 	 *
 	 * @return int
 	 */
-	public function getFetchArgument() {
+	public function getFetchArgument()
+    {
 		return $this->fetchArgument;
 	}
 
@@ -435,7 +464,8 @@ class Connection {
 	 * @param  int  $fetchArgument
 	 * @return int
 	 */
-	public function setFetchArgument($fetchArgument) {
+	public function setFetchArgument($fetchArgument)
+    {
 		$this->fetchArgument = $fetchArgument;
 	}
 
@@ -444,7 +474,8 @@ class Connection {
 	 *
 	 * @return string
 	 */
-	public function getDatabaseName() {
+	public function getDatabaseName()
+    {
 		return $this->database;
 	}
 
@@ -454,7 +485,8 @@ class Connection {
 	 * @param  string  $database
 	 * @return string
 	 */
-	public function setDatabaseName($database) {
+	public function setDatabaseName($database)
+    {
 		$this->database = $database;
 	}
 
@@ -463,11 +495,19 @@ class Connection {
 	 *
 	 * @return string
 	 */
-	public function getTablePrefix() {
+	public function getTablePrefix()
+    {
 		return $this->tablePrefix;
 	}
 
-	function quoteIdentifier($str) {
+    /**
+     * quote identifier
+     *
+     * @param $str
+     * @return string
+     */
+	function quoteIdentifier($str)
+    {
 		$str = trim($str, '`');
 		return "`{$str}`";
 	}
@@ -477,7 +517,8 @@ class Connection {
 	 *
 	 * @return string
 	 */
-	public function debug() {
+	public function debug()
+    {
 		if (!DEBUG) return;
 		$totalProcessTime = 0;
 		$totalSQL = 0;

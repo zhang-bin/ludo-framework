@@ -3,8 +3,8 @@ namespace Ludo\Database;
 
 use Ludo\Database\Connectors\ConnectionFactory;
 
-class DatabaseManager {
-
+class DatabaseManager
+{
     /**
      * The config instance.
      *
@@ -32,7 +32,8 @@ class DatabaseManager {
      * @param  array  $config
      * @param  \Ludo\Database\Connectors\ConnectionFactory  $factory
      */
-    public function __construct($config, ConnectionFactory $factory) {
+    public function __construct($config, ConnectionFactory $factory)
+    {
         $this->config = $config;
         $this->factory = $factory;
     }
@@ -43,7 +44,8 @@ class DatabaseManager {
      * @param  string  $name
      * @return \Ludo\Database\Connection
      */
-    public function connection($name = null) {
+    public function connection($name = null)
+    {
         $name = $name ?: $this->getDefaultConnection();
         if (!isset($this->connections[$name])) {
             $this->connections[$name] = $this->makeConnection($name);
@@ -57,7 +59,8 @@ class DatabaseManager {
      * @param  string  $name
      * @return \Ludo\Database\Connection
      */
-    public function reconnect($name = null) {
+    public function reconnect($name = null)
+    {
         $name = $name ?: $this->getDefaultConnection();
 
         $this->disconnect($name);
@@ -71,7 +74,8 @@ class DatabaseManager {
      * @param  string  $name
      * @return void
      */
-    public function disconnect($name = null) {
+    public function disconnect($name = null)
+    {
         $name = $name ?: $this->getDefaultConnection();
         unset($this->connections[$name]);
     }
@@ -82,7 +86,8 @@ class DatabaseManager {
      * @param  string  $name
      * @return \Ludo\Database\Connection
      */
-    protected function makeConnection($name) {
+    protected function makeConnection($name)
+    {
         $config = $this->getConfig($name);
         return $this->factory->make($config, $name);
     }
@@ -95,7 +100,8 @@ class DatabaseManager {
      *
      * @throws \InvalidArgumentException
      */
-    protected function getConfig($name) {
+    protected function getConfig($name)
+    {
         $name = $name ?: $this->getDefaultConnection();
         $connections = $this->config['database.connections'];
         if (is_null($config = array_get($connections, $name))) {
@@ -110,7 +116,8 @@ class DatabaseManager {
      *
      * @return string
      */
-    public function getDefaultConnection() {
+    public function getDefaultConnection()
+    {
         return $this->config['database.default'];
     }
 
@@ -120,7 +127,8 @@ class DatabaseManager {
      * @param  string  $name
      * @return void
      */
-    public function setDefaultConnection($name) {
+    public function setDefaultConnection($name)
+    {
         $this->config['database.default'] = $name;
     }
 
@@ -129,7 +137,8 @@ class DatabaseManager {
      *
      * @return array
      */
-    public function getConnections() {
+    public function getConnections()
+    {
         return $this->connections;
     }
 }

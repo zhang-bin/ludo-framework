@@ -2,7 +2,7 @@
 \Ludo\Foundation\Lang::init();
 \Ludo\Config\Config::init();
 
-$alias = array(
+$alias = [
     'Filter' => 'Ludo\Support\Filter',
     'Validator' => 'Ludo\Support\Validator',
     'Lang' => 'Ludo\Foundation\Lang',
@@ -10,5 +10,5 @@ $alias = array(
     'Factory' => 'Ludo\Support\Factory',
     'View' => 'Ludo\View\View',
     'TaskQueue' => 'Ludo\Task\TaskQueue'
-);
+];
 \Ludo\Support\AliasLoader::getInstance($alias)->register();

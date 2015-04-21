@@ -1,8 +1,10 @@
 <?php
 namespace Ludo\Routing;
 
-class Router {
-    public static function parse($pathInfo) {
+class Router
+{
+    public static function parse($pathInfo)
+    {
         $ctrl = 'Index';
         $act = 'index';
         if (!empty($pathInfo)) {

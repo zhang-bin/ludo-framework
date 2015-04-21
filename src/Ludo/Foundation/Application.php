@@ -5,8 +5,15 @@ use Ludo\Routing\Router;
 use Ludo\Support\ServiceProvider;
 use ReflectionMethod;
 
-class Application {
-    public function run($path = '') {
+class Application
+{
+    /**
+     * auto route
+     *
+     * @param string $path
+     */
+    public function run($path = '')
+    {
         try {
             if (PHP_SAPI != 'cli') {
                 $pathInfo = str_replace('.html', '', $_SERVER['PATH_INFO']);
@@ -19,7 +26,7 @@ class Application {
                 include_once $ctrlFile;
 
                 /**
-                 * @var \Ludo\Routing\BaseCtrl $controller
+                 * @var \Ludo\Routing\Controller $controller
                  */
                 $controller = new $ctrl();
                 $action = $act;
@@ -68,7 +75,8 @@ class Application {
         }
     }
 
-    public static function debug($lastOutput='') {
+    public static function debug($lastOutput = '')
+    {
         $debugInfo = '<h2>Time:'.date('Y-m-d H:i:s').':'.currUrl().'</h2>';
         $debugInfo .= '@@@@error:<pre>'.var_export(error_get_last(), true).'</pre>@@@@<br />';
         if (!empty($lastOutput)) {

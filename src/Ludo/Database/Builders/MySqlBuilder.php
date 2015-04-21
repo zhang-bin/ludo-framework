@@ -1,6 +1,7 @@
 <?php
 namespace Ludo\Database\Builders;
 
-class MySqlBuilder extends Builder {
+class MySqlBuilder extends Builder
+{
 
 }

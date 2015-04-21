@@ -4,56 +4,80 @@ namespace Ludo\Database\Builders;
 use Ludo\Database\Connection;
 use PDO;
 
-class Builder {
+class Builder
+{
     /**
-     * @var Connection $db
+     * @var Connection
      */
     protected $db;
 
-    /** @var String  table name */
+    /**
+     * @var string  table name
+     */
     protected $tableName = '';
 
-    /** @var String  current table's alias, default is table name without prefix */
+    /**
+     * @var string current table's alias, default is table name without prefix
+     */
     protected $tableAlias = '';
 
-    /** @var String  fields part of the select clause, default is '*' */
+    /**
+     * @var String fields part of the select clause, default is '*'
+     */
     protected $fields = '*';
 
-    /** @var String  Join clause */
+    /**
+     * @var string Join clause
+     */
     protected $join = '';
 
-    /** @var String  condition*/
+    /**
+     * @var string condition
+     */
     protected $where = '';
 
-    /** @var String  condition*/
+    /**
+     * @var string having
+     */
     protected $having = '';
 
-    /** @var Array  params used to replace the placeholder in condition*/
-    protected $params = null;
+    /**
+     * @var array params used to replace the placeholder in condition
+     */
+    protected $params = array();
 
-    /** @var String  e.g. Id ASC */
+    /**
+     * @var string order by
+     */
     protected $order = '';
 
-    /** @var String  group by */
+    /**
+     * @var string group by
+     */
     protected $group = '';
 
-    /** @var current sql clause */
+    /**
+     * @var string current sql clause
+     */
     protected $sql = '';
 
-    /** @var sql clause directly assigned by User */
+    /**
+     * @var string sql clause directly assigned by User
+     */
     protected $userSql = '';
 
+    /**
+     * @var bool distinct
+     */
     protected $distinct = false;
 
-    /** @var limit rows, start */
+    /**
+     * @var string limit rows, start
+     */
     protected $limit = '';
 
-    /*=== CONSTS ===*/
-    /** @var String left join */
     const LEFT_JOIN = 'LEFT JOIN';
-    /** @var String left join */
     const INNER_JOIN = 'INNER JOIN';
-    /** @var String left join */
     const RIGHT_JOIN = 'RIGHT JOIN';
 
     /**
@@ -61,7 +85,8 @@ class Builder {
      * @param String $tableName	table name without prefix
      * @param String $tableAlias alias of table, Default equals table name without prefix
      */
-    public function __construct(Connection $dbObj, $tableName, $tableAlias = '') {
+    public function __construct(Connection $dbObj, $tableName, $tableAlias = '')
+    {
         $this->db = $dbObj;
         $this->tableName = $this->db->getTablePrefix().$tableName;
 
@@ -75,7 +100,8 @@ class Builder {
      * @param String $tableAlias Table's alias
      * @return $this
      */
-    public function setTableAlias($tableAlias) {
+    public function setTableAlias($tableAlias)
+    {
         $this->tableAlias = $tableAlias;
         return $this;
     }
@@ -87,7 +113,8 @@ class Builder {
      * @param string|array $params
      * @return $this|String
      */
-    public function sql($sql = '', $params = null) {
+    public function sql($sql = '', $params = null)
+    {
         if (!empty($sql)) {
             $this->sql = '';
             $this->userSql = $sql;
@@ -104,7 +131,8 @@ class Builder {
      * @param String $fieldName comma separated list: id, User.name, UserType.id
      * @return $this
      */
-    public  function setField($fieldName) {
+    public  function setField($fieldName)
+    {
         if ($fieldName) {
             if ($this->fields && $this->fields != '*') {
                 if ($fieldName !='*') {
@@ -119,13 +147,15 @@ class Builder {
         }
         return $this;
     }
+
     /**
      * identical to setField()
      *
      * @param String $fieldName comma separated list: id, User.name, UserType.id
      * @return $this
      */
-    public function field($fieldName) {
+    public function field($fieldName)
+    {
         return $this->setField($fieldName);
     }
 
@@ -135,7 +165,8 @@ class Builder {
      * @param bool $distinct whether to distinct rows, default is false;
      * @return $this
      */
-    public function distinct($distinct = false) {
+    public function distinct($distinct = false)
+    {
         $this->distinct = $distinct;
         return $this;
     }
@@ -145,7 +176,8 @@ class Builder {
      * @param string $fields field part of joined table
      * @return $this
      */
-    protected function addJoinField($fields) {
+    protected function addJoinField($fields)
+    {
         if ($this->fields == '*') {
             $this->fields = "{$this->tableAlias}.*, {$fields}";
         } else {
@@ -153,6 +185,7 @@ class Builder {
         }
         return $this;
     }
+
     /**
      * join a table, This function can be multiple called and each call will be concatenated.
      *
@@ -162,7 +195,8 @@ class Builder {
      * @param String $join join type: LdTable::LEFT_JOIN OR LdTable::RIGHT_JOIN OR LdTable::INNER_JOIN.
      * @return $this
      */
-    public function join($table, $on = '', $fields = '', $join = self::INNER_JOIN) {
+    public function join($table, $on = '', $fields = '', $join = self::INNER_JOIN)
+    {
         $as = $table;
         //if $table have ' ' which means $table have a alias,
         //so replace the as if have and separate the table name and alias name.
@@ -190,7 +224,8 @@ class Builder {
      * @param String $fields the fields came from the joined table
      * @return $this
      */
-    public function leftJoin($table, $on = '', $fields = '') {
+    public function leftJoin($table, $on = '', $fields = '')
+    {
         return $this->join($table, $on, $fields, self::LEFT_JOIN);
     }
 
@@ -202,9 +237,11 @@ class Builder {
      * @param String $fields the fields came from the joined table
      * @return $this
      */
-    public function rightJoin($table, $on = '', $fields = '') {
+    public function rightJoin($table, $on = '', $fields = '')
+    {
         return $this->join($table, $on, $fields, self::RIGHT_JOIN);
     }
+
     /**
      * inner join a table, This function can be multiple called and each call will be concatenated.
      *
@@ -213,7 +250,8 @@ class Builder {
      * @param String $fields the fields came from the joined table
      * @return $this
      */
-    public function innerJoin($table, $on = '', $fields = '') {
+    public function innerJoin($table, $on = '', $fields = '')
+    {
         return $this->join($table, $on, $fields, self::INNER_JOIN);
     }
 
@@ -225,13 +263,15 @@ class Builder {
      * @param Array $params
      * @return $this
      */
-    public function where($condition, $params = NULL) {
+    public function where($condition, $params = NULL)
+    {
         if (!empty($condition)) {
             $this->where = 'WHERE '.$condition;
             $this->params = $this->autoArr($params);
         }
         return $this;
     }
+
     /**
      * set condition part in query clause
      *
@@ -240,17 +280,20 @@ class Builder {
      * @param Array $params
      * @return $this
      */
-    public function having($condition, $params = NULL) {
+    public function having($condition, $params = NULL)
+    {
         $this->having = 'HAVING '.$condition;
         $this->params = empty($this->params) ?  $this->autoArr($params) : array_merge($this->params, $this->autoArr($params));
         return $this;
     }
+
     /**
      * set order part in query clause
      * @param String order : e.g. id DESC
      * @return $this
      */
-    public function orderBy($order) {
+    public function orderBy($order)
+    {
         $this->order = $order;
         return $this;
     }
@@ -261,7 +304,8 @@ class Builder {
      * @param String $group e.g. 'field1'
      * @return $this
      */
-    public function groupBy($group) {
+    public function groupBy($group)
+    {
         $this->group = $group;
         return $this;
     }
@@ -273,7 +317,8 @@ class Builder {
      * @param int $start
      * @return $this
      */
-    public function limit($rows = 0, $start = 0) {
+    public function limit($rows = 0, $start = 0)
+    {
         if (empty($rows)) {
             $this->limit = '';
         } else {
@@ -287,7 +332,8 @@ class Builder {
      * @param bool $return true: return the sql clause (Default is true). false: assign sql clause to this->sql.
      * @return void
      */
-    protected function constructSql($return = true) {
+    protected function constructSql($return = true)
+    {
         if (empty($this->userSql)) {
             $distinct = $this->distinct ? 'DISTINCT' : '';
 
@@ -318,7 +364,8 @@ class Builder {
      * @param mixed $fetchArgument
      * @return array
      */
-    public function select($multi_call_params = NULL, $fetchMode = PDO::FETCH_ASSOC, $fetchArgument = null) {
+    public function select($multi_call_params = NULL, $fetchMode = PDO::FETCH_ASSOC, $fetchArgument = null)
+    {
         # 1. A multi-call means that sql have been prepared to do multiple call with different params.
         # 2. if $multi_call_params is null, means this is an once-call.
         # 	 once-call does not exist this->sql.
@@ -344,7 +391,8 @@ class Builder {
      *
      * @return array|bool represent one row in a table, or false if failure
      */
-    public function fetch($multi_call_params = NULL, $fetchMode = PDO::FETCH_ASSOC) {
+    public function fetch($multi_call_params = NULL, $fetchMode = PDO::FETCH_ASSOC)
+    {
         $this->limit(1);
         $this->db->setFetchMode($fetchMode);
         if (is_null($multi_call_params)) {//once-call, this->sql have no value
@@ -367,7 +415,8 @@ class Builder {
      * PDO::FETCH_COLUMN|PDO::FETCH_GROUP: To return an associative array grouped by the values of a specified column
      * @return array represents an table
      */
-    public function fetchAll($multi_call_params = null, $fetchMode = PDO::FETCH_ASSOC) {
+    public function fetchAll($multi_call_params = null, $fetchMode = PDO::FETCH_ASSOC)
+    {
         return $this->select($multi_call_params, $fetchMode);
     }
 
@@ -381,7 +430,8 @@ class Builder {
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return array represents an table
      */
-    public function fetchAllUnique($multi_call_params = null) {
+    public function fetchAllUnique($multi_call_params = null)
+    {
         return $this->select($multi_call_params, PDO::FETCH_COLUMN|PDO::FETCH_UNIQUE, 0);
     }
 
@@ -400,7 +450,8 @@ class Builder {
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return array represents an table
      */
-    public function fetchAllKvPair($multi_call_params = null) {
+    public function fetchAllKvPair($multi_call_params = null)
+    {
         return $this->select($multi_call_params, PDO::FETCH_KEY_PAIR);
     }
 
@@ -412,7 +463,8 @@ class Builder {
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return String Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
-    public function fetchColumn($multi_call_params = null) {
+    public function fetchColumn($multi_call_params = null)
+    {
         if (is_null($multi_call_params)) {//once-call, this->sql have no value
             return $this->db->selectColumn($this->constructSql(), $this->params);
         } else { //multiple-call:
@@ -427,7 +479,8 @@ class Builder {
      * @param String $distinctFields which field(s) for identifying distinct.
      * @return int the record count
      */
-    public function recordsCount($distinctFields = '') {
+    public function recordsCount($distinctFields = '')
+    {
         $this->fields = $distinctFields ? "count(DISTINCT {$distinctFields})" : 'count(*)';
         return $this->fetchColumn();
     }
@@ -442,7 +495,8 @@ class Builder {
      *                    );
      * @return int Last insert id if insert successful, else SqlException will be throwed
      */
-    public function insert($arr) {
+    public function insert($arr)
+    {
         //TODO for security reason, we should auto cache table scheme, and validate the data needs to be insert into DB.
         if ( empty($arr) ) return false;
 
@@ -476,9 +530,10 @@ class Builder {
      * 		String: 'id=2 and uanme="libok"'
      * 		Array:  array('id=? and uname=?', array(2, 'libok')); //TODO at present, here can only support placeholder(?) style prepared statement
      *
-     * @return affected row nums if insert successful, else SqlException will be throwed
+     * @return int row nums if insert successful, else SqlException will be throwed
      */
-    public function update($arr, $condition = '') {
+    public function update($arr, $condition = '')
+    {
         if ( empty($arr) ) return false;
 
         $comma = '';
@@ -513,10 +568,11 @@ class Builder {
      * 		String: if you just need one parameter in above prepared statement. e.g. '1111'
      *		Array: array(2, 'libok') or array(':id'=>2, ':uname'=>'libok')
      *
-     * @return affected row nums if insert successful, else SqlException will be throwed
+     * @return int row nums if insert successful, else SqlException will be throwed
      * @access public
      */
-    public function delete($condition = '', $params = null) {
+    public function delete($condition = '', $params = null)
+    {
         $sql = "DELETE FROM {$this->db->quoteIdentifier($this->tableName)}";
 
         if (!empty($condition)) {
@@ -535,7 +591,8 @@ class Builder {
      * reset some data member of LdTable which used to construct a sql clause
      * this method usally called after an DataBase query finished (e.g. $this->select();)
      */
-    protected function reset() {
+    protected function reset()
+    {
         $this->fields = '*';
         $this->join = '';
         $this->where = '';
@@ -546,13 +603,15 @@ class Builder {
         $this->userSql = '';
         $this->limit = '';
     }
+
     /**
      * execute an insert/update/delete sql clause directly,
      * @param String $sql sql clause
      * @param Mixed $params
      * @return int affected rows
      */
-    public function exec($sql, $params = NULL){
+    public function exec($sql, $params = NULL)
+    {
         if (func_num_args() == 2) {
             $params = $this->autoArr($params);
         } else {
@@ -561,14 +620,19 @@ class Builder {
         }
         return $this->db->affectingStatement($sql, $params);
     }
+
     /**
      * just for inner use to auto wrap any param to an array.
      *
      * @param String|Array $params
      * @return array
      */
-    protected function autoArr($params) {
-        if (!is_null($params) && !is_array($params)) $params = array($params);
+    protected function autoArr($params)
+    {
+        if (!is_null($params) && !is_array($params)) {
+            $params = array($params);
+        }
         return $params;
     }
 }
+

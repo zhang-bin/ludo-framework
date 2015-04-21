@@ -13,27 +13,30 @@ use Monolog\Logger as MonoLog;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\ChromePHPHandler;
 
-class Logger {
+class Logger
+{
     /**
      * @var MonoLog
      */
-    private $_logger;
+    private $logger;
 
     /**
      * @var Logger
      */
     private static $_instance;
 
-    public function __construct($level = MonoLog::DEBUG) {
-        $this->_logger = new MonoLog('log');
-        $this->_logger->pushHandler(new StreamHandler(SITE_ROOT.'/log/access.log', $level));
-        $this->_logger->pushHandler(new ChromePHPHandler($level));
+    public function __construct($level = MonoLog::DEBUG)
+    {
+        $this->logger = new MonoLog('log');
+        $this->logger->pushHandler(new StreamHandler(SITE_ROOT.'/log/access.log', $level));
+        $this->logger->pushHandler(new ChromePHPHandler($level));
     }
 
     /**
      * @return Logger
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (is_null(self::$_instance)) {
             self::$_instance = new self();
         }
@@ -49,10 +52,11 @@ class Logger {
      * @param string $line 行号
      * @return Logger
      */
-    public function info($info, $context = array(), $file = '', $line = '') {
+    public function info($info, $context = array(), $file = '', $line = '')
+    {
         if (!DEBUG) return;
         $info = $this->format($info, $file, $line);
-        $this->_logger->addInfo($info, $context);
+        $this->logger->addInfo($info, $context);
         return $this;
     }
 
@@ -65,10 +69,11 @@ class Logger {
      * @param string $line 行号
      * @return Logger
      */
-    public function debug($info, $context = array(), $file = '', $line = '') {
+    public function debug($info, $context = array(), $file = '', $line = '')
+    {
         if (!DEBUG) return;
         $info = $this->format($info, $file, $line);
-        $this->_logger->addDebug($info, $context);
+        $this->logger->addDebug($info, $context);
         return $this;
     }
 
@@ -81,10 +86,11 @@ class Logger {
      * @param string $line 行号
      * @return Logger
      */
-    public function warn($info, $context = array(), $file = '', $line = '') {
+    public function warn($info, $context = array(), $file = '', $line = '')
+    {
         if (!DEBUG) return;
         $info = $this->format($info, $file, $line);
-        $this->_logger->addWarning($info, $context);
+        $this->logger->addWarning($info, $context);
         return $this;
     }
 
@@ -97,10 +103,11 @@ class Logger {
      * @param string $line 行号
      * @return Logger
      */
-    public function error($info, $context = array(), $file = '', $line = '') {
+    public function error($info, $context = array(), $file = '', $line = '')
+    {
         if (!DEBUG) return;
         $info = $this->format($info, $file, $line);
-        $this->_logger->addError($info, $context);
+        $this->logger->addError($info, $context);
         return $this;
     }
 
@@ -113,10 +120,11 @@ class Logger {
      * @param string $line 行号
      * @return Logger
      */
-    public function fatal($info, $context = array(), $file = '', $line = '') {
+    public function fatal($info, $context = array(), $file = '', $line = '')
+    {
         if (!DEBUG) return;
         $info = $this->format($info, $file, $line);
-        $this->_logger->addCritical($info, $context);
+        $this->logger->addCritical($info, $context);
         return $this;
     }
 
@@ -128,7 +136,8 @@ class Logger {
      * @param string $line
      * @return string $log
      */
-    public function format($info, $file, $line) {
+    public function format($info, $file, $line)
+    {
         is_array($info) && $info = json_encode($info);
         $log = $info;
         if (!empty($file)) $log .= " in $file on line $line";

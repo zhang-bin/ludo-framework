@@ -1,6 +1,7 @@
 <?php
 namespace Ludo\Database;
 
-class MySqlConnection extends Connection {
+class MySqlConnection extends Connection
+{
 
 }

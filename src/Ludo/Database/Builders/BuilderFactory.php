@@ -3,8 +3,8 @@ namespace Ludo\Database\Builders;
 
 use Ludo\Database\Connection;
 
-class BuilderFactory {
-
+class BuilderFactory
+{
     /**
      * get a aql builder based on the configuration.
      *
@@ -14,7 +14,8 @@ class BuilderFactory {
      *
      * @return \Ludo\Database\Builders\Builder
      */
-    public function make(Connection $connection, $tableName, $tableAlias = '') {
+    public function make(Connection $connection, $tableName, $tableAlias = '')
+    {
         $driver = $connection->getDriverName();
         switch ($driver) {
             case 'mysql':

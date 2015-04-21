@@ -6,7 +6,8 @@
  * @param  String $innerUrl ==pathInfo
  * @return String right url with pathInfo.
  */
-function url($innerUrl='') {
+function url($innerUrl = '')
+{
 	return USING_MOD_REWRITE ? SITE_URL.'/'.$innerUrl : LD_PORTAL_URL.'/'.$innerUrl;
 }
 
@@ -17,7 +18,8 @@ function url($innerUrl='') {
  * @param String $innerUrl innerUrl which is based from SITE_URL
  * @return String root url
  */
-function rurl($innerUrl) {
+function rurl($innerUrl)
+{
 	return SITE_URL.'/'.$innerUrl;
 }
 
@@ -28,7 +30,8 @@ function rurl($innerUrl) {
  * @param string $tplPath tpl path related to tpl root
  * @return string
  */
-function tpl($tplPath) {
+function tpl($tplPath)
+{
 	return TPL_ROOT.'/'.$tplPath.php;
 }
 
@@ -40,7 +43,8 @@ function tpl($tplPath) {
  * @param String $innerUrl ==pathInfo
  * @return void|array
  */
-function redirect($innerUrl='') {
+function redirect($innerUrl = '')
+{
 	if (!isAjax()) {
 		header('location:'.url($innerUrl));
 		if (DEBUG) \Ludo\Foundation\Application::debug();die;
@@ -48,7 +52,9 @@ function redirect($innerUrl='') {
 		return array(STATUS => GO, URL => url($innerUrl));
 	}
 }
-function redirectOut($outUrl) {
+
+function redirectOut($outUrl)
+{
 	if (!isAjax()) {
 		header('location:'.$outUrl);
 		if (DEBUG) \Ludo\Foundation\Application::debug();die;
@@ -56,30 +62,36 @@ function redirectOut($outUrl) {
 		return array(STATUS => GO, URL => $outUrl);
 	}
 }
-function isAjax() {
+
+function isAjax()
+{
 	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
+
 /**
  * get the extension for a file
  *
  * @param String $fileName
- * @return extension of a file. like: jpg or PNG or txt or php
+ * @return string extension of a file. like: jpg or PNG or txt or php
  */
-function ext($fileName) {
+function ext($fileName)
+{
 	return substr(strrchr($fileName, '.'), 1);
 }
 /**
  * convert absolute location (eg. /usr/local/www/blackdog/uploads/1.html)
  * to relative path (which is relative to the site root,eg. /uploads/1.html)
  */
-function abs2rel($path) {
+function abs2rel($path)
+{
 	return str_replace(SITE_ROOT, '', $path);
 }
 /**
  * convert relative path (which is relative to the site root,eg. /uploads/1.html)
  * to absolute location (eg. /usr/local/www/blackdog/uploads/1.html)
  */
-function rel2abs($path) {
+function rel2abs($path)
+{
 	if ($path[0] != '/') $path = '/'.$path;
 	return SITE_ROOT.$path;
 }
@@ -90,7 +102,8 @@ function rel2abs($path) {
  * @param int $digit
  * @return int
  */
-function ceil10($digit) {
+function ceil10($digit)
+{
 	$str = strval(ceil($digit));
 	$len = strlen($str);
 	if ($str[$len-1] != 0) {
@@ -106,13 +119,15 @@ function ceil10($digit) {
  *
  * @return string current page url
  */
-function currUrl() {
+function currUrl()
+{
 	$url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
 
 	if ($_SERVER['SERVER_PORT'] != '80')	$url .= ':'.$_SERVER["SERVER_PORT"]; //add port
 
 	return $url.$_SERVER["REQUEST_URI"];
 }
+
 /**
  * get a pager html render
  *
@@ -131,7 +146,8 @@ function currUrl() {
  * 		'html'=>'page html render, e.g. 1  3 4 5 6  8'
  * }
  */
-function pager(array $p) {
+function pager(array $p)
+{
 	//==parse page variables
 	if (empty($p['size'])) $p['size'] = PAGE_SIZE;
 	if (empty($p['span'])) $p['span'] = PAGE_SPAN;
@@ -214,14 +230,16 @@ function pager(array $p) {
  * Mac: \r
  *
  */
-function nl() {
+function nl()
+{
 	return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? "\r\n" : "\n";
 }
 
 /**
  * return current user's real IP. It can get IP behind Proxy.
  */
-function realIp() {
+function realIp()
+{
 	static $realIp = '';
 
 	if (!$realIp) {
@@ -252,14 +270,16 @@ function realIp() {
  * @param int $fix
  * @return string
  */
-function refineSize($size, $fix = 2) {
+function refineSize($size, $fix = 2)
+{
 	if ($size < 1024)	return round($size, $fix).' B'; //<1K
 	elseif ($size < 1048576) return round($size / 1024, $fix).' KB'; //<1M
 	elseif ($size < 1073741824)	return round($size / 1048576, $fix).' MB'; //<1G
 	else return round($size / 1073741824, $fix).' GB';
 }
 
-function addSuffix($FileName, $Suffix) {
+function addSuffix($FileName, $Suffix)
+{
 	$ext = strrchr($FileName, '.');
 
 	if (!$ext)
@@ -268,13 +288,15 @@ function addSuffix($FileName, $Suffix) {
 	return substr($FileName, 0, strpos($FileName, '.')).$Suffix.$ext;
 }
 
-function debug($var, $print_r=true) {
+function debug($var, $print_r=true)
+{
 	echo '<pre>';
 	$print_r ? print_r($var) : var_dump($var);
 	echo '</pre>';
 }
 
-function logined() {
+function logined()
+{
 	return !empty($_SESSION[USER]);
 }
 
@@ -285,7 +307,8 @@ function logined() {
  * @param bool $isOuterJurl
  * @return string
  */
-function gotoLogin($jurl = '', $isOuterJurl=false) {
+function gotoLogin($jurl = '', $isOuterJurl = false)
+{
 	if (empty($jurl)) {
 		$jurl = currUrl();
 		$isOuterJurl = true;
@@ -294,7 +317,8 @@ function gotoLogin($jurl = '', $isOuterJurl=false) {
 	return redirect('user/'.$jurl);
 }
 
-function logout() {
+function logout()
+{
 	unset($_SESSION);
 	session_destroy();
 	redirect();
@@ -308,7 +332,8 @@ function logout() {
  * @param  mixed   $value
  * @return array
  */
-function array_add($array, $key, $value) {
+function array_add($array, $key, $value)
+{
 	if (!isset($array[$key])) $array[$key] = $value;
 	return $array;
 }
@@ -319,7 +344,8 @@ function array_add($array, $key, $value) {
  * @param array $array
  * @return array
  */
-function array_divide($array) {
+function array_divide($array)
+{
 	return array(array_keys($array), array_values($array));
 }
 
@@ -330,7 +356,8 @@ function array_divide($array) {
  * @param string $prepend
  * @return array
  */
-function array_dot($array, $prepend = '') {
+function array_dot($array, $prepend = '')
+{
 	$results = array();
 	foreach ($array as $key => $value) {
 		if (is_array($value)) {
@@ -349,7 +376,8 @@ function array_dot($array, $prepend = '') {
  * @param array $keys
  * @return array
  */
-function array_except($array, $keys) {
+function array_except($array, $keys)
+{
 	return array_diff_key($array, array_flip((array)$keys));
 }
 
@@ -361,7 +389,8 @@ function array_except($array, $keys) {
  * @param  mixed    $default
  * @return mixed
  */
-function array_first($array, $callback, $default = null) {
+function array_first($array, $callback, $default = null)
+{
 	foreach ($array as $key => $value) {
 		if (call_user_func($callback, $key, $value)) return $value;
 	}
@@ -377,7 +406,8 @@ function array_first($array, $callback, $default = null) {
  * @param  mixed    $default
  * @return mixed
  */
-function array_last($array, $callback, $default = null) {
+function array_last($array, $callback, $default = null)
+{
 	return array_first(array_reverse($array), $callback, $default);
 }
 
@@ -388,7 +418,8 @@ function array_last($array, $callback, $default = null) {
  * @param  string  $key
  * @return void
  */
-function array_forget(&$array, $key) {
+function array_forget(&$array, $key)
+{
 	$keys = explode('.', $key);
 
 	while (count($keys) > 1) {
@@ -409,7 +440,8 @@ function array_forget(&$array, $key) {
  * @param  mixed   $default
  * @return mixed
  */
-function array_get($array, $key, $default = null) {
+function array_get($array, $key, $default = null)
+{
 	if (is_null($key)) return $array;
 	if (isset($array[$key])) return $array[$key];
 	foreach (explode('.', $key) as $segment) {
@@ -429,7 +461,8 @@ function array_get($array, $key, $default = null) {
  * @param  mixed   $default
  * @return mixed
  */
-function array_pull(&$array, $key, $default = null) {
+function array_pull(&$array, $key, $default = null)
+{
 	$value = array_get($array, $key, $default);
 	array_forget($array, $key);
 	return $value;
@@ -442,7 +475,8 @@ function array_pull(&$array, $key, $default = null) {
  * @param string|array $needles
  * @return bool
  */
-function end_with($haystack, $needles) {
+function end_with($haystack, $needles)
+{
 	foreach ((array) $needles as $needle) {
 		if ($needle == substr($haystack, -strlen($needle))) {
 			return true;
@@ -458,7 +492,8 @@ function end_with($haystack, $needles) {
  * @param  string|array  $needles
  * @return bool
  */
-function start_with($haystack, $needles) {
+function start_with($haystack, $needles)
+{
 	foreach ((array) $needles as $needle) {
 		if ($needle != '' && strpos($haystack, $needle) === 0) {
 			return true;
@@ -474,7 +509,8 @@ function start_with($haystack, $needles) {
  * @param  string|array  $needles
  * @return bool
  */
-function str_contains($haystack, $needles) {
+function str_contains($haystack, $needles)
+{
 	foreach ((array) $needles as $needle) {
 		if ($needle != '' && strpos($haystack, $needle) !== false) {
 			return true;
@@ -491,7 +527,8 @@ function str_contains($haystack, $needles) {
  * @param  string  $subject
  * @return string
  */
-function str_replace_array($search, array $replace, $subject) {
+function str_replace_array($search, array $replace, $subject)
+{
 	foreach ($replace as $value) {
 		$subject = preg_replace('/'.$search.'/', $value, $subject, 1);
 	}
@@ -507,7 +544,8 @@ function str_replace_array($search, array $replace, $subject) {
  * @return string
  * @throws Exception
  */
-function str_random($length = 16) {
+function str_random($length = 16)
+{
 	if (function_exists('openssl_random_pseudo_bytes')) {
 		$bytes = openssl_random_pseudo_bytes($length * 2);
 		if ($bytes === false) {
@@ -519,13 +557,15 @@ function str_random($length = 16) {
 	return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
 }
 
-function csrf_token() {
+function csrf_token()
+{
     $token = str_random(32);
     $_SESSION[USER]['token'] = $token;
     return $token;
 }
 
-function csrf_token_validate($token) {
+function csrf_token_validate($token)
+{
     return $_SESSION[USER]['token'] == $token;
 }
 

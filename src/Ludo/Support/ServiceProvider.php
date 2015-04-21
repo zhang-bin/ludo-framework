@@ -7,43 +7,47 @@ use Ludo\Config\Config;
 use Ludo\Log\Logger;
 use Ludo\View\View;
 use Ludo\Task\TaskQueueServer;
+
 /**
  * The kernel of the framework which holds all available resource
  */
-class ServiceProvider {
-	private $_db = array();
-	private $_config = array();
+class ServiceProvider
+{
+	private $db = array();
+	private $config = array();
 
 	/**
 	 * @var \Ludo\View\View
 	 */
-	private $_tpl = null;
+	private $tpl = null;
 
 	/**
 	 * @var \Ludo\Database\DatabaseManager
 	 */
-	private $_dbManager = null;
+	private $dbManager = null;
 
 	/**
 	 * @var \Ludo\Log\Logger
 	 */
-	private $_log = null;
+	private $log = null;
 
-	static private $_instance = null;
+    private static $instance = null;
 
-	private function __construct() {
-		$this->_config = Config::getConfig();
+	private function __construct()
+    {
+		$this->config = Config::getConfig();
 	}
 
 	/**
 	 * get unique instance of kernel
 	 * @return ServiceProvider
 	 */
-	static function getInstance() {
-		if (self::$_instance == null) {
-			self::$_instance = new ServiceProvider();
+	public static function getInstance()
+    {
+		if (self::$instance == null) {
+			self::$instance = new ServiceProvider();
 		}
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -52,13 +56,14 @@ class ServiceProvider {
 	 * @param string $name db instance in database config
 	 * @return \Ludo\Database\Connection an instance of DBHandler
 	 */
-	public function getDBHandler($name = null) {
+	public function getDBHandler($name = null)
+    {
 		$this->getDBManagerHandler();
-		$name = $name ?: $this->_dbManager->getDefaultConnection();
-		if (empty($this->_db[$name])) {
-			$this->_db[$name] = $this->_dbManager->connection($name);
+		$name = $name ?: $this->dbManager->getDefaultConnection();
+		if (empty($this->db[$name])) {
+			$this->db[$name] = $this->dbManager->connection($name);
 		}
-		return $this->_db[$name];
+		return $this->db[$name];
 	}
 
 	/**
@@ -66,11 +71,12 @@ class ServiceProvider {
 	 *
 	 * @return \Ludo\Database\DatabaseManager
 	 */
-	public function getDBManagerHandler() {
-		if (empty($this->_dbManager)) {
-			$this->_dbManager = new DatabaseManager($this->_config, new ConnectionFactory());
+	public function getDBManagerHandler()
+    {
+		if (empty($this->dbManager)) {
+			$this->dbManager = new DatabaseManager($this->config, new ConnectionFactory());
 		}
-		return $this->_dbManager;
+		return $this->dbManager;
 	}
 
 	/**
@@ -78,11 +84,12 @@ class ServiceProvider {
 	 *
 	 * @return \Ludo\View\View
 	 */
-	public function getTplHandler() {
-		if ($this->_tpl == null) {
-			$this->_tpl = new View();
+	public function getTplHandler()
+    {
+		if ($this->tpl == null) {
+			$this->tpl = new View();
 		}
-		return $this->_tpl;
+		return $this->tpl;
 	}
 
 	/**
@@ -90,14 +97,16 @@ class ServiceProvider {
 	 *
 	 * @return \Ludo\Log\Logger
 	 */
-	public function getLogHandler() {
-		if ($this->_log == null) {
-			$this->_log = new Logger();
+	public function getLogHandler()
+    {
+		if ($this->log == null) {
+			$this->log = new Logger();
 		}
-		return $this->_log;
+		return $this->log;
 	}
 
-    public function taskQueueServer($cmd) {
+    public function taskQueueServer($cmd)
+    {
         $server = new TaskQueueServer();
         $client = new \swoole_client(SWOOLE_TCP, SWOOLE_SOCK_SYNC);
         switch ($cmd) {

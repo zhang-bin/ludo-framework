@@ -1,7 +1,8 @@
 <?php
 namespace Ludo\Database\Connectors;
 
-interface ConnectorInterface {
+interface ConnectorInterface
+{
 
 	/**
 	 * Establish a database connection.

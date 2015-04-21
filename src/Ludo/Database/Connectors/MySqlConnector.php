@@ -1,15 +1,16 @@
 <?php
 namespace Ludo\Database\Connectors;
 
-class MySqlConnector extends Connector implements ConnectorInterface {
-
+class MySqlConnector extends Connector implements ConnectorInterface
+{
 	/**
 	 * Establish a database connection.
 	 *
 	 * @param  array  $config
 	 * @return \PDO
 	 */
-	public function connect(array $config) {
+	public function connect(array $config)
+    {
 		$dsn = $this->getDsn($config);
 
 		// We need to grab the PDO options that should be used while making the brand
@@ -33,7 +34,8 @@ class MySqlConnector extends Connector implements ConnectorInterface {
 	 * @param  array   $config
 	 * @return string
 	 */
-	protected function getDsn(array $config) {
+	protected function getDsn(array $config)
+    {
 		// First we will create the basic DSN setup as well as the port if it is in
 		// in the configuration options. This will give us the basic DSN we will
 		// need to establish the PDO connections and return them back for use.
@@ -53,5 +55,4 @@ class MySqlConnector extends Connector implements ConnectorInterface {
 		}
 		return $dsn;
 	}
-
 }

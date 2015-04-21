@@ -23,7 +23,8 @@ class ClassLoader {
 	 * @param  string  $class
 	 * @return void
 	 */
-	public static function load($class) {
+	public static function load($class)
+    {
 		$class = self::normalizeClass($class);
 
 		foreach (self::$directories as $directory) {
@@ -40,7 +41,8 @@ class ClassLoader {
 	 * @param  string  $class
 	 * @return string
 	 */
-	public static function normalizeClass($class) {
+	public static function normalizeClass($class)
+    {
 		if ($class[0] == '\\') $class = substr($class, 1);
 		return str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $class).'.php';
 	}
@@ -50,7 +52,8 @@ class ClassLoader {
 	 *
 	 * @return void
 	 */
-	public static function register() {
+	public static function register()
+    {
 		if (!self::$registered)  {
 			self::$registered = spl_autoload_register(array('\Ludo\Support\ClassLoader', 'load'));
 		}
@@ -62,7 +65,8 @@ class ClassLoader {
 	 * @param  string|array  $directories
 	 * @return void
 	 */
-	public static function addDirectories($directories) {
+	public static function addDirectories($directories)
+    {
 		self::$directories = array_merge(self::$directories, (array) $directories);
 		self::$directories = array_unique(self::$directories);
 	}
@@ -73,7 +77,8 @@ class ClassLoader {
 	 * @param  string|array  $directories
 	 * @return void
 	 */
-	public static function removeDirectories($directories = null) {
+	public static function removeDirectories($directories = null)
+    {
 		if (is_null($directories)) {
 			static::$directories = array();
 		} else {
@@ -90,7 +95,8 @@ class ClassLoader {
 	 *
 	 * @return array
 	 */
-	public static function getDirectories() {
+	public static function getDirectories()
+    {
 		return self::$directories;
 	}
 }

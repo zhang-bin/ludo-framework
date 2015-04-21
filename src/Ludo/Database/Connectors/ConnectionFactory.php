@@ -5,7 +5,8 @@ use PDO;
 use Ludo\Database\MySqlConnection;
 use Ludo\Database\PgSqlConnection;
 
-class ConnectionFactory {
+class ConnectionFactory
+{
 	/**
 	 * Establish a PDO connection based on the configuration.
 	 *
@@ -13,7 +14,8 @@ class ConnectionFactory {
 	 * @param  string  $name
 	 * @return \Ludo\Database\Connection
 	 */
-	public function make(array $config, $name = null) {
+	public function make(array $config, $name = null)
+    {
 		$config = $this->parseConfig($config, $name);
 		if (isset($config['read'])) {
 			return $this->createReadWriteConnection($config);
@@ -28,7 +30,8 @@ class ConnectionFactory {
 	 * @param  array  $config
 	 * @return \Ludo\Database\Connection
 	 */
-	protected function createSingleConnection(array $config) {
+	protected function createSingleConnection(array $config)
+    {
 		$pdo = $this->createConnector($config)->connect($config);
 		return $this->createConnection($config['driver'], $pdo, $config['database'], $config['prefix'], $config);
 	}
@@ -39,7 +42,8 @@ class ConnectionFactory {
 	 * @param  array  $config
 	 * @return \Ludo\Database\Connection
 	 */
-	protected function createReadWriteConnection(array $config) {
+	protected function createReadWriteConnection(array $config)
+    {
 		$connection = $this->createSingleConnection($this->getWriteConfig($config));
 		return $connection->setReadPdo($this->createReadPdo($config));
 	}
@@ -50,7 +54,8 @@ class ConnectionFactory {
 	 * @param  array  $config
 	 * @return \PDO
 	 */
-	protected function createReadPdo(array $config) {
+	protected function createReadPdo(array $config)
+    {
 		$readConfig = $this->getReadConfig($config);
 		return $this->createConnector($readConfig)->connect($readConfig);
 	}
@@ -61,7 +66,8 @@ class ConnectionFactory {
 	 * @param  array  $config
 	 * @return array
 	 */
-	protected function getReadConfig(array $config) {
+	protected function getReadConfig(array $config)
+    {
 		$readConfig = $this->getReadWriteConfig($config, 'read');
 		return $this->mergeReadWriteConfig($config, $readConfig);
 	}
@@ -72,7 +78,8 @@ class ConnectionFactory {
 	 * @param  array  $config
 	 * @return array
 	 */
-	protected function getWriteConfig(array $config) {
+	protected function getWriteConfig(array $config)
+    {
 		$writeConfig = $this->getReadWriteConfig($config, 'write');
 		return $this->mergeReadWriteConfig($config, $writeConfig);
 	}
@@ -84,7 +91,8 @@ class ConnectionFactory {
 	 * @param  string  $type
 	 * @return array
 	 */
-	protected function getReadWriteConfig(array $config, $type) {
+	protected function getReadWriteConfig(array $config, $type)
+    {
 		if (isset($config[$type][0])) {
 			return $config[$type][array_rand($config[$type])];
 		} else {
@@ -99,7 +107,8 @@ class ConnectionFactory {
 	 * @param  array  $merge
 	 * @return array
 	 */
-	protected function mergeReadWriteConfig(array $config, array $merge) {
+	protected function mergeReadWriteConfig(array $config, array $merge)
+    {
 		return array_except(array_merge($config, $merge), array('read', 'write'));
 	}
 
@@ -110,7 +119,8 @@ class ConnectionFactory {
 	 * @param  string  $name
 	 * @return array
 	 */
-	protected function parseConfig(array $config, $name) {
+	protected function parseConfig(array $config, $name)
+    {
 		return array_add(array_add($config, 'prefix', ''), 'name', $name);
 	}
 
@@ -122,7 +132,8 @@ class ConnectionFactory {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function createConnector(array $config) {
+	public function createConnector(array $config)
+    {
 		if (!isset($config['driver'])) {
 			throw new \InvalidArgumentException("A driver must be specified.");
 		}
@@ -149,7 +160,8 @@ class ConnectionFactory {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	protected function createConnection($driver, PDO $connection, $database, $prefix = '', array $config = array()) {
+	protected function createConnection($driver, PDO $connection, $database, $prefix = '', array $config = array())
+    {
 		switch ($driver) {
 			case 'mysql':
 				return new MySqlConnection($connection, $database, $prefix, $config);
@@ -159,5 +171,5 @@ class ConnectionFactory {
 
 		throw new \InvalidArgumentException("Unsupported driver [$driver]");
 	}
-
 }
+

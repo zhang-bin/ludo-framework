@@ -2,7 +2,9 @@
 namespace Ludo\Routing;
 
 use Ludo\Support\ServiceProvider;
-abstract class Controller {
+
+abstract class Controller
+{
     /**
      * @var String current Ctrl name
      */
@@ -23,16 +25,20 @@ abstract class Controller {
      */
     public $httpHeader = null;
 
-    public function __construct($name) {
+    public function __construct($name)
+    {
         $this->name = $name;
         $this->httpHeader = 'Content-Type:text/html;charset='.PROGRAM_CHARSET;
         $this->tpl 	  = ServiceProvider::getInstance()->getTplHandler();
     }
-    public function getCurrentCtrlName() {
+
+    public function getCurrentCtrlName()
+    {
         return $this->name;
     }
 
-    protected function resetGet() {
+    protected function resetGet()
+    {
         $get = $_GET;
         unset($get['pager']);
         $params = http_build_query($get);
@@ -41,7 +47,8 @@ abstract class Controller {
         return '?'.$params.'pager=';
     }
 
-    public function beforeAction($action) {
+    public function beforeAction($action)
+    {
         if (!logined()) {
             return gotoLogin();
         }
@@ -51,7 +58,8 @@ abstract class Controller {
      * @param string $action
      * @param array $result
      */
-    public function afterAction($action, $result) {
+    public function afterAction($action, $result)
+    {
 //        Load::helper('Session');
 //        Session::ageFlashData();
     }
