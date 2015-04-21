@@ -12,7 +12,7 @@ class TaskQueueServer {
 
     public function __construct() {
         swoole_set_process_name('php task_queue manager');
-        $this->_config = Config::server()['server.task_queue'];
+        $this->_config = Config::get('server.task_queue');
     }
 
     public function run() {

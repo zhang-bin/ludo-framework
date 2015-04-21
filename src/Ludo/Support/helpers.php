@@ -519,5 +519,15 @@ function str_random($length = 16) {
 	return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
 }
 
+function csrf_token() {
+    $token = str_random(32);
+    $_SESSION[USER]['token'] = $token;
+    return $token;
+}
+
+function csrf_token_validate($token) {
+    return $_SESSION[USER]['token'] == $token;
+}
+
 
 

@@ -6,29 +6,16 @@ class Config {
 
     public static function init() {
         if (empty(self::$config)) {
-            self::database();
-            self::server();
-        }
-        return self::$config;
-    }
-
-    public static function database() {
-        if (empty(self::$config['database'])) {
-            $file = SITE_ROOT.'/config/database.php';
-            $database = require $file;
-            foreach ($database as $k => $v) {
-                self::$config['database.'.$k] = $v;
-            }
-        }
-        return self::$config;
-    }
-
-    public static function server() {
-        if (empty(self::$config['server'])) {
-            $file = SITE_ROOT.'/config/server.php';
-            $database = require $file;
-            foreach ($database as $k => $v) {
-                self::$config['server.'.$k] = $v;
+            $dir = SITE_ROOT.'/config/';
+            $files = scandir($dir);
+            foreach ($files as $file) {
+                if ($file == '.' || $file == '..') continue;
+                $filename = $dir.$file;
+                $config = require $filename;
+                $basename = basename($filename, '.php');
+                foreach ($config as $k => $v) {
+                    self::$config[$basename.'.'.$k] = $v;
+                }
             }
         }
         return self::$config;

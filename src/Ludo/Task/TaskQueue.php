@@ -14,7 +14,7 @@ class TaskQueue {
     public function __construct($queueName) {
         $this->_tasks['name'] = $queueName;
         $this->_tasks['queue'] = array();
-        $config = Config::server()['server.task_queue'];
+        $config = Config::get('server.task_queue');
         $this->_client = new \swoole_client(SWOOLE_TCP, SWOOLE_SOCK_SYNC);
         $this->_client->connect($config['host'], $config['port']);
     }
