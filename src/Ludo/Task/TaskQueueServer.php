@@ -10,9 +10,17 @@ class TaskQueueServer {
      */
     private $_server;
 
+    /**
+     * @var Redis
+     */
+    private $_queue;
+
     public function __construct() {
         swoole_set_process_name('php task_queue manager');
         $this->_config = Config::get('server.task_queue');
+        $this->_queue = new \Redis();
+        $this->_queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
+        $this->_queue->select(3);
     }
 
     public function run() {
@@ -44,17 +52,24 @@ class TaskQueueServer {
                 $server->shutdown();
                 break;
             default:
-                $data = json_decode($data, true);
-                foreach ($data['queue'] as $item) {
-                    $server->task(json_encode($item));
-                }
+                do {
+                    $task = json_decode($this->_queue->rPop($data), true);
+                    if (empty($task)) break;
+                    $job = array('name' => $data, 'task' => $task);
+                    $server->task(json_encode($job));
+                } while(1);
                 break;
         }
     }
 
     public function task(\swoole_server $server, $taskId, $fromId, $data) {
         $data = json_decode($data, true);
+        $name = $data['name'];
+        $data = $data['task'];
         $result = curlPost($data['url'], http_build_query($data['data']));
+        if ($result === false) {
+            $this->_queue->lPush($name, json_encode($data));
+        }
         $log = sprintf('Url: %s, Task Data: %s ---- Task Result: %s', $data['url'], json_encode($data['data'], JSON_UNESCAPED_UNICODE), $result);
         ServiceProvider::getInstance()->getLogHandler()->debug($log);
     }

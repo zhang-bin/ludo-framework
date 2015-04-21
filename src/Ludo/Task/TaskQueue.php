@@ -7,6 +7,10 @@ class TaskQueue {
     private $_tasks = array();
     private $_client;
     private $_errmsg;
+    /**
+     * @var Redis
+     */
+    private $_queue;
 
     /**
      * @param string $queueName 队列名称
@@ -17,6 +21,10 @@ class TaskQueue {
         $config = Config::get('server.task_queue');
         $this->_client = new \swoole_client(SWOOLE_TCP, SWOOLE_SOCK_SYNC);
         $this->_client->connect($config['host'], $config['port']);
+
+        $this->_queue = new \Redis();
+        $this->_queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
+        $this->_queue->select(3);
     }
 
     /**
@@ -43,14 +51,26 @@ class TaskQueue {
             return false;
         }
 
-        $task = json_encode($this->_tasks);
-        if ($this->_client->send($task)) {
+        foreach ($this->_tasks['queue'] as $task) {
+            if (empty($task)) continue;
+            $this->_queue->lPush($this->_tasks['name'], json_encode($task));
+        }
+        if ($this->_client->send($this->_tasks['name'])) {
             $this->_tasks = array();
         } else {
             $this->_errmsg = '发送数据失败';
             return false;
         }
         $this->_client->close();
+    }
+
+    /**
+     * 返回队列剩余长度
+     *
+     * @return int
+     */
+    public function curLen() {
+        return $this->_queue->lLen($this->_tasks['name']);
     }
 
     /**
