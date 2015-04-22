@@ -1,5 +1,6 @@
 <?php
 namespace Ludo\Foundation;
+
 /**
  * Class Lang
  */
@@ -52,7 +53,6 @@ class Lang
         }
 
         $language = strtolower($language ? $language : DEFAULT_LANGUAGE);
-        $language = 'en-us';//屏蔽中文版
 
         $langDir = LD_LANGUAGE_PATH.DIRECTORY_SEPARATOR.$language.DIRECTORY_SEPARATOR;
         $defaultLangDir = LD_LANGUAGE_PATH.DIRECTORY_SEPARATOR.DEFAULT_LANGUAGE.DIRECTORY_SEPARATOR;

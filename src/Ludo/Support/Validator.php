@@ -110,7 +110,7 @@ class Validator
         $schemeRequired = false,
         $hostRequired = true,
         $pathRequired = false,
-        $queryStringRequired = flase
+        $queryStringRequired = false
     ) {
         if (empty($data)) return false;
         $flags = 0;

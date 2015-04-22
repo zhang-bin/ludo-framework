@@ -47,6 +47,10 @@ abstract class Controller
         return '?'.$params.'pager=';
     }
 
+    /**
+     * @param string $action
+     * @return string
+     */
     public function beforeAction($action)
     {
         if (!logined()) {
@@ -60,7 +64,6 @@ abstract class Controller
      */
     public function afterAction($action, $result)
     {
-//        Load::helper('Session');
-//        Session::ageFlashData();
+
     }
 }

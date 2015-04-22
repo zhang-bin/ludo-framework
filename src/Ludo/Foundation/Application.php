@@ -20,51 +20,45 @@ class Application
             } else {
                 $pathInfo = $path;
             }
+
             list($ctrl, $act) = Router::parse($pathInfo);
-            $ctrlFile = LD_CTRL_PATH.'/'.$ctrl.php;
-            if (file_exists($ctrlFile)) {
-                include_once $ctrlFile;
+            /**
+             * @var \Ludo\Routing\Controller $controller
+             */
+            $controller = new $ctrl();
+            $action = $act;
 
-                /**
-                 * @var \Ludo\Routing\Controller $controller
-                 */
-                $controller = new $ctrl();
-                $action = $act;
+            define('CURRENT_CONTROLLER', $controller->getCurrentCtrlName());
+            define('CURRENT_ACTION', $act);
 
-                define('CURRENT_CONTROLLER', $controller->getCurrentCtrlName());
-                define('CURRENT_ACTION', $act);
+            if (!method_exists($controller, $action)) {
+                throw new \BadMethodCallException("Method [$ctrl->$action] Not Found");
+            }
 
-                if (!method_exists($controller, $action)) {
-                    throw new \BadMethodCallException("Method [$ctrl->$action] Not Found");
-                }
+            $method = new ReflectionMethod($ctrl, $action);
+            if ($method->isStatic()) {
+                throw new \BadMethodCallException("Method [$ctrl->$action] Can not Static");
+            }
 
-                $method = new ReflectionMethod($ctrl, $action);
-                if ($method->isStatic()) {
-                    throw new \BadMethodCallException("Method [$ctrl->$action] Can not Static");
-                }
+            $controller->beforeAction($action);
+            $output = $method->invoke($controller);
+            $controller->afterAction($action, $output);
 
-                $controller->beforeAction($action);
-                $output = $method->invoke($controller);
-                $controller->afterAction($action, $output);
-
-                //if have output, means this action is an ajax call.
-                if (isset($output)) {
-                    if (!empty($controller->httpHeader)) {
-                        if (!is_array($controller->httpHeader)) {
-                            header($controller->httpHeader);
-                        } else {
-                            foreach ($controller->httpHeader as $header) {
-                                header($header);
-                            }
+            //if have output, means this action is an ajax call.
+            if (isset($output)) {
+                if (!empty($controller->httpHeader)) {
+                    if (!is_array($controller->httpHeader)) {
+                        header($controller->httpHeader);
+                    } else {
+                        foreach ($controller->httpHeader as $header) {
+                            header($header);
                         }
                     }
-                    is_array($output) && $output = json_encode($output);
-                    echo $output;
                 }
-                if (DEBUG) self::debug($output);
-            } else {
-                throw new \Exception("Class File [$ctrl] Not Found");
+                is_array($output) && $output = json_encode($output);
+                echo $output;
             }
+            if (DEBUG) self::debug($output);
         } catch(\Exception $ex) {
             $error = '<pre>'.$ex->getMessage()."\n\n".$ex->getTraceAsString().'</pre>';
             error_log($error);

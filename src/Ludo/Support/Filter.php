@@ -29,7 +29,7 @@ class Filter
      * Sanitize Email string
      *
      * @param String $data url string
-     * @return clean url string
+     * @return string clean url string
      */
     public static function email($data)
     {
@@ -40,7 +40,7 @@ class Filter
      * Sanitize  URL string
      *
      * @param String $data url string
-     * @return clean url string
+     * @return string clean url string
      */
     public static function url($data)
     {
@@ -52,7 +52,7 @@ class Filter
      *
      * @param String $data
      * @param int $encodeType ENT_QUOTES or ENT_NOQUOTES  or ENT_COMPAT. Default is ENT_QUOTES
-     * @return the clean string with no html tags.
+     * @return string the clean string with no html tags.
      */
     public static function str($data, $encodeType = ENT_QUOTES)
     {
@@ -67,7 +67,7 @@ class Filter
      *
      * @param String $data
      * @param int $encodeType ENT_QUOTES or ENT_NOQUOTES  or ENT_COMPAT. Default is ENT_QUOTES
-     * @return the clean string with no html tags.
+     * @return string the clean string with no html tags.
      */
     public static function entity($data, $encodeType = ENT_QUOTES)
     {
@@ -82,7 +82,7 @@ class Filter
      *
      * @param String $dirtyHtml html string needs to be sanitized.
      * @param String $allowedTags eg. 'p,b,a[href],i'
-     * @return clean html string
+     * @return string clean html string
      */
     public static function html($dirtyHtml, $allowedTags = '')
     {

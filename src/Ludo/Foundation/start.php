@@ -11,5 +11,6 @@ $alias = [
     'View' => 'Ludo\View\View',
     'TaskQueue' => 'Ludo\Task\TaskQueue',
     'QueryException' => 'Ludo\Database\QueryException',
+    'Counter' => 'Ludo\Counter\Counter',
 ];
 \Ludo\Support\AliasLoader::getInstance($alias)->register();

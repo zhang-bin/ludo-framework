@@ -49,7 +49,7 @@ class AliasLoader
 
 		self::$instance->setAliases($aliases);
 
-		return static::$instance;
+		return self::$instance;
 	}
 
 	/**
@@ -140,16 +140,5 @@ class AliasLoader
 	public function setRegistered($value)
     {
 		$this->registered = $value;
-	}
-
-	/**
-	 * Set the value of the singleton alias loader.
-	 *
-	 * @param  \Ludo\Support\AliasLoader  $loader
-	 * @return void
-	 */
-	public static function setInstance($loader)
-    {
-		static::$instance = $loader;
 	}
 }

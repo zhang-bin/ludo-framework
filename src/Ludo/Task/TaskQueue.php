@@ -1,5 +1,6 @@
 <?php
 namespace Ludo\Task;
+
 use Ludo\Config\Config;
 
 class TaskQueue
