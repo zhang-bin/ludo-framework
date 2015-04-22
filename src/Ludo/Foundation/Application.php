@@ -119,14 +119,14 @@ class Application
             '}	?>';
         $postfix = '<?php endif; ?>';
 
-        $oldDebuginfo = file_get_contents($debugFile);
+        $oldDebugInfo = file_get_contents($debugFile);
 
-        $oldDebuginfo = str_replace($prefix, '', $oldDebuginfo);
-        $oldDebuginfo = str_replace($postfix, '', $oldDebuginfo);
+        $oldDebugInfo = str_replace($prefix, '', $oldDebugInfo);
+        $oldDebugInfo = str_replace($postfix, '', $oldDebugInfo);
 
         $delimiter = '<br><br><br><br><br>=========================================================================================================================';
-        $oldDebuginfo = $debugInfo . $delimiter . $oldDebuginfo;
-        $arr = explode($delimiter, $oldDebuginfo);
+        $oldDebugInfo = $debugInfo . $delimiter . $oldDebugInfo;
+        $arr = explode($delimiter, $oldDebugInfo);
 
         $cnt = count($arr);
 

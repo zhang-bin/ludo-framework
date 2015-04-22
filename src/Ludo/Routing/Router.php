@@ -13,6 +13,11 @@ class Router
             //==Ctrl
             !empty($pathInfo[0]) && $ctrl = ucfirst($pathInfo[0]);
 
+            //==如果ctrl是aaa_bbb的格式，那么会取最后一个下划线后面的字母作为ctrl
+            if (false !== ($pos = strrpos($ctrl, '_'))) {
+                $ctrl = ucfirst(substr($ctrl, $pos+1));
+            }
+
             //==Act
             if (!empty($pathInfo[1])) {
                 if (is_numeric($pathInfo[1])) {

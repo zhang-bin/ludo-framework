@@ -4,9 +4,11 @@ namespace Ludo\Support;
 use Ludo\Database\DatabaseManager;
 use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Config\Config;
-use Ludo\Log\Logger;
 use Ludo\View\View;
 use Ludo\Task\TaskQueueServer;
+use Monolog\Logger as MonoLog;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\ChromePHPHandler;
 
 /**
  * The kernel of the framework which holds all available resource
@@ -27,7 +29,7 @@ class ServiceProvider
 	private $dbManager = null;
 
 	/**
-	 * @var \Ludo\Log\Logger
+	 * @var MonoLog
 	 */
 	private $log = null;
 
@@ -40,6 +42,7 @@ class ServiceProvider
 
 	/**
 	 * get unique instance of kernel
+     *
 	 * @return ServiceProvider
 	 */
 	public static function getInstance()
@@ -92,19 +95,30 @@ class ServiceProvider
 		return $this->tpl;
 	}
 
-	/**
-	 * get Log Handler
-	 *
-	 * @return \Ludo\Log\Logger
-	 */
-	public function getLogHandler()
+    /**
+     * get Log Handler
+     *
+     * @param string $name
+     * @param int $level
+     * @param string $filename
+     * @return MonoLog
+     */
+	public function getLogHandler($name = 'log', $level = MonoLog::DEBUG, $filename = null)
     {
+        is_null($filename) && $filename = SITE_ROOT.'/log/access.log';
 		if ($this->log == null) {
-			$this->log = new Logger();
+			$this->log = new MonoLog($name);
+            $this->log->pushHandler(new StreamHandler($filename, $level));
+            $this->log->pushHandler(new ChromePHPHandler($level));
 		}
 		return $this->log;
 	}
 
+    /**
+     * 异步任务server
+     *
+     * @param $cmd
+     */
     public function taskQueueServer($cmd)
     {
         $server = new TaskQueueServer();

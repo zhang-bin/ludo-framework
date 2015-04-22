@@ -9,6 +9,7 @@ $alias = [
     'Config' => 'Ludo\Config\Config',
     'Factory' => 'Ludo\Support\Factory',
     'View' => 'Ludo\View\View',
-    'TaskQueue' => 'Ludo\Task\TaskQueue'
+    'TaskQueue' => 'Ludo\Task\TaskQueue',
+    'QueryException' => 'Ludo\Database\QueryException',
 ];
 \Ludo\Support\AliasLoader::getInstance($alias)->register();

@@ -314,6 +314,8 @@ class Connection
 			$result = $callback($this, $query, $params);
 		} catch (\Exception $e) {
 			$err = $e->getMessage();
+            $time = '['.date('Y-m-d H:i:s').']    ';
+            error_log($time.$e->getTraceAsString());
 			throw new QueryException($query, (array)$params, $e);
 		}
 		// Once we have run the query we will calculate the time that it took to run and
