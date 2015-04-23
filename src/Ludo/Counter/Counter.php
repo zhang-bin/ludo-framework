@@ -10,8 +10,6 @@ class Counter
      */
     private $db;
 
-    private $counters = array();
-
     const PREFIX = 'counter_';
 
     public function __construct()
@@ -30,11 +28,37 @@ class Counter
      */
     public function create($name, $value = 0)
     {
-        if (isset($this->counters[$name])) return false;
-        $this->counters[$name] = $name;
-
         $key = self::PREFIX.$name;
+        if ($this->db->exists($key)) return false;
         $this->db->incrBy($key, $value);
+        return true;
+    }
+
+    /**
+     * Sets an expiration date (a timeout) on an counter.
+     *
+     * @param string $name counter name
+     * @param int $ttl remaining time to Live, in seconds.
+     * @return bool TRUE in case of success, FALSE in case of failure.
+     */
+    public function expire($name, $ttl) {
+        $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
+        $this->db->expire($key, $ttl);
+        return true;
+    }
+
+    /**
+     * Sets an expiration date (a timestamp) on an counter.
+     *
+     * @param string $name counter name
+     * @param int $timestamp Unix timestamp. The counter's date of death, in seconds from Epoch time.
+     * @return bool TRUE in case of success, FALSE in case of failure.
+     */
+    public function expireAt($name, $timestamp) {
+        $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
+        $this->db->expireAt($key, $timestamp);
         return true;
     }
 
@@ -46,10 +70,8 @@ class Counter
      */
     public function remove($name)
     {
-        if (!isset($this->counters[$name])) return false;
-        unset($this->counters[$name]);
-
         $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
         $this->db->del($key);
         return true;
     }
@@ -62,7 +84,8 @@ class Counter
      */
     public function exists($name)
     {
-        return isset($this->counters[$name]);
+        $key = self::PREFIX.$name;
+        return $this->db->exists($key);
     }
 
     /**
@@ -73,9 +96,8 @@ class Counter
      */
     public function get($name)
     {
-        if (!isset($this->counters[$name])) return false;
-
         $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
         return $this->db->get($key);
     }
 
@@ -88,9 +110,8 @@ class Counter
      */
     public function set($name, $value)
     {
-        if (!isset($this->counters[$name])) return false;
-
         $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
         $this->db->set($key, $value);
         return true;
     }
@@ -104,9 +125,8 @@ class Counter
      */
     public function incr($name, $value = 1)
     {
-        if (!isset($this->counters[$name])) return false;
-
         $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
         return $this->db->incrBy($key, $value);
     }
 
@@ -119,9 +139,8 @@ class Counter
      */
     public function decr($name, $value = 1)
     {
-        if (!isset($this->counters[$name])) return false;
-
         $key = self::PREFIX.$name;
+        if (!$this->db->exists($key)) return false;
         return $this->db->decrBy($key, $value);
     }
 }
