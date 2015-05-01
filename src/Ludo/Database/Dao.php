@@ -461,6 +461,6 @@ abstract class Dao
 
     public function truncate()
     {
-        $this->connection->exec('TRUNCATE '.$this->tblName);
+        $this->connection->statement('TRUNCATE '.$this->tblName);
     }
 }
