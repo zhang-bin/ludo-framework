@@ -312,20 +312,20 @@ class Connection
 		$err = '';
 		try {
 			$result = $callback($this, $query, $params);
+		    return $result;
 		} catch (\Exception $e) {
 			$err = $e->getMessage();
             $time = '['.date('Y-m-d H:i:s').']    ';
             error_log($time.$e->getTraceAsString());
 			throw new QueryException($query, (array)$params, $e);
-		}
-		// Once we have run the query we will calculate the time that it took to run and
-		// then log the query, bindings, and execution time so we will report them on
-		// the event that the developer needs them. We'll log time in milliseconds.
-		$time = $this->getElapsedTime($start);
+		} finally {
+            // Once we have run the query we will calculate the time that it took to run and
+            // then log the query, bindings, and execution time so we will report them on
+            // the event that the developer needs them. We'll log time in milliseconds.
+            $time = $this->getElapsedTime($start);
 
-		$this->logQuery($query, $params, $time, $err);
-
-		return $result;
+            $this->logQuery($query, $params, $time, $err);
+        }
 	}
 
 	/**
