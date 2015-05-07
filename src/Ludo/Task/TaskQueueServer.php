@@ -37,6 +37,7 @@ class TaskQueueServer
             'group' => $this->config['group'],
             'daemonize' => 1,
             'dispatch_mode' => 1,
+            'open_tcp_nodelay' => true,
         );
         $this->server->set($config);
         $this->server->on('Receive', array($this, 'receive'));

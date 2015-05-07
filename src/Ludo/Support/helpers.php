@@ -551,9 +551,9 @@ function str_random($length = 16)
 		if ($bytes === false) {
 			throw new Exception('Unable to generate random string.');
 		}
-		return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $length);
+		return substr(str_replace(array('/', '+', '=', 'i', 'L', '0', 'o', 'O', 'l', 'I'), '', base64_encode($bytes)), 0, $length);
 	}
-	$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$pool = '123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
 	return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
 }
 
