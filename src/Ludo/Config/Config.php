@@ -11,7 +11,7 @@ class Config
             $dir = SITE_ROOT.'/config/';
             $files = scandir($dir);
             foreach ($files as $file) {
-                if ($file == '.' || $file == '..') continue;
+                if ($file[0] == '.') continue;
                 $filename = $dir.$file;
                 $config = require $filename;
                 $basename = basename($filename, '.php');
