@@ -79,8 +79,10 @@ function ext($fileName)
 	return substr(strrchr($fileName, '.'), 1);
 }
 /**
- * convert absolute location (eg. /usr/local/www/blackdog/uploads/1.html)
+ * convert absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
  * to relative path (which is relative to the site root,eg. /uploads/1.html)
+ * @param string $path
+ * @return string
  */
 function abs2rel($path)
 {
@@ -88,7 +90,9 @@ function abs2rel($path)
 }
 /**
  * convert relative path (which is relative to the site root,eg. /uploads/1.html)
- * to absolute location (eg. /usr/local/www/blackdog/uploads/1.html)
+ * to absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
+ * @param string $path
+ * @return string
  */
 function rel2abs($path)
 {

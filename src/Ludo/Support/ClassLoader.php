@@ -21,7 +21,6 @@ class ClassLoader {
 	 * Load the given class file.
 	 *
 	 * @param  string  $class
-	 * @return void
 	 */
 	public static function load($class)
     {
@@ -30,7 +29,6 @@ class ClassLoader {
 		foreach (self::$directories as $directory) {
 			if (file_exists($path = $directory.DIRECTORY_SEPARATOR.$class)) {
 				require_once $path;
-				return true;
 			}
 		}
 	}
@@ -38,13 +36,13 @@ class ClassLoader {
 	/**
 	 * Get the normal file name for a class.
 	 *
-	 * @param  string  $class
+	 * @param  string $className
 	 * @return string
 	 */
-	public static function normalizeClass($class)
+	public static function normalizeClass($className)
     {
-		if ($class[0] == '\\') $class = substr($class, 1);
-		return str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $class).'.php';
+		if ($className[0] == '\\') $className = substr($className, 1);
+		return str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $className).'.php';
 	}
 
 	/**

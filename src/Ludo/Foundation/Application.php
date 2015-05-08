@@ -60,9 +60,9 @@ class Application
             }
             if (DEBUG) self::debug($output);
         } catch(\Exception $ex) {
-            $error = '<pre>'.$ex->getMessage()."\n\n".$ex->getTraceAsString().'</pre>';
-            error_log($error);
+            error_log($ex);
             if (DEBUG) {
+                $error = '<pre>'.$ex->getMessage()."\n\n".$ex->getTraceAsString().'</pre>';
                 echo $error;
                 self::debug($error);
             }

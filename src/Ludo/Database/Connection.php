@@ -521,7 +521,7 @@ class Connection
 	 */
 	public function debug()
     {
-		if (!DEBUG) return;
+		if (!DEBUG) return null;
 		$totalProcessTime = 0;
 		$totalSQL = 0;
 

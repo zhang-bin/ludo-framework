@@ -39,12 +39,11 @@ class MySqlConnector extends Connector implements ConnectorInterface
 		// First we will create the basic DSN setup as well as the port if it is in
 		// in the configuration options. This will give us the basic DSN we will
 		// need to establish the PDO connections and return them back for use.
-		extract($config);
 
-		$dsn = "mysql:host={$host};dbname={$database}";
+		$dsn = "mysql:host={$config['host']};dbname={$config['database']}";
 
 		if (isset($config['port'])) {
-			$dsn .= ";port={$port}";
+			$dsn .= ";port={$config['port']}";
 		}
 
 		// Sometimes the developer may specify the specific UNIX socket that should

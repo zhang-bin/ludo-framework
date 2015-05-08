@@ -289,7 +289,7 @@ class Builder
 
     /**
      * set order part in query clause
-     * @param String order : e.g. id DESC
+     * @param string $order : e.g. id DESC
      * @return $this
      */
     public function orderBy($order)
@@ -330,7 +330,7 @@ class Builder
     /**
      * construct all the given information to a sql clause. often used by read-only query.
      * @param bool $return true: return the sql clause (Default is true). false: assign sql clause to this->sql.
-     * @return void
+     * @return mixed
      */
     protected function constructSql($return = true)
     {
@@ -497,12 +497,12 @@ class Builder
      */
     public function insert($arr)
     {
-        //TODO for security reason, we should auto cache table scheme, and validate the data needs to be insert into DB.
         if ( empty($arr) ) return false;
 
         $comma = '';
         $setFields = '(';
         $setValues = '(';
+        $params = array();
         foreach($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
@@ -527,10 +527,10 @@ class Builder
      *                      ...
      *                    );
      * @param String|Array $condition The query condition. with following format:<br />
-     * 		String: 'id=2 and uanme="libok"'
-     * 		Array:  array('id=? and uname=?', array(2, 'libok')); //TODO at present, here can only support placeholder(?) style prepared statement
+     * 		String: 'id=2 and username="test"'
+     * 		Array:  array('id=? and uname=?', array(2, 'test')); //
      *
-     * @return int row nums if insert successful, else SqlException will be throwed
+     * @return int row number if insert successful, else SqlException will be throw
      */
     public function update($arr, $condition = '')
     {
@@ -538,6 +538,7 @@ class Builder
 
         $comma = '';
         $setFields = '';
+        $params = array();
         foreach($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
@@ -551,7 +552,7 @@ class Builder
                 $sql .= ' WHERE '.$condition[0];
                 $params = array_merge($params, $this->autoArr($condition[1]));
             } else {
-                $sql .= ' WHERE '.$this->db->quote($condition);
+                $sql .= ' WHERE '.$this->db->quoteIdentifier($condition);
                 $params = null;
             }
         }
@@ -580,7 +581,7 @@ class Builder
                 if (!is_array($params)) $params = array($params);
                 $sql .= ' WHERE '.$condition;
             } else {
-                $sql .= ' WHERE '.$this->db->quote($condition);
+                $sql .= ' WHERE '.$this->db->quoteIdentifier($condition);
             }
         }
 
@@ -589,7 +590,7 @@ class Builder
 
     /**
      * reset some data member of LdTable which used to construct a sql clause
-     * this method usally called after an DataBase query finished (e.g. $this->select();)
+     * this method usually called after an DataBase query finished (e.g. $this->select();)
      */
     protected function reset()
     {

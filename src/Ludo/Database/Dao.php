@@ -117,7 +117,7 @@ abstract class Dao
      *
      * @param Int $id
      * @param Array $arr
-     * @return affected
+     * @return int affected row number
      */
     public function update($id, $arr)
     {

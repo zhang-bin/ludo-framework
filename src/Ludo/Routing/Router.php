@@ -30,7 +30,7 @@ class Router
 
             //==id
             $cnt = count($pathInfo);
-            if ($cnt < 2) return array($ctrl, $act); //if pathinfo only one param which is ctrl, just return back;
+            if ($cnt < 2) return array($ctrl, $act); //if path info only one param which is ctrl, just return back;
 
             $paramStart = 2;
             if ($cnt % 2 != 0) {

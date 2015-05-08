@@ -67,6 +67,7 @@ class TaskQueue
             return false;
         }
         $this->client->close();
+        return true;
     }
 
     /**

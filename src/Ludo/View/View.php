@@ -36,7 +36,7 @@ class View
 	/**
 	 * this is an overloading method, which can have one or two arguments
 	 * if one: the arg should be a ASSOC array
-	 * if two: the 1st arg should be the $varname, the 2nd arg should be $varValue
+	 * if two: the 1st arg should be the $varName, the 2nd arg should be $varValue
 	 * assign the key => value pair to template
 	 * @param String $varName variable name
 	 * @param String $varValue variable value
