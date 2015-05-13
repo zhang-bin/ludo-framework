@@ -555,9 +555,9 @@ function str_random($length = 16)
 		if ($bytes === false) {
 			throw new Exception('Unable to generate random string.');
 		}
-		return substr(str_replace(array('/', '+', '=', 'i', 'L', '0', 'o', 'O', 'l', 'I'), '', base64_encode($bytes)), 0, $length);
+		return substr(str_replace(array('/', '+', '=', 'i', 'L', '0', 'o', 'O', 'l', 'I', '1', '2', 'Z'), '', base64_encode($bytes)), 0, $length);
 	}
-	$pool = '123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
+	$pool = '3456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXY';
 	return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
 }
 
@@ -570,7 +570,7 @@ function csrf_token()
 
 function csrf_token_validate($token)
 {
-    return $_SESSION[USER]['token'] == $token;
+    return $_SESSION[USER]['token'] == trim($token);
 }
 
 
