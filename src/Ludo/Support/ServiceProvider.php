@@ -6,9 +6,7 @@ use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Config\Config;
 use Ludo\View\View;
 use Ludo\Task\TaskQueueServer;
-use Monolog\Logger as MonoLog;
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\ChromePHPHandler;
+use Ludo\Log\Logger;
 
 /**
  * The kernel of the framework which holds all available resource
@@ -29,7 +27,7 @@ class ServiceProvider
 	private $dbManager = null;
 
 	/**
-	 * @var MonoLog
+	 * @var Logger
 	 */
 	private $log = null;
 
@@ -98,20 +96,14 @@ class ServiceProvider
     /**
      * get Log Handler
      *
-     * @param string $name
-     * @param int $level
-     * @param string $filename
-     * @return MonoLog
+     * @return Logger
      */
-	public function getLogHandler($name = 'log', $level = MonoLog::DEBUG, $filename = null)
+	public function getLogHandler()
     {
-        is_null($filename) && $filename = SITE_ROOT.'/log/access.log';
-		if ($this->log == null) {
-			$this->log = new MonoLog($name);
-            $this->log->pushHandler(new StreamHandler($filename, $level));
-            $this->log->pushHandler(new ChromePHPHandler($level));
-		}
-		return $this->log;
+        if ($this->log == null) {
+            $this->log = new Logger();
+        }
+        return $this->log;
 	}
 
     /**
