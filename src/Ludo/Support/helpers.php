@@ -563,9 +563,11 @@ function str_random($length = 16)
 
 function csrf_token()
 {
-    $token = str_random(32);
-    $_SESSION[USER]['token'] = $token;
-    return $token;
+    if (empty($_SESSION[USER]['token'])) {
+        $token = str_random(32);
+        $_SESSION[USER]['token'] = $token;
+    }
+    return $_SESSION[USER]['token'];
 }
 
 function csrf_token_validate($token)
@@ -573,5 +575,8 @@ function csrf_token_validate($token)
     return $_SESSION[USER]['token'] == trim($token);
 }
 
-
-
+function csrf_token_refresh() {
+    $token = str_random(32);
+    $_SESSION[USER]['token'] = $token;
+    return $token;
+}
