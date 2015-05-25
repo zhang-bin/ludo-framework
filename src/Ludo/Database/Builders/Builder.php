@@ -361,6 +361,7 @@ class Builder
             return $sql;
         } else {
             $this->sql = $sql;
+            return $this;
         }
     }
 
