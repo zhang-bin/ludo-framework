@@ -24,7 +24,7 @@ class Builder
     /**
      * @var String fields part of the select clause, default is '*'
      */
-    protected $fields = '*';
+    protected $fields = array();
 
     /**
      * @var string Join clause
@@ -131,20 +131,21 @@ class Builder
      * @param String $fieldName comma separated list: id, User.name, UserType.id
      * @return $this
      */
-    public  function setField($fieldName)
+    public function setField($fieldName)
     {
-        if ($fieldName) {
-            if ($this->fields && $this->fields != '*') {
-                if ($fieldName !='*') {
-                    $this->fields .= ",$fieldName";
-                } else {
-                    if (strpos($this->fields, $this->tableAlias.'.*') === false)
-                        $this->fields .= ','.$this->tableAlias.'.*';
-                }
-            } else {
-                $this->fields = $fieldName;
-            }
-        }
+        if (!empty($fieldName)) array_push($this->fields, $fieldName);
+//        if ($fieldName) {
+//            if ($this->fields && $this->fields != '*') {
+//                if ($fieldName !='*') {
+//                    $this->fields .= ",$fieldName";
+//                } else {
+//                    if (strpos($this->fields, $this->tableAlias.'.*') === false)
+//                        $this->fields .= ','.$this->tableAlias.'.*';
+//                }
+//            } else {
+//                $this->fields = $fieldName;
+//            }
+//        }
         return $this;
     }
 
@@ -156,6 +157,7 @@ class Builder
      */
     public function field($fieldName)
     {
+        if ($fieldName == '*') $fieldName = $this->tableAlias.'.*';
         return $this->setField($fieldName);
     }
 
@@ -178,11 +180,12 @@ class Builder
      */
     protected function addJoinField($fields)
     {
-        if ($this->fields == '*') {
-            $this->fields = "{$this->tableAlias}.*, {$fields}";
-        } else {
-            $this->fields .= ','.$fields;
-        }
+        array_push($this->fields, $fields);
+//        if ($this->fields == '*') {
+//            $this->fields = "{$this->tableAlias}.*, {$fields}";
+//        } else {
+//            $this->fields .= ','.$fields;
+//        }
         return $this;
     }
 
@@ -344,7 +347,12 @@ class Builder
             }
             $order = !empty($this->order) ? 'ORDER BY '.$this->order : '';
 
-            $sql = "SELECT $distinct $this->fields FROM {$this->db->quoteIdentifier($this->tableName)} {$this->tableAlias} {$this->join} {$this->where} {$groupBy} {$order} {$this->limit}";
+            if (empty($this->fields)) {
+                $fields = $this->tableAlias.'.*';
+            } else {
+                $fields = implode(',', $this->fields);
+            }
+            $sql = "SELECT $distinct $fields FROM {$this->db->quoteIdentifier($this->tableName)} {$this->tableAlias} {$this->join} {$this->where} {$groupBy} {$order} {$this->limit}";
         } else {
             $sql = $this->userSql;
         }
@@ -481,7 +489,7 @@ class Builder
      */
     public function recordsCount($distinctFields = '')
     {
-        $this->fields = $distinctFields ? "count(DISTINCT {$distinctFields})" : 'count(*)';
+        array_push($this->fields, $distinctFields ? "count(DISTINCT {$distinctFields})" : 'count(*)');
         return $this->fetchColumn();
     }
 
@@ -594,7 +602,7 @@ class Builder
      */
     protected function reset()
     {
-        $this->fields = '*';
+        $this->fields = array();
         $this->join = '';
         $this->where = '';
         $this->having = '';

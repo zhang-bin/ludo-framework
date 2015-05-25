@@ -266,7 +266,6 @@ abstract class Dao
             $where = $condition;
             $params = null;
         }
-
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAll(null, $fetchMode);
     }
 
