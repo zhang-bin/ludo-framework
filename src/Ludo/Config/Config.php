@@ -13,6 +13,8 @@ class Config
             foreach ($files as $file) {
                 if ($file[0] == '.') continue;
                 $filename = $dir.$file;
+                $ext = ext($filename);
+                if ($ext != 'php') continue;
                 $config = require $filename;
                 $basename = basename($filename, '.php');
                 foreach ($config as $k => $v) {
