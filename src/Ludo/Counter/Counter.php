@@ -16,7 +16,7 @@ class Counter
     {
         $this->db = new \Redis();
         $this->db->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
-        $this->db->select(4);
+        $this->db->select(1);
     }
 
     /**

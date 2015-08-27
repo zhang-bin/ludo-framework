@@ -22,8 +22,6 @@ class TaskQueueServer
         swoole_set_process_name('php task_queue manager');
         $this->config = Config::get('server.task_queue');
         $this->queue = new \Redis();
-        $this->queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
-        $this->queue->select(3);
     }
 
     public function run()
@@ -36,7 +34,7 @@ class TaskQueueServer
             'user' => $this->config['user'],
             'group' => $this->config['group'],
             'daemonize' => 1,
-            'dispatch_mode' => 1,
+            'dispatch_mode' => 2,
             'open_tcp_nodelay' => true,
         );
         $this->server->set($config);
@@ -58,6 +56,8 @@ class TaskQueueServer
                 $server->shutdown();
                 break;
             default:
+                $this->queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
+                $this->queue->select(1);
                 do {
                     $task = json_decode($this->queue->rPop($data), true);
                     if (empty($task)) break;

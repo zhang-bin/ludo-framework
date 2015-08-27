@@ -27,7 +27,7 @@ class TaskQueue
 
         $this->queue = new \Redis();
         $this->queue->connect(Config::get('database.connections.redis.host'), Config::get('database.connections.redis.port'));
-        $this->queue->select(3);
+        $this->queue->select(1);
     }
 
     /**
