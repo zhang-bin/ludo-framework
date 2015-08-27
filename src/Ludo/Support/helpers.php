@@ -41,7 +41,7 @@ function tpl($tplPath)
  * eg. return redirect('user/login');
  *
  * @param String $innerUrl ==pathInfo
- * @return void|array
+ * @return void
  */
 function redirect($innerUrl = '')
 {
@@ -49,7 +49,7 @@ function redirect($innerUrl = '')
 		header('location:'.url($innerUrl));
 		if (DEBUG) \Ludo\Foundation\Application::debug();die;
 	} else {
-		return array(STATUS => GO, URL => url($innerUrl));
+		echo json_encode(array(STATUS => GO, URL => url($innerUrl)));die;
 	}
 }
 
@@ -59,7 +59,7 @@ function redirectOut($outUrl)
 		header('location:'.$outUrl);
 		if (DEBUG) \Ludo\Foundation\Application::debug();die;
 	} else {
-		return array(STATUS => GO, URL => $outUrl);
+		echo json_encode(array(STATUS => GO, URL => $outUrl));die;
 	}
 }
 
@@ -318,7 +318,7 @@ function gotoLogin($jurl = '', $isOuterJurl = false)
 		$isOuterJurl = true;
 	}
 	$jurl = $isOuterJurl ? '?jurl='.urlencode($jurl) : '?jurl='.urlencode(url($jurl));
-	return redirect('user/'.$jurl);
+	redirect('user/'.$jurl);
 }
 
 function logout()

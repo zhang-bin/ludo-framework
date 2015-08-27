@@ -53,9 +53,7 @@ abstract class Controller
      */
     public function beforeAction($action)
     {
-        if (!logined()) {
-            return gotoLogin();
-        }
+
     }
 
     /**
