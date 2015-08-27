@@ -129,7 +129,7 @@ class Logger
         $class = CURRENT_CONTROLLER.'::';
         $function = CURRENT_ACTION.'-->';
 
-        $status = $this->_getTimeLine($priority);
+        $status = $this->getTimeLine($priority);
         $log = $status.$class.$function.$info;
         if (!empty($file)) $log .= " in $file on line $line";
         $log .= "\n";
@@ -154,7 +154,7 @@ class Logger
         return self::$instance;
     }
 
-    private function _getTimeLine($level)
+    private function getTimeLine($level)
     {
         $time = date(TIME_FORMAT);
 
