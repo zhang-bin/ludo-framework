@@ -247,9 +247,9 @@ function realIp()
 	static $realIp = '';
 
 	if (!$realIp) {
-		$cip = getenv('HTTP_CLIENT_IP');
-		$xip = getenv('HTTP_X_FORWARDED_FOR');
-		$rip = getenv('REMOTE_ADDR');
+		$cip = $_SERVER['HTTP_CLIENT_IP'];
+		$xip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		$rip = $_SERVER['REMOTE_ADDR'];
 		$srip = $_SERVER['REMOTE_ADDR'];
 		if($cip && strcasecmp($cip, 'unknown')) {
 			$realIp = $cip;
