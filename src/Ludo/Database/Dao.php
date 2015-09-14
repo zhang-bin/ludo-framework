@@ -170,7 +170,8 @@ abstract class Dao
      */
     public function fetch($id, $fields = '', $fetchMode = PDO::FETCH_ASSOC)
     {
-        if (!empty($fields)) $this->builder->setField($fields);
+        if (empty($fields)) $fields = $this->tblName.'.*';
+        $this->builder->setField($fields);
         $this->builder->where($this->tblName.'.id = ?', $id);
         return $this->builder->fetch(null, $fetchMode);
     }
