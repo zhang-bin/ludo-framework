@@ -403,9 +403,14 @@ abstract class Dao
         return $this;
     }
 
-    public function beginTransaction()
+    /**
+     * Start a new database transaction.
+     *
+     * @param bool|true $switchConnection 事务开启后，如果该值为true，那么事务内的查询操作会切换到主库
+     */
+    public function beginTransaction($switchConnection = false)
     {
-        $this->connection->beginTransaction();
+        $this->connection->beginTransaction($switchConnection);
     }
 
     public function commit()

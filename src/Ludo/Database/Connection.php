@@ -22,6 +22,14 @@ class Connection
 	protected $readPdo;
 
 	/**
+	 * Decide select sql whether to switch main PDO connection
+	 * default select use read pdo
+	 *
+	 * @var bool
+	 */
+	protected $switchConnection = false;
+
+	/**
 	 * All of the queries run against the connection.
 	 *
 	 * @var array
@@ -239,36 +247,14 @@ class Connection
 		return $this->getReadPdo()->lastInsertId($name);
 	}
 
-
-	/**
-	 * Execute a Closure within a transaction.
-	 *
-	 * @param  Closure  $callback
-	 * @return mixed
-	 *
-	 * @throws \Exception
-	 */
-	public function transaction(Closure $callback)
-    {
-		$this->beginTransaction();
-
-		try {
-			$result = $callback($this);
-			$this->commit();
-		} catch (\Exception $e) {
-			$this->rollBack();
-			throw $e;
-		}
-		return $result;
-	}
-
 	/**
 	 * Start a new database transaction.
 	 *
-	 * @return void
+	 * @param bool $switchConnection 事务开启后，如果该值为true，那么事务内的查询操作会切换到主库
 	 */
-	public function beginTransaction()
+	public function beginTransaction($switchConnection)
     {
+		$this->switchConnection = $switchConnection;
 		$this->pdo->beginTransaction();
 	}
 
@@ -279,6 +265,7 @@ class Connection
 	 */
 	public function commit()
     {
+		$this->switchConnection = false;
 		$this->pdo->commit();
 	}
 
@@ -289,6 +276,7 @@ class Connection
 	 */
 	public function rollBack()
     {
+		$this->switchConnection = false;
 		$this->pdo->rollBack();
 	}
 
@@ -371,7 +359,7 @@ class Connection
 	 */
 	public function getReadPdo()
     {
-		return $this->readPdo ?: $this->pdo;
+		return $this->switchConnection ? $this->pdo : ($this->readPdo ?: $this->pdo);
 	}
 
 	/**
