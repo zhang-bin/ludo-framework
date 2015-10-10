@@ -1,6 +1,7 @@
 <?php
 namespace Ludo\Database;
 
+use Ludo\Support\ServiceProvider;
 use PDO;
 use Closure;
 
@@ -250,7 +251,7 @@ class Connection
 	/**
 	 * Start a new database transaction.
 	 *
-	 * @param bool $switchConnection 事务开启后，如果该值为true，那么事务内的查询操作会切换到主库
+	 * @param bool $switchConnection after start a transaction, select query will switch to write connection if it's set true
 	 */
 	public function beginTransaction($switchConnection)
     {
@@ -303,6 +304,18 @@ class Connection
 		    return $result;
 		} catch (\Exception $e) {
 			$err = $e->getMessage();
+			if (strpos($err, 'server has gone away') !== false) {//if mysql server has gone away, try reconnect
+				$dbManager = ServiceProvider::getInstance()->getDBManagerHandler();
+
+				//because we didn't know current connection belongs to who, so we reconnect all connections
+				$connections = $dbManager->getConnections();
+				foreach ($connections as $name => $connection) {
+					$dbManager->reconnect($name);
+				}
+
+				$result = $callback($this, $query, $params);
+				return $result;
+			}
             $time = '['.date('Y-m-d H:i:s').']    ';
             error_log($time.$e->getTraceAsString());
 			throw new QueryException($query, (array)$params, $e);
