@@ -245,7 +245,7 @@ class Connection
 	 */
 	public function lastInsertId($name = 'id')
     {
-		return $this->getReadPdo()->lastInsertId($name);
+		return $this->getPdo()->lastInsertId($name);
 	}
 
 	/**
