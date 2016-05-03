@@ -125,7 +125,7 @@ function ceil10($digit)
  */
 function currUrl()
 {
-	$url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
+	$url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://'.$_SERVER['HTTP_HOST'] : 'http://'.$_SERVER['HTTP_HOST'];
 
 	if ($_SERVER['SERVER_PORT'] != '80')	$url .= ':'.$_SERVER["SERVER_PORT"]; //add port
 
@@ -247,9 +247,9 @@ function realIp()
 	static $realIp = '';
 
 	if (!$realIp) {
-		$cip = $_SERVER['HTTP_CLIENT_IP'];
-		$xip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		$rip = $_SERVER['REMOTE_ADDR'];
+		$cip = getenv('HTTP_CLIENT_IP');
+		$xip = getenv('HTTP_X_FORWARDED_FOR');
+		$rip = getenv('REMOTE_ADDR');
 		$srip = $_SERVER['REMOTE_ADDR'];
 		if($cip && strcasecmp($cip, 'unknown')) {
 			$realIp = $cip;
@@ -550,14 +550,7 @@ function str_replace_array($search, array $replace, $subject)
  */
 function str_random($length = 16)
 {
-	if (function_exists('openssl_random_pseudo_bytes')) {
-		$bytes = openssl_random_pseudo_bytes($length * 2);
-		if ($bytes === false) {
-			throw new Exception('Unable to generate random string.');
-		}
-		return substr(str_replace(array('/', '+', '=', 'i', 'L', '0', 'o', 'O', 'l', 'I', '1', '2', 'Z'), '', base64_encode($bytes)), 0, $length);
-	}
-	$pool = '3456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXY';
+	$pool = '3456789abcdefghjkmnpqrstuvwxyz';
 	return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
 }
 

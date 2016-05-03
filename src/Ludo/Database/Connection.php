@@ -81,7 +81,7 @@ class Connection
 	 * @param  array   $config
 	 */
 	public function __construct(PDO $pdo, $database = '', $tablePrefix = '', array $config = array())
-    {
+	{
 		$this->pdo = $pdo;
 		$this->database = $database;
 		$this->tablePrefix = $tablePrefix;
@@ -96,7 +96,7 @@ class Connection
 	 * @return array
 	 */
 	public function selectColumn($query, $params = array())
-    {
+	{
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -115,7 +115,7 @@ class Connection
 	 * @return array
 	 */
 	public function selectOne($query, $params = array())
-    {
+	{
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -134,7 +134,7 @@ class Connection
 	 * @return array
 	 */
 	public function select($query, $params = array())
-    {
+	{
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -157,7 +157,7 @@ class Connection
 	 * @return bool
 	 */
 	public function insert($query, $params = array())
-    {
+	{
 		return $this->statement($query, $params);
 	}
 
@@ -169,7 +169,7 @@ class Connection
 	 * @return int affected row
 	 */
 	public function update($query, $params = array())
-    {
+	{
 		return $this->affectingStatement($query, $params);
 	}
 
@@ -181,7 +181,7 @@ class Connection
 	 * @return int affected row
 	 */
 	public function delete($query, $params = array())
-    {
+	{
 		return $this->affectingStatement($query, $params);
 	}
 
@@ -193,7 +193,7 @@ class Connection
 	 * @return bool
 	 */
 	public function statement($query, $params = array())
-    {
+	{
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -210,7 +210,7 @@ class Connection
 	 * @return int
 	 */
 	public function affectingStatement($query, $params = array())
-    {
+	{
 		return $this->run($query, $params, function($me, $query, $params) {
 			/**
 			 * @var Connection $me
@@ -228,7 +228,7 @@ class Connection
 	 * @return bool
 	 */
 	public function unprepared($query)
-    {
+	{
 		return $this->run($query, array(), function($me, $query) {
 			/**
 			 * @var Connection $me
@@ -244,7 +244,7 @@ class Connection
 	 * @return string insert id
 	 */
 	public function lastInsertId($name = 'id')
-    {
+	{
 		return $this->getPdo()->lastInsertId($name);
 	}
 
@@ -254,7 +254,7 @@ class Connection
 	 * @param bool $switchConnection after start a transaction, select query will switch to write connection if it's set true
 	 */
 	public function beginTransaction($switchConnection)
-    {
+	{
 		$this->switchConnection = $switchConnection;
 		$this->pdo->beginTransaction();
 	}
@@ -265,7 +265,7 @@ class Connection
 	 * @return void
 	 */
 	public function commit()
-    {
+	{
 		$this->switchConnection = false;
 		$this->pdo->commit();
 	}
@@ -276,7 +276,7 @@ class Connection
 	 * @return void
 	 */
 	public function rollBack()
-    {
+	{
 		$this->switchConnection = false;
 		$this->pdo->rollBack();
 	}
@@ -292,7 +292,7 @@ class Connection
 	 * @throws QueryException
 	 */
 	protected function run($query, $params, Closure $callback)
-    {
+	{
 		$start = microtime(true);
 
 		// To execute the statement, we'll simply call the callback, which will actually
@@ -301,7 +301,7 @@ class Connection
 		$err = '';
 		try {
 			$result = $callback($this, $query, $params);
-		    return $result;
+			return $result;
 		} catch (\Exception $e) {
 			$err = $e->getMessage();
 			if (strpos($err, 'server has gone away') !== false) {//if mysql server has gone away, try reconnect
@@ -316,17 +316,17 @@ class Connection
 				$result = $callback($this, $query, $params);
 				return $result;
 			}
-            $time = '['.date('Y-m-d H:i:s').']    ';
-            error_log($time.$e->getTraceAsString());
+			$time = '['.date('Y-m-d H:i:s').']    ';
+			error_log($time.$e->getTraceAsString());
 			throw new QueryException($query, (array)$params, $e);
 		} finally {
-            // Once we have run the query we will calculate the time that it took to run and
-            // then log the query, bindings, and execution time so we will report them on
-            // the event that the developer needs them. We'll log time in milliseconds.
-            $time = $this->getElapsedTime($start);
+			// Once we have run the query we will calculate the time that it took to run and
+			// then log the query, bindings, and execution time so we will report them on
+			// the event that the developer needs them. We'll log time in milliseconds.
+			$time = $this->getElapsedTime($start);
 
-            $this->logQuery($query, $params, $time, $err);
-        }
+			$this->logQuery($query, $params, $time, $err);
+		}
 	}
 
 	/**
@@ -339,7 +339,7 @@ class Connection
 	 * @return void
 	 */
 	public function logQuery($query, $params, $time = null, $err = null)
-    {
+	{
 		if (!DEBUG) return;
 		$this->queryLog[] = compact('query', 'params', 'time', 'err');
 	}
@@ -351,7 +351,7 @@ class Connection
 	 * @return float
 	 */
 	protected function getElapsedTime($start)
-    {
+	{
 		return microtime(true) - $start;
 	}
 
@@ -371,7 +371,7 @@ class Connection
 	 * @return PDO
 	 */
 	public function getReadPdo()
-    {
+	{
 		return $this->switchConnection ? $this->pdo : ($this->readPdo ?: $this->pdo);
 	}
 
@@ -382,7 +382,7 @@ class Connection
 	 * @return \Ludo\Database\Connection
 	 */
 	public function setPdo(PDO $pdo)
-    {
+	{
 		$this->pdo = $pdo;
 		return $this;
 	}
@@ -394,7 +394,7 @@ class Connection
 	 * @return \Ludo\Database\Connection
 	 */
 	public function setReadPdo(PDO $pdo)
-    {
+	{
 		$this->readPdo = $pdo;
 		return $this;
 	}
@@ -405,7 +405,7 @@ class Connection
 	 * @return string|null
 	 */
 	public function getName()
-    {
+	{
 		return $this->getConfig('name');
 	}
 
@@ -416,7 +416,7 @@ class Connection
 	 * @return mixed
 	 */
 	public function getConfig($option)
-    {
+	{
 		return array_get($this->config, $option);
 	}
 
@@ -426,7 +426,7 @@ class Connection
 	 * @return string
 	 */
 	public function getDriverName()
-    {
+	{
 		return $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 	}
 
@@ -436,7 +436,7 @@ class Connection
 	 * @return int
 	 */
 	public function getFetchMode()
-    {
+	{
 		return $this->fetchMode;
 	}
 
@@ -447,7 +447,7 @@ class Connection
 	 * @return int
 	 */
 	public function setFetchMode($fetchMode)
-    {
+	{
 		$this->fetchMode = $fetchMode;
 	}
 
@@ -457,7 +457,7 @@ class Connection
 	 * @return int
 	 */
 	public function getFetchArgument()
-    {
+	{
 		return $this->fetchArgument;
 	}
 
@@ -468,7 +468,7 @@ class Connection
 	 * @return int
 	 */
 	public function setFetchArgument($fetchArgument)
-    {
+	{
 		$this->fetchArgument = $fetchArgument;
 	}
 
@@ -478,7 +478,7 @@ class Connection
 	 * @return string
 	 */
 	public function getDatabaseName()
-    {
+	{
 		return $this->database;
 	}
 
@@ -489,7 +489,7 @@ class Connection
 	 * @return string
 	 */
 	public function setDatabaseName($database)
-    {
+	{
 		$this->database = $database;
 	}
 
@@ -499,18 +499,18 @@ class Connection
 	 * @return string
 	 */
 	public function getTablePrefix()
-    {
+	{
 		return $this->tablePrefix;
 	}
 
-    /**
-     * quote identifier
-     *
-     * @param $str
-     * @return string
-     */
+	/**
+	 * quote identifier
+	 *
+	 * @param $str
+	 * @return string
+	 */
 	function quoteIdentifier($str)
-    {
+	{
 		$str = trim($str, '`');
 		return "`{$str}`";
 	}
@@ -521,7 +521,7 @@ class Connection
 	 * @return string
 	 */
 	public function debug()
-    {
+	{
 		if (!DEBUG) return null;
 		$totalProcessTime = 0;
 		$totalSQL = 0;

@@ -45,11 +45,12 @@ class Lang
         if (isset($_COOKIE['lang'])) {
             $language = $_COOKIE['lang'];
         } else {
-            $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            $language = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         }
 
         if (($pos = strpos($language, ',')) !== false) {
             $language = substr($language, 0, $pos);
+            setcookie('lang', $language, null, '/');
         }
 
         $language = strtolower($language ? $language : DEFAULT_LANGUAGE);
@@ -66,5 +67,79 @@ class Lang
         }
         self::$language = $language;
         include_once self::$langDir.'base.lang.php';
+    }
+
+    /**
+     * 语言包差异
+     *
+     * @param $baseDir string 基础路径
+     * @param $base string 基础语言包
+     * @param $diff string 差异语言包
+     * @return array
+     */
+    public static function diff($baseDir, $base, $diff) {
+        $baseLangDir = $baseDir.DIRECTORY_SEPARATOR.$base.DIRECTORY_SEPARATOR;
+        $diffLangDir = $baseDir.DIRECTORY_SEPARATOR.$diff.DIRECTORY_SEPARATOR;
+
+        $baseLanguages = $diffLanguages = array();
+        $files = scandir($baseLangDir);
+        foreach ($files as $file) {
+            if ($file[0] == '.') continue;
+            $filename = $baseLangDir.$file;
+            $ext = ext($filename);
+            if ($ext != 'php') continue;
+            $file = explodeSafe($file, '.')[0];
+            $baseLanguages[$file] = require $filename;
+        }
+
+        $files = scandir($diffLangDir);
+        foreach ($files as $file) {
+            if ($file[0] == '.') continue;
+            $filename = $diffLangDir.$file;
+            $ext = ext($filename);
+            if ($ext != 'php') continue;
+            $file = explodeSafe($file, '.')[0];
+            $diffLanguages[$file] = require $filename;
+        }
+
+        $result = array();
+        foreach ($baseLanguages as $filename => $languages) {
+            if ($filename == 'base') continue;
+            foreach ($languages as $k => $v) {
+                if (empty($diffLanguages[$filename][$k])) {
+                    $result[$filename][$k] = $v;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 合并差异语言
+     *
+     * @param $baseDir string 基础路径
+     * @param $language string 语言
+     * @param $data array 翻译数据
+     */
+    public static function merge($baseDir, $language, $data) {
+        $baseLangDir = $baseDir.DIRECTORY_SEPARATOR.DEFAULT_LANGUAGE.DIRECTORY_SEPARATOR;
+
+        foreach ($data as $filename => $datum) {
+            $baseLangFilename = $baseLangDir.$filename.'.lang.php';
+            if (!file_exists($baseLangFilename)) continue;
+
+            $diffLangFilename = $baseDir.DIRECTORY_SEPARATOR.$language.DIRECTORY_SEPARATOR.$filename.'.lang.php';
+            $diffData = array();
+            if (file_exists($diffLangFilename)) {
+                $diffData = require $diffLangFilename;
+            }
+
+            foreach ($datum as $k => $v) {
+                $diffData[$k] = $v;
+            }
+            $str = var_export($diffData, true);
+            $str = "<?php\nreturn ".$str.';';
+            file_put_contents($diffLangFilename, $str);
+        }
     }
 }
