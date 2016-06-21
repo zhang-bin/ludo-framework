@@ -30,8 +30,12 @@ class Logger
 
     public function __construct()
     {
-        $dir = LD_LOG_PATH.DIRECTORY_SEPARATOR.date(DATE_FORMAT).DIRECTORY_SEPARATOR;
-        !is_dir($dir) && mkdir($dir);
+        $dir = LD_LOG_PATH.DIRECTORY_SEPARATOR.date(DATE_FORMAT).DIRECTORY_SEPARATOR.date('G').DIRECTORY_SEPARATOR;
+        if (!is_dir($dir)) {
+            $oldMask = umask(0);
+            mkdir($dir, 0777, true);
+            umask($oldMask);
+        }
         self::$_logFilename = array(
             LOGGER_LEVEL_INFO => $dir.'info.log',
             LOGGER_LEVEL_DEBUG => $dir.'debug.log',
@@ -120,8 +124,6 @@ class Logger
      */
     public function log($info, $priority)
     {
-        if ($priority < LOGGER_LEVEL_DEFAULT) return;
-
         //== get file and line from debug_backtrace.
         $backtrace = debug_backtrace();
         $file = $backtrace[2]['file'];

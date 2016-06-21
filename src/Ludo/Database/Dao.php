@@ -38,7 +38,7 @@ abstract class Dao
     /**
      * insert data into DB
      *
-     * @param Array $arr array('field'=>value, 'field2'=>value2);
+     * @param array $arr array('field'=>value, 'field2'=>value2);
      * @return int Last insert id if insert successful, else SqlException will be throw
      */
     public function add($arr)
@@ -49,7 +49,7 @@ abstract class Dao
     /**
      * identical to LdBaseDao::add($arr);
      *
-     * @param Array $arr array('field'=>value, 'field2'=>value2);
+     * @param array $arr array('field'=>value, 'field2'=>value2);
      * @return int Last insert id if insert successful, else SqlException will be throw
      */
     public function insert($arr)
@@ -60,10 +60,10 @@ abstract class Dao
     /**
      * used for batch insert lots data into the table
      *
-     * @param Array $arr 2D array,
+     * @param array $arr 2D array,
      * 	assoc array: 			array(array('field'=>value, 'field2'=>value2), array('field'=>value, 'field2'=>value2));
      * 	or just indexed array:	array(array(value1, value2), array(value1, value2)); //if use indexedNames, the 2nd argument "$fieldNames" must be passed.
-     * @param Array|String $fieldNames [Optional] only needed in indexed Data. field names for batch insert
+     * @param array|string $fieldNames [Optional] only needed in indexed Data. field names for batch insert
      * @param bool $ignore
      * @return true if insert successful, else SqlException will be throw
      */
@@ -116,7 +116,7 @@ abstract class Dao
      * update fields of object with id=$id
      *
      * @param Int $id
-     * @param Array $arr
+     * @param array $arr
      * @return int affected row number
      */
     public function update($id, $arr)
@@ -127,7 +127,7 @@ abstract class Dao
     /**
      * update fields of object with some conditions
      *
-     * @param Array $newData
+     * @param array $newData
      * @param String $condition
      * @param mixed
      * @return int affected row
@@ -166,7 +166,7 @@ abstract class Dao
      * @param $id
      * @param String $fields fields needs to be fetched, comma separated
      * @param int $fetchMode
-     * @return Array key is field name and value is field value.
+     * @return array key is field name and value is field value.
      */
     public function fetch($id, $fields = '', $fetchMode = PDO::FETCH_ASSOC)
     {
@@ -312,6 +312,27 @@ abstract class Dao
             $params = null;
         }
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllKvPair();
+    }
+
+    /**
+     * Do query, and return the PDOStatement Object
+     *
+     * @param String $condition
+     * @param int $rows
+     * @param int $start
+     * @param String $order
+     * @param String $fields
+     * @return \PDOStatement
+     */
+    function queryAll($condition = '', $rows = 0, $start = 0, $order='id DESC', $fields = '') {
+        if (is_array($condition)) {
+            $where = $condition[0];
+            $params = $condition[1];
+        } else {
+            $where = $condition;
+            $params = null;
+        }
+        return $this->builder->field($fields)->where($where)->orderby($order)->limit($rows, $start)->select($params);
     }
 
     /**
