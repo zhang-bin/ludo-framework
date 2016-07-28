@@ -561,7 +561,7 @@ class Builder
                 $sql .= ' WHERE '.$condition[0];
                 $params = array_merge($params, $this->autoArr($condition[1]));
             } else {
-                $sql .= ' WHERE '.$this->db->quoteIdentifier($condition);
+                $sql .= ' WHERE '.$condition;
                 $params = null;
             }
         }
@@ -586,12 +586,10 @@ class Builder
         $sql = "DELETE FROM {$this->db->quoteIdentifier($this->tableName)}";
 
         if (!empty($condition)) {
-            if (!is_null($params)) { //using prepared statement.
-                if (!is_array($params)) $params = array($params);
-                $sql .= ' WHERE '.$condition;
-            } else {
-                $sql .= ' WHERE '.$this->db->quoteIdentifier($condition);
+            if (!is_null($params) && !is_array($params)) { //using prepared statement.
+                $params = array($params);
             }
+            $sql .= ' WHERE '.$condition;
         }
 
         return $this->db->delete($sql, $params);
