@@ -441,7 +441,16 @@ class Builder
      */
     public function fetchAllUnique($multi_call_params = null)
     {
-        return $this->select($multi_call_params, PDO::FETCH_COLUMN|PDO::FETCH_UNIQUE, 0);
+        if (PHP_VERSION_ID >= 70000) {
+            return $this->select($multi_call_params, PDO::FETCH_COLUMN|PDO::FETCH_UNIQUE, 0);
+        } else {
+            $data = $this->select($multi_call_params, PDO::FETCH_COLUMN);
+            $result = array();
+            foreach ($data as $datum) {
+                $result[$datum] = $datum;
+            }
+            return $result;
+        }
     }
 
     /**
