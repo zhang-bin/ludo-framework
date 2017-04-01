@@ -31,7 +31,7 @@ class ServiceProvider
 	 */
 	private $log = null;
 
-    private static $instance = null;
+	private static $instance = null;
 
 	private function __construct()
     {

@@ -11,14 +11,14 @@ class Config
             $dir = SITE_ROOT.'/config/';
             $files = scandir($dir);
             foreach ($files as $file) {
-                if ($file[0] == '.') continue;
+                if ($file[0] == '.' || $file[0] == '..') continue;
                 $filename = $dir.$file;
                 $ext = ext($filename);
                 if ($ext != 'php') continue;
                 $config = require $filename;
                 $basename = basename($filename, '.php');
                 foreach ($config as $k => $v) {
-                    self::$config[$basename.'.'.$k] = $v;
+                    self::$config[$basename][$k] = $v;
                 }
             }
         }
@@ -28,9 +28,13 @@ class Config
     public static function get($name)
     {
         $segments = explode('.', $name);
-        if (count($segments) < 2) return null;
-        $item = self::$config[$segments[0].'.'.$segments[1]];
-        unset($segments[0], $segments[1]);
+        $length = count($segments);
+        if ($length == 1) {
+            return self::$config[$segments[0]];
+        }
+        $item = self::$config[$segments[0]];
+        unset($segments[0]);
+
         $name = implode('.', $segments);
         empty($name) && $name = null;
         return array_get($item, $name);

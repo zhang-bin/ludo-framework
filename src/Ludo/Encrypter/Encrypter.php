@@ -2,6 +2,7 @@
 namespace Ludo\Encrypter;
 
 use RuntimeException;
+use Ludo\Config\Config;
 
 class Encrypter
 {
@@ -10,14 +11,14 @@ class Encrypter
      *
      * @var string
      */
-    private $key;
+    private static $key;
 
     /**
      * The algorithm used for encryption
      *
      * @var string
      */
-    private $cipher;
+    private static $cipher;
 
     /**
      * Encrypter constructor.
@@ -25,11 +26,12 @@ class Encrypter
      * @param $key
      * @param string $cipher
      */
-    public function __construct($key, $cipher = 'AES-128-CBC')
+    private static function init()
     {
-        if (self::supported($key, $cipher)) {
-            $this->key = $key;
-            $this->cipher = $cipher;
+        $config = Config::get('app');
+        if (self::supported($config['key'], $config['cipher'])) {
+            self::$key = $config['key'];
+            self::$cipher = $config['cipher'];
         } else {
             throw new RuntimeException('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.');
         }
@@ -41,19 +43,20 @@ class Encrypter
      * @param $value
      * @return string
      */
-    public function encrypt($value) {
+    public static function encrypt($value) {
+        self::init();
         if (function_exists('random_bytes')) {
             $iv = random_bytes(16);
         } else {
             $iv = openssl_random_pseudo_bytes(16);
         }
-        $value = openssl_encrypt($value, $this->cipher, $this->key, 0, $iv);
+        $value = openssl_encrypt($value, self::$cipher, self::$key, 0, $iv);
 
         if (false === $value) {
             throw new EncryptException('Could not encrypt the data.');
         }
         $iv = base64_encode($iv);
-        $mac = $this->hash($iv, $value);
+        $mac = self::hash($iv, $value);
 
         $json = json_encode(compact('iv', 'value', 'mac'));
 
@@ -66,11 +69,12 @@ class Encrypter
      * @param $payload
      * @return string
      */
-    public function decrypt($payload) {
-        $payload = $this->getJsonPayload($payload);
+    public static function decrypt($payload) {
+        self::init();
+        $payload = self::getJsonPayload($payload);
 
         $iv = base64_decode($payload['iv']);
-        $value = openssl_decrypt($payload['value'], $this->cipher, $this->key, 0, $iv);
+        $value = openssl_decrypt($payload['value'], self::$cipher, self::$key, 0, $iv);
         if (false === $value) {
             throw new EncryptException('Could not decrypt the data.');
         }
@@ -98,8 +102,8 @@ class Encrypter
      * @param $value
      * @return string
      */
-    public function hash($iv, $value) {
-        return hash_hmac('sha256', $iv.$value, $this->key);
+    public static function hash($iv, $value) {
+        return hash_hmac('sha256', $iv.$value, self::$key);
     }
 
     /**
@@ -108,14 +112,14 @@ class Encrypter
      * @param $payload
      * @return mixed
      */
-    private function getJsonPayload($payload) {
+    private static function getJsonPayload($payload) {
         $payload = json_decode(base64_decode($payload), true);
 
         if (!is_array($payload) && isset($payload['iv'], $payload['value'], $payload['mac'])) {
             throw new EncryptException('The payload is invalid.');
         }
 
-        $mac = $this->hash($payload['iv'], $payload['value']);
+        $mac = self::hash($payload['iv'], $payload['value']);
         if (!hash_equals($payload['mac'], $mac)) {
             throw new EncryptException('The mac is invalid.');
         }
