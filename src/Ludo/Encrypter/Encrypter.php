@@ -43,7 +43,8 @@ class Encrypter
      * @param $value
      * @return string
      */
-    public static function encrypt($value) {
+    public static function encrypt($value)
+    {
         self::init();
         if (function_exists('random_bytes')) {
             $iv = random_bytes(16);
@@ -69,7 +70,8 @@ class Encrypter
      * @param $payload
      * @return string
      */
-    public static function decrypt($payload) {
+    public static function decrypt($payload)
+    {
         self::init();
         $payload = self::getJsonPayload($payload);
 
@@ -88,7 +90,8 @@ class Encrypter
      * @param $cipher
      * @return bool
      */
-    public static function supported($key, $cipher) {
+    public static function supported($key, $cipher)
+    {
         $length = mb_strlen($key, '8bit');
 
         return ($cipher === 'AES-128-CBC' && $length === 16) ||
@@ -102,7 +105,8 @@ class Encrypter
      * @param $value
      * @return string
      */
-    public static function hash($iv, $value) {
+    public static function hash($iv, $value)
+    {
         return hash_hmac('sha256', $iv.$value, self::$key);
     }
 
@@ -112,7 +116,8 @@ class Encrypter
      * @param $payload
      * @return mixed
      */
-    private static function getJsonPayload($payload) {
+    private static function getJsonPayload($payload)
+    {
         $payload = json_decode(base64_decode($payload), true);
 
         if (!is_array($payload) && isset($payload['iv'], $payload['value'], $payload['mac'])) {
