@@ -12,5 +12,6 @@ $alias = [
     'TaskQueue' => 'Ludo\Task\TaskQueue',
     'QueryException' => 'Ludo\Database\QueryException',
     'Counter' => 'Ludo\Counter\Counter',
+    'Encrypter' => 'Ludo\Encrypter\Encrypter',
 ];
 \Ludo\Support\AliasLoader::getInstance($alias)->register();
