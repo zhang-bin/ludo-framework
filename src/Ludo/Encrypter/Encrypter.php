@@ -4,6 +4,10 @@ namespace Ludo\Encrypter;
 use RuntimeException;
 use Ludo\Config\Config;
 
+/**
+ * Class Encrypter
+ * @package Ludo\Encrypter
+ */
 class Encrypter
 {
     /**
@@ -26,7 +30,7 @@ class Encrypter
      * @param $key
      * @param string $cipher
      */
-    private static function init()
+    public function __construct()
     {
         $config = Config::get('app');
         if (self::supported($config['key'], $config['cipher'])) {
@@ -43,9 +47,8 @@ class Encrypter
      * @param $value
      * @return string
      */
-    public static function encrypt($value)
+    public function encrypt($value)
     {
-        self::init();
         if (function_exists('random_bytes')) {
             $iv = random_bytes(16);
         } else {
@@ -57,7 +60,7 @@ class Encrypter
             throw new EncryptException('Could not encrypt the data.');
         }
         $iv = base64_encode($iv);
-        $mac = self::hash($iv, $value);
+        $mac = $this->hash($iv, $value);
 
         $json = json_encode(compact('iv', 'value', 'mac'));
 
@@ -70,10 +73,9 @@ class Encrypter
      * @param $payload
      * @return string
      */
-    public static function decrypt($payload)
+    public function decrypt($payload)
     {
-        self::init();
-        $payload = self::getJsonPayload($payload);
+        $payload = $this->getJsonPayload($payload);
 
         $iv = base64_decode($payload['iv']);
         $value = openssl_decrypt($payload['value'], self::$cipher, self::$key, 0, $iv);
@@ -105,7 +107,7 @@ class Encrypter
      * @param $value
      * @return string
      */
-    public static function hash($iv, $value)
+    private function hash($iv, $value)
     {
         return hash_hmac('sha256', $iv.$value, self::$key);
     }
@@ -116,7 +118,7 @@ class Encrypter
      * @param $payload
      * @return mixed
      */
-    private static function getJsonPayload($payload)
+    private function getJsonPayload($payload)
     {
         $payload = json_decode(base64_decode($payload), true);
 
@@ -124,7 +126,7 @@ class Encrypter
             throw new EncryptException('The payload is invalid.');
         }
 
-        $mac = self::hash($payload['iv'], $payload['value']);
+        $mac = $this->hash($payload['iv'], $payload['value']);
         if (!hash_equals($payload['mac'], $mac)) {
             throw new EncryptException('The mac is invalid.');
         }

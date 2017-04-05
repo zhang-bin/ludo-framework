@@ -2,6 +2,17 @@
 \Ludo\Foundation\Lang::init();
 \Ludo\Config\Config::init();
 
+$providers = [
+    Ludo\Encrypter\EncrypterServiceProvider::class,
+];
+
+foreach ($providers as $provider) {
+    if (is_string($provider)) $provider = new $provider();
+    if (method_exists($provider, 'register')) {
+        $provider->register();
+    }
+}
+
 $alias = [
     'Filter' => Ludo\Support\Filter::class,
     'Validator' => Ludo\Support\Validator::class,
@@ -12,7 +23,7 @@ $alias = [
     'TaskQueue' => Ludo\Task\TaskQueue::class,
     'QueryException' => Ludo\Database\QueryException::class,
     'Counter' => Ludo\Counter\Counter::class,
-    'Encrypter' => Ludo\Encrypter\Encrypter::class,
+    'Crypt' => Ludo\Support\Facades\Crypt::class,
 ];
 \Ludo\Support\AliasLoader::getInstance($alias)->register();
 

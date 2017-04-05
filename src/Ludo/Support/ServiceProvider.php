@@ -33,6 +33,8 @@ class ServiceProvider
 
 	private static $instance = null;
 
+	private $bindings = [];
+
 	private function __construct()
     {
 		$this->config = Config::getConfig();
@@ -131,4 +133,16 @@ class ServiceProvider
                 break;
         }
     }
+
+    public function register($abstract, $concrete) {
+        if (isset($this->bindings[$abstract])) return;//已经注册了
+
+        $this->bindings[$abstract] = call_user_func($concrete);
+    }
+
+    public function getRegisteredAbstract($abstract)
+    {
+        return $this->bindings[$abstract];
+    }
+
 }
