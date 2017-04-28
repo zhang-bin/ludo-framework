@@ -77,7 +77,7 @@ class ServiceProvider
 	public function getDBManagerHandler()
     {
 		if (empty($this->dbManager)) {
-			$this->dbManager = new DatabaseManager($this->config, new ConnectionFactory());
+			$this->dbManager = new DatabaseManager($this->config['database'], new ConnectionFactory());
 		}
 		return $this->dbManager;
 	}

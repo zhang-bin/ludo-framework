@@ -103,7 +103,7 @@ class DatabaseManager
     protected function getConfig($name)
     {
         $name = $name ?: $this->getDefaultConnection();
-        $connections = $this->config['database.connections'];
+        $connections = $this->config['connections'];
         if (is_null($config = array_get($connections, $name))) {
             throw new \InvalidArgumentException("Database [$name] not configured.");
         }
@@ -118,7 +118,7 @@ class DatabaseManager
      */
     public function getDefaultConnection()
     {
-        return $this->config['database.default'];
+        return $this->config['default'];
     }
 
     /**
@@ -129,7 +129,7 @@ class DatabaseManager
      */
     public function setDefaultConnection($name)
     {
-        $this->config['database.default'] = $name;
+        $this->config['default'] = $name;
     }
 
     /**
