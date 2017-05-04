@@ -105,13 +105,8 @@ class Validator
         return filter_var($data, FILTER_VALIDATE_IP, $flag) !== false ? true : false;
     }
 
-    public static function url(
-        $data,
-        $schemeRequired = false,
-        $hostRequired = true,
-        $pathRequired = false,
-        $queryStringRequired = false
-    ) {
+    public static function url( $data, $schemeRequired = false, $hostRequired = true, $pathRequired = false, $queryStringRequired = false)
+    {
         if (empty($data)) return false;
         $flags = 0;
         if ($schemeRequired) $flags |= FILTER_FLAG_SCHEME_REQUIRED;
@@ -137,5 +132,17 @@ class Validator
         $date = date_parse($data);
 
         return checkdate($date['month'], $date['day'], $date['year']);
+    }
+
+    /**
+     * whether data is a valid mobile phone number
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function mobile($data)
+    {
+        if (empty($data)) return false;
+        return (preg_match('/^1[34578]\d{9}$/', $data, $match) !== 0);
     }
 }
