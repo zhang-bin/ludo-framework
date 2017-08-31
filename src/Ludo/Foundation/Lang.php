@@ -142,4 +142,31 @@ class Lang
             file_put_contents($diffLangFilename, $str);
         }
     }
+
+    /**
+     * 获取语言包数据
+     * @param $baseDir
+     * @param $lang
+     * @return array
+     */
+    public static function getLang($baseDir, $lang) {
+        $baseLangDir = $baseDir.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR;
+        $baseLanguages = $diffLanguages = array();
+        $files = scandir($baseLangDir);
+        foreach ($files as $file) {
+            if ($file[0] == '.') continue;
+            $filename = $baseLangDir.$file;
+            $ext = ext($filename);
+            if ($ext != 'php') continue;
+            $file = explodeSafe($file, '.')[0];
+            $baseLanguages[$file] = require $filename;
+        }
+
+        $result = array();
+        foreach ($baseLanguages as $filename => $languages) {
+            if ($filename == 'base') continue;
+            $result[$filename] = $languages;
+        }
+        return $result;
+    }
 }
