@@ -489,4 +489,9 @@ abstract class Dao
     {
         $this->connection->statement('TRUNCATE '.$this->tblName);
     }
+
+    public function showCreate()
+    {
+        return $this->connection->select('SHOW CREATE TABLE '.$this->tblName)[0]['Create Table'];
+    }
 }
