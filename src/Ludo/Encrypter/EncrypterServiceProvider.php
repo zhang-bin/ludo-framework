@@ -7,8 +7,7 @@ use Ludo\Config\Config;
 class EncrypterServiceProvider {
     public function register() {
         ServiceProvider::getInstance()->register('encrypter', function(){
-            $config = Config::get('app');
-            return new Encrypter($config['key'], $config['cipher']);
+            return new Encrypter();
         });
     }
 }
