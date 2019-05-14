@@ -2,6 +2,7 @@
 namespace Ludo\Database;
 
 use Ludo\Database\Connectors\ConnectionFactory;
+use Ludo\Support\ServiceProvider;
 
 class DatabaseManager
 {
@@ -77,7 +78,12 @@ class DatabaseManager
     public function disconnect($name = null)
     {
         $name = $name ?: $this->getDefaultConnection();
-        unset($this->connections[$name]);
+        $this->connections[$name] = null;
+
+        $provider = ServiceProvider::getInstance();
+        if (is_object($provider)) {
+            $provider->delDBHandler($name);
+        }
     }
 
     /**

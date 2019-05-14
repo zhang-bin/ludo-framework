@@ -69,6 +69,14 @@ class ServiceProvider
 		return $this->db[$name];
 	}
 
+    /**
+     * delete all DB connections
+     * $param $name
+     */
+	public function delDBHandler($name = null) {
+        $this->db[$name] = null;
+    }
+
 	/**
 	 * get DB Manager Handler
 	 *

@@ -651,5 +651,50 @@ class Builder
         }
         return $params;
     }
+
+    /**
+     * used for batch insert lots data into the table
+     *
+     * @param array $arr 2D array,
+     * 	assoc array: 			array(array('field'=>value, 'field2'=>value2), array('field'=>value, 'field2'=>value2));
+     * 	or just indexed array:	array(array(value1, value2), array(value1, value2)); //if use indexedNames, the 2nd argument "$fieldNames" must be passed.
+     * @param array|String $fieldNames [Optional] only needed in indexed Data. field names for batch insert
+     * @param bool $ignore
+     * @return int if insert successful, else SqlException will be throwed
+     */
+    function batchInsert($arr, $fieldNames=array(), $ignore = false) {
+        if (empty($arr)) return false;
+
+        if (!empty($fieldNames)) {
+            $keys = is_array($fieldNames) ? implode(',', $fieldNames) : $fieldNames;
+        } else {
+            $keys = array_keys($arr[0]);
+            $fields = '';
+            foreach ($keys as $key) {
+                $fields .= "`$key`,";
+            }
+            $fields = trim($fields, ',');
+            $keys = $fields;
+        }
+
+        $sql = 'INSERT';
+        if ($ignore) $sql .= ' IGNORE ';
+        $sql .= ' INTO '.$this->db->quoteIdentifier($this->tableName)." ({$keys}) VALUES ";
+
+        $comma = '';
+        $params = array();
+        foreach ($arr as $a) {
+            $sql .= $comma.'(';
+            $comma2 = '';
+            foreach($a as $v) {
+                $sql .= $comma2.'?';
+                $params[] = $v;
+                $comma2 = ',';
+            }
+            $sql .= ')';
+            $comma = ',';
+        }
+        return $this->exec($sql, $params);
+    }
 }
 
