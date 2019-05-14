@@ -172,4 +172,24 @@ class BaseRedis extends Redis
     private function getNullMutexKey($key) {
         return 'null_mutex_'.$key;
     }
+
+    /**
+     * 随机延长过期时间，防止同一时间有大量key过期
+     *
+     * @param $key
+     * @param $seconds
+     */
+    public function randExpire($key, $seconds) {
+        $this->expire($key, $seconds + mt_rand(0, 86400));
+    }
+
+    /**
+     * 随机延长过期时间，防止同一时间有大量key过期
+     *
+     * @param $key
+     * @param $timestamp
+     */
+    public function randExpireAt($key, $timestamp) {
+        $this->expireAt($key, $timestamp + mt_rand(0, 86400));
+    }
 }

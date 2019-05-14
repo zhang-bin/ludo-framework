@@ -9,6 +9,16 @@ class Validator
         return filter_var($data, FILTER_VALIDATE_EMAIL) !== false;
     }
 
+    public static function uname($data)
+    {
+        return !empty($data) && preg_match('/^[a-zA-Z0-9]{5,16}$/', $data);
+    }
+
+    public static function password($data)
+    {
+        return !empty($data) && preg_match('/^[a-zA-Z0-9]{6,16}$/', $data);
+    }
+
     /**
      * validate if length of data is between the range( including the min and max value);
      *

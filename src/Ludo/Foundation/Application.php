@@ -22,14 +22,14 @@ class Application
             }
 
             list($ctrl, $act) = Router::parse($pathInfo);
+
+            define('CURRENT_CONTROLLER', $ctrl);
+            define('CURRENT_ACTION', $act);
             /**
              * @var \Ludo\Routing\Controller $controller
              */
             $controller = new $ctrl();
             $action = $act;
-
-            define('CURRENT_CONTROLLER', $controller->getCurrentCtrlName());
-            define('CURRENT_ACTION', $act);
 
             if (!method_exists($controller, $action)) {
                 throw new \BadMethodCallException("Method [$ctrl->$action] Not Found");
