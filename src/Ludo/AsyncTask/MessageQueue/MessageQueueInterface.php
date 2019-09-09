@@ -1,0 +1,69 @@
+<?php
+namespace Ludo\AsyncTask\MessageQueue;
+
+use Ludo\AsyncTask\JobInterface;
+
+interface MessageQueueInterface
+{
+
+    /**
+     * Push a job to queue
+     *
+     * @param JobInterface $job job object
+     * @param int $delay delay seconds
+     * @return bool
+     */
+    public function push(JobInterface $job, int $delay = 0): bool ;
+
+    /**
+     * Delete a delay job from queue
+     *
+     * @param JobInterface $job job object
+     * @return bool
+     */
+    public function delete(JobInterface $job): bool ;
+
+    /**
+     * Pop a job from queue
+     *
+     * @return array
+     */
+    public function pop(): array ;
+
+    /**
+     * Ack a job
+     *
+     * @param string $data stringify job
+     * @return bool
+     */
+    public function ack(string $data): bool ;
+
+    /**
+     * Push a job to failed queue
+     *
+     * @param string $data stringify job
+     * @return bool
+     */
+    public function fail(string $data): bool ;
+
+    /**
+     * Consume jobs from queue
+     */
+    public function consume(): void ;
+
+    /**
+     * Reload failed job into waiting queue
+     *
+     * @param string|null $queue queue name
+     * @return int
+     */
+    public function reload(string $queue = null): int;
+
+    /**
+     * Flush all failed message from failed queue
+     *
+     * @param string|null $queue failed queue name
+     * @return bool
+     */
+    public function flush(string $queue = null): bool ;
+}

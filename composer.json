@@ -11,11 +11,14 @@
   "require": {
     "php": ">=5.5.0",
     "ezyang/htmlpurifier": ">=4.6",
-    "phpmailer/phpmailer": "5.2.*"
+    "phpmailer/phpmailer": "5.2.*",
+    "ext-redis": "*",
+    "symfony/console": "^4.3"
   },
   "autoload": {
     "files": [
-      "src/Ludo/Support/helpers.php"
+      "src/Ludo/Support/helpers.php",
+      "src/Ludo/Utils/Functions.php"
     ],
     "psr-0": {
       "Ludo": "src/"
