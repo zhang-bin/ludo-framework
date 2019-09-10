@@ -22,7 +22,7 @@ class MessageQueueFactory
      */
     public function __construct()
     {
-        $config = Config::get('async_queue');
+        $config = Config::getInstance()->get('async_queue');
 
         $messageQueueClass = $config['message_queue'];
         if (!class_exists($messageQueueClass)) {

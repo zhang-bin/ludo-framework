@@ -37,7 +37,7 @@ class ServiceProvider
 
 	private function __construct()
     {
-		$this->config = Config::getConfig();
+		$this->config = Config::getInstance()->getConfig();
 	}
 
 	/**
@@ -115,32 +115,6 @@ class ServiceProvider
         }
         return $this->log;
 	}
-
-    /**
-     * 异步任务server
-     *
-     * @param $cmd
-     */
-    public function taskQueueServer($cmd)
-    {
-        $server = new TaskQueueServer();
-        $client = new \swoole_client(SWOOLE_TCP, SWOOLE_SOCK_SYNC);
-        switch ($cmd) {
-            case 'start':
-                $server->run();
-                break;
-            case 'stop':
-                $client->connect(Config::get('server.task_queue.host'), Config::get('server.task_queue.port'));
-                $client->send('stop');
-                break;
-            case 'reload':
-                $client->connect(Config::get('server.task_queue.host'), Config::get('server.task_queue.port'));
-                $client->send('reload');
-                break;
-            default:
-                break;
-        }
-    }
 
     public function register($abstract, $concrete) {
         if (isset($this->bindings[$abstract])) return;//已经注册了

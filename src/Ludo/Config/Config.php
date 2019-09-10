@@ -1,31 +1,90 @@
 <?php
 namespace Ludo\Config;
 
+/**
+ * Class Config
+ *
+ * @package Ludo\Config
+ */
 class Config
 {
+    /**
+     * @var array $config config data
+     */
     public static $config = array();
 
-    public static function init()
+    /**
+     * @var Config $instance config instance
+     */
+    private static $instance;
+
+    /**
+     * Get config instance
+     *
+     * @return Config
+     */
+    public static function getInstance()
     {
-        if (empty(self::$config)) {
-            $dir = SITE_ROOT.'/config/';
-            $files = scandir($dir);
-            foreach ($files as $file) {
-                if ($file[0] == '.' || $file[0] == '..') continue;
-                $filename = $dir.$file;
-                $ext = ext($filename);
-                if ($ext != 'php') continue;
-                $config = require $filename;
-                $basename = basename($filename, '.php');
-                foreach ($config as $k => $v) {
-                    self::$config[$basename][$k] = $v;
-                }
-            }
+        if (is_null(self::$instance)) {
+            self::$instance = new Config();
         }
-        return self::$config;
+        return self::$instance;
     }
 
-    public static function get($name)
+    /**
+     * Config constructor.
+     */
+    public function __construct()
+    {
+        $dir = SITE_ROOT.'/config/';
+        $this->readDirectory($dir);
+    }
+
+    /**
+     * Read config file
+     *
+     * @param string $filename
+     */
+    private function readFile(string $filename): void
+    {
+        if (file_exists($filename) && is_readable($filename)) {
+            $config = require $filename;
+            $basename = basename($filename, '.php');
+            foreach ($config as $k => $v) {
+                self::$config[$basename][$k] = $v;
+            }
+        }
+    }
+
+    /**
+     * Read config directory
+     *
+     * @param string $dir
+     */
+    private function readDirectory(string $dir): void
+    {
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if ($file[0] == '.' || $file[0] == '..') {
+                continue;
+            }
+            $filename = $dir.$file;
+            $ext = ext($filename);
+            if ($ext != 'php') {
+                continue;
+            }
+
+            $this->readFile($filename);
+        }
+    }
+
+    /**
+     * Get config value by key
+     *
+     * @param $name
+     * @return mixed
+     */
+    public function get($name)
     {
         $segments = explode('.', $name);
         $length = count($segments);
@@ -40,7 +99,12 @@ class Config
         return array_get($item, $name);
     }
 
-    public static function getConfig()
+    /**
+     * Get all config data
+     *
+     * @return array
+     */
+    public function getConfig()
     {
         return self::$config;
     }

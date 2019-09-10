@@ -1,7 +1,7 @@
 <?php
 namespace Ludo\Utils;
 
-use Swoole\Channel;
+use Swoole\Coroutine\Channel;
 use Swoole\Coroutine;
 
 /**
@@ -45,9 +45,11 @@ class Parallel
             });
         }
 
-        while($callbackNum--) {
-            $channel->pop();
-        }
+        Coroutine::create(function () use ($channel, $callbackNum) {
+            while($callbackNum--) {
+                $channel->pop();
+            }
+        });
 
         return $result;
     }

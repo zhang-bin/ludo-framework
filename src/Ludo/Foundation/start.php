@@ -1,6 +1,5 @@
 <?php
 \Ludo\Foundation\Lang::init();
-\Ludo\Config\Config::init();
 
 $providers = [
     Ludo\Encrypter\EncrypterServiceProvider::class,
@@ -20,7 +19,6 @@ $alias = [
     'Config' => Ludo\Config\Config::class,
     'Factory' => Ludo\Support\Factory::class,
     'View' => Ludo\View\View::class,
-    'TaskQueue' => Ludo\Task\TaskQueue::class,
     'QueryException' => Ludo\Database\QueryException::class,
     'Counter' => Ludo\Counter\Counter::class,
     'Crypt' => Ludo\Support\Facades\Crypt::class,

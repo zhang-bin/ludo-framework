@@ -32,7 +32,7 @@ class Encrypter
      */
     public function __construct()
     {
-        $config = Config::get('app');
+        $config = Config::getInstance()->get('app');
         if (self::supported($config['key'], $config['cipher'])) {
             self::$key = $config['key'];
             self::$cipher = $config['cipher'];

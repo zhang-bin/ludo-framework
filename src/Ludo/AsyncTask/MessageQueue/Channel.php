@@ -1,6 +1,8 @@
 <?php
 
-namespace Ludo\AsyncTask;
+namespace Ludo\AsyncTask\MessageQueue;
+
+use RuntimeException;
 
 /**
  * Class Channel
@@ -41,6 +43,21 @@ class Channel
         $this->delayed = $channel.'_delayed';
         $this->failed = $channel.'_failed';
         $this->timeout = $channel.'_timeout';
+    }
+
+    /**
+     * Get channel by name
+     *
+     * @param string $channel
+     * @return mixed
+     */
+    public function get(string $channel)
+    {
+        if (isset($this->{$channel}) && is_string($this->{$channel})) {
+            return $this->{$channel};
+        }
+
+        throw new RuntimeException(sprintf('Channel %s is not exist.', $channel));
     }
 
     /**

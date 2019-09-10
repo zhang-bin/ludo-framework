@@ -2,12 +2,11 @@
 
 namespace Ludo\AsyncTask\MessageQueue;
 
-use Ludo\AsyncTask\Channel;
 use Ludo\AsyncTask\JobInterface;
 use Ludo\AsyncTask\Message;
 use Ludo\AsyncTask\MessageInterface;
 use Redis;
-
+use RuntimeException;
 
 class RedisMessageQueue extends MessageQueue
 {
@@ -74,6 +73,20 @@ class RedisMessageQueue extends MessageQueue
     }
 
     /**
+     * Delete a job from delayed queue
+     *
+     * @param JobInterface $job
+     * @return bool
+     */
+    public function delete(JobInterface $job): bool
+    {
+        $message = new Message($job);
+        $data = serialize($message);
+
+        return boolval($this->redis->zRem($this->channel->getDelayed(), $data));
+    }
+
+    /**
      * Pop job from message queue
      *
      * @return array
@@ -137,12 +150,44 @@ class RedisMessageQueue extends MessageQueue
         return $this->redis->zAdd($this->channel->getDelayed(), [], time() + $this->retryDelaySeconds, $data) > 0;
     }
 
-    public function reload(string $queue = null): int
+    /**
+     * Reload failed message into waiting queue
+     *
+     * @param string|null $channel
+     * @return int
+     */
+    public function reload(string $channel = null): int
     {
-        $channel = $this->channel->getFailed();
-        if ($queue) {
+        $channelName = $this->channel->getFailed();
+        if ($channel) {
+            if (!in_array($channel, ['timeout', 'waiting'])) {
+                throw new RuntimeException(sprintf('Channel %s is not supported', $channel));
+            }
 
+            $channelName = $this->channel->get($channel);
         }
+
+        $num = 0;
+        while ($this->redis->rpoplpush($channelName, $this->channel->getWaiting())) {
+            ++$num;
+        }
+        return $num;
+    }
+
+    /**
+     * Flush message queue
+     *
+     * @param string|null $channel
+     * @return bool
+     */
+    public function flush(string $channel = null): bool
+    {
+        $channelName = $this->channel->getFailed();
+        if ($channel) {
+            $channelName = $this->channel->get($channel);
+        }
+
+        return boolval($this->redis->del($channelName));
     }
 
     /**

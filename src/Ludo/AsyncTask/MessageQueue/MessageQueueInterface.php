@@ -54,10 +54,10 @@ interface MessageQueueInterface
     /**
      * Reload failed job into waiting queue
      *
-     * @param string|null $queue queue name
+     * @param string|null $channel queue name
      * @return int
      */
-    public function reload(string $queue = null): int;
+    public function reload(string $channel = null): int;
 
     /**
      * Flush all failed message from failed queue
