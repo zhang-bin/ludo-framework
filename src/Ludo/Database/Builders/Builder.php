@@ -1,8 +1,10 @@
 <?php
+
 namespace Ludo\Database\Builders;
 
 use Ludo\Database\Connection;
 use PDO;
+use phpDocumentor\Reflection\Types\This;
 
 class Builder
 {
@@ -82,13 +84,13 @@ class Builder
 
     /**
      * @param Connection $dbObj
-     * @param String $tableName	table name without prefix
-     * @param String $tableAlias alias of table, Default equals table name without prefix
+     * @param string $tableName table name without prefix
+     * @param string $tableAlias alias of table, Default equals table name without prefix
      */
-    public function __construct(Connection $dbObj, $tableName, $tableAlias = '')
+    public function __construct(Connection $dbObj, string $tableName, string $tableAlias = '')
     {
         $this->db = $dbObj;
-        $this->tableName = $this->db->getTablePrefix().$tableName;
+        $this->tableName = $this->db->getTablePrefix() . $tableName;
 
         //tableAlias default is the table name without prefix
         $this->tableAlias = $tableAlias ? $tableAlias : $tableName;
@@ -97,10 +99,10 @@ class Builder
     /**
      * Set table Alias
      *
-     * @param String $tableAlias Table's alias
+     * @param string $tableAlias Table's alias
      * @return $this
      */
-    public function setTableAlias($tableAlias)
+    public function setTableAlias(string $tableAlias): Builder
     {
         $this->tableAlias = $tableAlias;
         return $this;
@@ -113,7 +115,7 @@ class Builder
      * @param string|array $params
      * @return $this|String
      */
-    public function sql($sql = '', $params = null)
+    public function sql(string $sql = '', $params = null)
     {
         if (!empty($sql)) {
             $this->sql = '';
@@ -128,12 +130,15 @@ class Builder
     /**
      * set the field part of sql clause
      *
-     * @param String $fieldName comma separated list: id, User.name, UserType.id
+     * @param string $fieldName comma separated list: id, User.name, UserType.id
      * @return $this
      */
-    public function setField($fieldName)
+    public function setField(string $fieldName): Builder
     {
-        if (!empty($fieldName)) array_push($this->fields, $fieldName);
+        if (!empty($fieldName)) {
+            array_push($this->fields, $fieldName);
+        }
+
         return $this;
     }
 
@@ -143,9 +148,12 @@ class Builder
      * @param String $fieldName comma separated list: id, User.name, UserType.id
      * @return $this
      */
-    public function field($fieldName)
+    public function field(string $fieldName): Builder
     {
-        if ($fieldName == '*') $fieldName = $this->tableAlias.'.*';
+        if ($fieldName == '*') {
+            $fieldName = $this->tableAlias . '.*';
+        }
+
         return $this->setField($fieldName);
     }
 
@@ -155,7 +163,7 @@ class Builder
      * @param bool $distinct whether to distinct rows, default is false;
      * @return $this
      */
-    public function distinct($distinct = false)
+    public function distinct(bool $distinct = false): Builder
     {
         $this->distinct = $distinct;
         return $this;
@@ -166,7 +174,7 @@ class Builder
      * @param string $fields field part of joined table
      * @return $this
      */
-    protected function addJoinField($fields)
+    protected function addJoinField(string $fields): Builder
     {
         array_push($this->fields, $fields);
         return $this;
@@ -175,13 +183,13 @@ class Builder
     /**
      * join a table, This function can be multiple called and each call will be concatenated.
      *
-     * @param String $table the table will be joined, which can have alias like "user u" or "user as u"
-     * @param String $on on condition
-     * @param String $fields the fields came from the joined table
-     * @param String $join join type: LdTable::LEFT_JOIN OR LdTable::RIGHT_JOIN OR LdTable::INNER_JOIN.
+     * @param string $table the table will be joined, which can have alias like "user u" or "user as u"
+     * @param string $on on condition
+     * @param string $fields the fields came from the joined table
+     * @param string $join join type: LdTable::LEFT_JOIN OR LdTable::RIGHT_JOIN OR LdTable::INNER_JOIN.
      * @return $this
      */
-    public function join($table, $on = '', $fields = '', $join = self::INNER_JOIN)
+    public function join(string $table, string $on = '', string $fields = '', string $join = self::INNER_JOIN): Builder
     {
         $as = $table;
         //if $table have ' ' which means $table have a alias,
@@ -192,11 +200,13 @@ class Builder
             $as = $tmp[1];
         }
 
-        $table = $this->db->quoteIdentifier($this->db->getTablePrefix().$table);
+        $table = $this->db->quoteIdentifier($this->db->getTablePrefix() . $table);
 
-        if ($fields) $this->addJoinField($fields);
+        if ($fields) {
+            $this->addJoinField($fields);
+        }
 
-        $on = $on ? 'ON '.$on : '';
+        $on = $on ? 'ON ' . $on : '';
 
         $this->join .= " {$join} {$table} {$as} {$on} ";
         return $this;
@@ -205,12 +215,12 @@ class Builder
     /**
      * left join a table, This function can be multiple called and each call will be concatenated.
      *
-     * @param String $table the table will be joined, which can have alias like "user u" or "user as u"
-     * @param String $on on condition
-     * @param String $fields the fields came from the joined table
+     * @param string $table the table will be joined, which can have alias like "user u" or "user as u"
+     * @param string $on on condition
+     * @param string $fields the fields came from the joined table
      * @return $this
      */
-    public function leftJoin($table, $on = '', $fields = '')
+    public function leftJoin(string $table, string $on = '', string $fields = ''): Builder
     {
         return $this->join($table, $on, $fields, self::LEFT_JOIN);
     }
@@ -218,12 +228,12 @@ class Builder
     /**
      * Right join a table, This function can be multiple called and each call will be concatenated.
      *
-     * @param String $table the table will be joined, which can have alias like "user u" or "user as u"
-     * @param String $on on condition
-     * @param String $fields the fields came from the joined table
+     * @param string $table the table will be joined, which can have alias like "user u" or "user as u"
+     * @param string $on on condition
+     * @param string $fields the fields came from the joined table
      * @return $this
      */
-    public function rightJoin($table, $on = '', $fields = '')
+    public function rightJoin(string $table, string $on = '', string $fields = ''): Builder
     {
         return $this->join($table, $on, $fields, self::RIGHT_JOIN);
     }
@@ -231,12 +241,12 @@ class Builder
     /**
      * inner join a table, This function can be multiple called and each call will be concatenated.
      *
-     * @param String $table the table will be joined, which can have alias like "user u" or "user as u"
-     * @param String $on on condition
-     * @param String $fields the fields came from the joined table
+     * @param string $table the table will be joined, which can have alias like "user u" or "user as u"
+     * @param string $on on condition
+     * @param string $fields the fields came from the joined table
      * @return $this
      */
-    public function innerJoin($table, $on = '', $fields = '')
+    public function innerJoin(string $table, string $on = '', string $fields = ''): Builder
     {
         return $this->join($table, $on, $fields, self::INNER_JOIN);
     }
@@ -244,15 +254,15 @@ class Builder
     /**
      * set condition part in query clause
      *
-     * @param String $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
+     * @param string $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
      *                               'field1=:name & tableAlias.field3=:user'
      * @param array|null $params
      * @return $this
      */
-    public function where($condition, $params = NULL)
+    public function where(string $condition, $params = null): Builder
     {
         if (!empty($condition)) {
-            $this->where = 'WHERE '.$condition;
+            $this->where = 'WHERE ' . $condition;
             $this->params = $this->autoArr($params);
         }
         return $this;
@@ -261,15 +271,15 @@ class Builder
     /**
      * set condition part in query clause
      *
-     * @param String $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
+     * @param string $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
      *                               'field1=:name & tableAlias.field3=:user'
      * @param array|null $params
      * @return $this
      */
-    public function having($condition, $params = NULL)
+    public function having(string $condition, $params = null): Builder
     {
-        $this->having = 'HAVING '.$condition;
-        $this->params = empty($this->params) ?  $this->autoArr($params) : array_merge($this->params, $this->autoArr($params));
+        $this->having = 'HAVING ' . $condition;
+        $this->params = empty($this->params) ? $this->autoArr($params) : array_merge($this->params, $this->autoArr($params));
         return $this;
     }
 
@@ -278,7 +288,7 @@ class Builder
      * @param string $order : e.g. id DESC
      * @return $this
      */
-    public function orderBy($order)
+    public function orderBy(string $order): Builder
     {
         $this->order = $order;
         return $this;
@@ -290,7 +300,7 @@ class Builder
      * @param String $group e.g. 'field1'
      * @return $this
      */
-    public function groupBy($group)
+    public function groupBy(string $group): Builder
     {
         $this->group = $group;
         return $this;
@@ -303,7 +313,7 @@ class Builder
      * @param int $start
      * @return $this
      */
-    public function limit($rows = 0, $start = 0)
+    public function limit(int $rows = 0, int $start = 0): Builder
     {
         if (empty($rows)) {
             $this->limit = '';
@@ -318,20 +328,20 @@ class Builder
      * @param bool $return true: return the sql clause (Default is true). false: assign sql clause to this->sql.
      * @return mixed
      */
-    protected function constructSql($return = true)
+    protected function constructSql(bool $return = true)
     {
         if (empty($this->userSql)) {
             $distinct = $this->distinct ? 'DISTINCT' : '';
 
             $groupBy = '';
             if (!empty($this->group)) {
-                $groupBy = 'GROUP BY '.$this->group;
-                if (!empty($this->having)) $groupBy .= ' '.$this->having;
+                $groupBy = 'GROUP BY ' . $this->group;
+                if (!empty($this->having)) $groupBy .= ' ' . $this->having;
             }
-            $order = !empty($this->order) ? 'ORDER BY '.$this->order : '';
+            $order = !empty($this->order) ? 'ORDER BY ' . $this->order : '';
 
             if (empty($this->fields)) {
-                $fields = $this->tableAlias.'.*';
+                $fields = $this->tableAlias . '.*';
             } else {
                 $fields = implode(',', $this->fields);
             }
@@ -351,12 +361,12 @@ class Builder
     /**
      * do an query directly, which will return a result
      *
-     * @param array/String $params
+     * @param array/string $params
      * @param int $fetchMode
      * @param mixed $fetchArgument
      * @return array
      */
-    public function select($multi_call_params = NULL, $fetchMode = PDO::FETCH_ASSOC, $fetchArgument = null)
+    public function select($multi_call_params = NULL, int $fetchMode = PDO::FETCH_ASSOC, $fetchArgument = null): array
     {
         # 1. A multi-call means that sql have been prepared to do multiple call with different params.
         # 2. if $multi_call_params is null, means this is an once-call.
@@ -376,14 +386,14 @@ class Builder
 
     /**
      * get one row from table into an array
-     * @param String|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
-     * 	A multi-call means that sql have been prepared to do multiple call with different params.
+     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     *    A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @param int $fetchMode PDO::FETCH_ASSOC, PDO::FETCH_NUM, PDO::FETCH_BOTH
      *
      * @return array|bool represent one row in a table, or false if failure
      */
-    public function fetch($multi_call_params = NULL, $fetchMode = PDO::FETCH_ASSOC)
+    public function fetch($multi_call_params = NULL, int $fetchMode = PDO::FETCH_ASSOC)
     {
         $this->limit(1);
         $this->db->setFetchMode($fetchMode);
@@ -399,7 +409,7 @@ class Builder
      * get all rows from table into an 2D array
      *
      * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
-     * 	A multi-call means that sql have been prepared to do multiple call with different params.
+     *    A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @param int $fetchMode Controls the contents of the returned array.
      * Defaults to PDO::FETCH_BOTH. Other useful options is:
@@ -407,7 +417,7 @@ class Builder
      * PDO::FETCH_COLUMN|PDO::FETCH_GROUP: To return an associative array grouped by the values of a specified column
      * @return array represents an table
      */
-    public function fetchAll($multi_call_params = null, $fetchMode = PDO::FETCH_ASSOC)
+    public function fetchAll($multi_call_params = null, int $fetchMode = PDO::FETCH_ASSOC)
     {
         return $this->select($multi_call_params, $fetchMode);
     }
@@ -418,14 +428,14 @@ class Builder
      * will return: array(row1_col1, row2_col1, row3_col1);
      *
      * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
-     * 	A multi-call means that sql have been prepared to do multiple call with different params.
+     *    A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return array represents an table
      */
     public function fetchAllUnique($multi_call_params = null)
     {
         if (PHP_VERSION_ID >= 70000) {
-            return $this->select($multi_call_params, PDO::FETCH_COLUMN|PDO::FETCH_UNIQUE, 0);
+            return $this->select($multi_call_params, PDO::FETCH_COLUMN | PDO::FETCH_UNIQUE, 0);
         } else {
             $data = $this->select($multi_call_params, PDO::FETCH_COLUMN);
             $result = array();
@@ -440,16 +450,16 @@ class Builder
      * get the same column in each rows from table into an 1D array.
      * note:
      *
+     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     *    A multi-call means that sql have been prepared to do multiple call with different params.
+     *   if $multi_call_params is not null, means this is an multi-call.
+     * @return array represents an table
      * @example
      * <pre>
      * select col1, col2 from table limit 0,3. \n
      * will return: array(row1_col1=>row1_col2, row2_col1=>row2_col2, row3_col1=>row3_col2);
      * </pre>
      *
-     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
-     * 	A multi-call means that sql have been prepared to do multiple call with different params.
-     *   if $multi_call_params is not null, means this is an multi-call.
-     * @return array represents an table
      */
     public function fetchAllKvPair($multi_call_params = null)
     {
@@ -460,7 +470,7 @@ class Builder
      * Returns a single column from the next row of a result set
      *
      * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
-     * 	A multi-call means that sql have been prepared to do multiple call with different params.
+     *    A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return mixed Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
@@ -477,10 +487,10 @@ class Builder
     /**
      * get the records count
      *
-     * @param String $distinctFields which field(s) for identifying distinct.
+     * @param string $distinctFields which field(s) for identifying distinct.
      * @return int the record count
      */
-    public function recordsCount($distinctFields = '')
+    public function recordsCount(string $distinctFields = ''): int
     {
         array_push($this->fields, $distinctFields ? "count(DISTINCT {$distinctFields})" : 'count(*)');
         return $this->fetchColumn();
@@ -496,19 +506,19 @@ class Builder
      *                    );
      * @return int Last insert id if insert successful, else SqlException will be throwed
      */
-    public function insert($arr)
+    public function insert(array $arr): int
     {
-        if ( empty($arr) ) return false;
+        if (empty($arr)) return false;
 
         $comma = '';
         $setFields = '(';
         $setValues = '(';
         $params = array();
-        foreach($arr as $key => $value) {
+        foreach ($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
             $setFields .= "{$comma}{$key}";
-            $setValues .= $comma.'?';
+            $setValues .= $comma . '?';
             $comma = ',';
         }
         $setFields .= ')';
@@ -528,19 +538,21 @@ class Builder
      *                      ...
      *                    );
      * @param string|array $condition The query condition. with following format:<br />
-     * 		String: 'id=2 and username="test"'
-     * 		Array:  array('id=? and uname=?', array(2, 'test')); //
+     *        String: 'id=2 and username="test"'
+     *        Array:  array('id=? and uname=?', array(2, 'test')); //
      *
      * @return int row number if insert successful, else SqlException will be throw
      */
-    public function update($arr, $condition = '')
+    public function update(array $arr, string $condition = ''): int
     {
-        if ( empty($arr) ) return false;
+        if (empty($arr)) {
+            return false;
+        }
 
         $comma = '';
         $setFields = '';
         $params = array();
-        foreach($arr as $key => $value) {
+        foreach ($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
             $setFields .= "{$comma} {$key}=?";
@@ -550,10 +562,10 @@ class Builder
 
         if (!empty($condition)) {
             if (is_array($condition)) {
-                $sql .= ' WHERE '.$condition[0];
+                $sql .= ' WHERE ' . $condition[0];
                 $params = array_merge($params, $this->autoArr($condition[1]));
             } else {
-                $sql .= ' WHERE '.$condition;
+                $sql .= ' WHERE ' . $condition;
                 $params = null;
             }
         }
@@ -565,15 +577,15 @@ class Builder
      * delete record from table
      *
      * @param string $condition The query condition. with following format:<br />
-     * 		String: 'id=2 and uanme="libok"' or 'id=? and uname=?' or 'id=:id and uname=:uname'
+     *        String: 'id=2 and uanme="libok"' or 'id=? and uname=?' or 'id=:id and uname=:uname'
      * @param string|array $params params which will be used in prepared statement, with following format: <br />
-     * 		String: if you just need one parameter in above prepared statement. e.g. '1111'
-     *		Array: array(2, 'libok') or array(':id'=>2, ':uname'=>'libok')
+     *        String: if you just need one parameter in above prepared statement. e.g. '1111'
+     *        Array: array(2, 'libok') or array(':id'=>2, ':uname'=>'libok')
      *
      * @return int row nums if insert successful, else SqlException will be throwed
      * @access public
      */
-    public function delete($condition = '', $params = null)
+    public function delete(string $condition = '', $params = null): int
     {
         $sql = "DELETE FROM {$this->db->quoteIdentifier($this->tableName)}";
 
@@ -581,7 +593,7 @@ class Builder
             if (!is_null($params) && !is_array($params)) { //using prepared statement.
                 $params = array($params);
             }
-            $sql .= ' WHERE '.$condition;
+            $sql .= ' WHERE ' . $condition;
         }
 
         return $this->db->delete($sql, $params);
@@ -606,11 +618,11 @@ class Builder
 
     /**
      * execute an insert/update/delete sql clause directly,
-     * @param String $sql sql clause
+     * @param string $sql sql clause
      * @param Mixed $params
      * @return int affected rows
      */
-    public function exec($sql, $params = NULL)
+    public function exec(string $sql, $params = null): int
     {
         if (func_num_args() == 2) {
             $params = $this->autoArr($params);
@@ -634,51 +646,4 @@ class Builder
         }
         return $params;
     }
-
-    /**
-     * used for batch insert lots data into the table
-     *
-     * @param array $arr 2D array,
-     * 	assoc array: 			array(array('field'=>value, 'field2'=>value2), array('field'=>value, 'field2'=>value2));
-     * 	or just indexed array:	array(array(value1, value2), array(value1, value2)); //if use indexedNames, the 2nd argument "$fieldNames" must be passed.
-     * @param array|String $fieldNames [Optional] only needed in indexed Data. field names for batch insert
-     * @param bool $ignore
-     * @return int if insert successful, else SqlException will be throwed
-     */
-    public function batchInsert($arr, $fieldNames=array(), $ignore = false)
-    {
-        if (empty($arr)) return false;
-
-        if (!empty($fieldNames)) {
-            $keys = is_array($fieldNames) ? implode(',', $fieldNames) : $fieldNames;
-        } else {
-            $keys = array_keys($arr[0]);
-            $fields = '';
-            foreach ($keys as $key) {
-                $fields .= "`$key`,";
-            }
-            $fields = trim($fields, ',');
-            $keys = $fields;
-        }
-
-        $sql = 'INSERT';
-        if ($ignore) $sql .= ' IGNORE ';
-        $sql .= ' INTO '.$this->db->quoteIdentifier($this->tableName)." ({$keys}) VALUES ";
-
-        $comma = '';
-        $params = array();
-        foreach ($arr as $a) {
-            $sql .= $comma.'(';
-            $comma2 = '';
-            foreach($a as $v) {
-                $sql .= $comma2.'?';
-                $params[] = $v;
-                $comma2 = ',';
-            }
-            $sql .= ')';
-            $comma = ',';
-        }
-        return $this->exec($sql, $params);
-    }
 }
-

@@ -1,8 +1,10 @@
 <?php
+
 namespace Ludo\Database;
 
 use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Support\ServiceProvider;
+use InvalidArgumentException;
 
 class DatabaseManager
 {
@@ -16,7 +18,7 @@ class DatabaseManager
     /**
      * The database connection factory instance.
      *
-     * @var \Ludo\Database\Connectors\ConnectionFactory
+     * @var ConnectionFactory
      */
     protected $factory;
 
@@ -25,15 +27,22 @@ class DatabaseManager
      *
      * @var array
      */
-    protected $connections = array();
+    protected $connections = [];
+
+    /**
+     * Config
+     *
+     * @var array
+     */
+    protected $config = [];
 
     /**
      * Create a new database manager instance.
      *
-     * @param  array  $config
-     * @param  \Ludo\Database\Connectors\ConnectionFactory  $factory
+     * @param array $config
+     * @param ConnectionFactory $factory
      */
-    public function __construct($config, ConnectionFactory $factory)
+    public function __construct(array $config, ConnectionFactory $factory)
     {
         $this->config = $config;
         $this->factory = $factory;
@@ -42,10 +51,10 @@ class DatabaseManager
     /**
      * Get a database connection instance.
      *
-     * @param  string  $name
-     * @return \Ludo\Database\Connection
+     * @param string $name
+     * @return Connection
      */
-    public function connection($name = null)
+    public function connection(string $name = null): Connection
     {
         $name = $name ?: $this->getDefaultConnection();
         if (!isset($this->connections[$name])) {
@@ -57,10 +66,10 @@ class DatabaseManager
     /**
      * Reconnect to the given database.
      *
-     * @param  string  $name
-     * @return \Ludo\Database\Connection
+     * @param string $name
+     * @return Connection
      */
-    public function reconnect($name = null)
+    public function reconnect(string $name = null): Connection
     {
         $name = $name ?: $this->getDefaultConnection();
 
@@ -72,10 +81,10 @@ class DatabaseManager
     /**
      * Disconnect from the given database.
      *
-     * @param  string  $name
+     * @param string $name
      * @return void
      */
-    public function disconnect($name = null)
+    public function disconnect(string $name = null): void
     {
         $name = $name ?: $this->getDefaultConnection();
         $this->connections[$name] = null;
@@ -89,10 +98,10 @@ class DatabaseManager
     /**
      * Make the database connection instance.
      *
-     * @param  string  $name
-     * @return \Ludo\Database\Connection
+     * @param string $name
+     * @return Connection
      */
-    protected function makeConnection($name)
+    protected function makeConnection(string $name): Connection
     {
         $config = $this->getConfig($name);
         return $this->factory->make($config, $name);
@@ -101,17 +110,17 @@ class DatabaseManager
     /**
      * Get the configuration for a connection.
      *
-     * @param  string  $name
+     * @param string $name
      * @return array
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    protected function getConfig($name)
+    protected function getConfig(string $name): array
     {
         $name = $name ?: $this->getDefaultConnection();
         $connections = $this->config['connections'];
         if (is_null($config = array_get($connections, $name))) {
-            throw new \InvalidArgumentException("Database [$name] not configured.");
+            throw new InvalidArgumentException("Database [$name] not configured.");
         }
 
         return $config;
@@ -122,7 +131,7 @@ class DatabaseManager
      *
      * @return string
      */
-    public function getDefaultConnection()
+    public function getDefaultConnection(): string
     {
         return $this->config['default'];
     }
@@ -130,10 +139,10 @@ class DatabaseManager
     /**
      * Set the default connection name.
      *
-     * @param  string  $name
+     * @param string $name
      * @return void
      */
-    public function setDefaultConnection($name)
+    public function setDefaultConnection(string $name): void
     {
         $this->config['default'] = $name;
     }
@@ -143,7 +152,7 @@ class DatabaseManager
      *
      * @return array
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         return $this->connections;
     }

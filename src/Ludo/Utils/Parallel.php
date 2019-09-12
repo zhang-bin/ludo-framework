@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Utils;
 
 use Swoole\Coroutine\Channel;
@@ -19,7 +20,7 @@ class Parallel
      * @param callable $callback
      * @param null $key
      */
-    public function add(callable $callback, $key = null)
+    public function add(callable $callback, $key = null): void
     {
         if (is_null($key)) {
             $this->callbacks[] = $callback;
@@ -33,7 +34,7 @@ class Parallel
      *
      * @return array
      */
-    public function wait()
+    public function wait(): array
     {
         $result = [];
         $callbackNum = count($this->callbacks);
@@ -46,7 +47,7 @@ class Parallel
         }
 
         Coroutine::create(function () use ($channel, $callbackNum) {
-            while($callbackNum--) {
+            while ($callbackNum--) {
                 $channel->pop();
             }
         });

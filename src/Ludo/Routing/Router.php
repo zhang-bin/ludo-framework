@@ -4,7 +4,7 @@ namespace Ludo\Routing;
 
 class Router
 {
-    public static function parse($pathInfo)
+    public static function parse(string $pathInfo)
     {
         $ctrl = 'Index';
         $act = 'index';

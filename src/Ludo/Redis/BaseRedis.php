@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Redis;
 
 use Redis;
@@ -107,7 +108,7 @@ class BaseRedis extends Redis
             $data = $this->hGetAll($key);
         } else {
             if (!$this->hExists($key, $hashKey)) {
-                $nullMutexKey = $this->getNullMutexKey($key.'_'.$hashKey);
+                $nullMutexKey = $this->getNullMutexKey($key . '_' . $hashKey);
                 if ($this->exists($nullMutexKey)) {
                     $data = null;
                 } else {
@@ -135,7 +136,8 @@ class BaseRedis extends Redis
      * @param mixed $value 数据
      * @param array $expire 过期值 e.g. expire_at => timestamp || expire => seconds
      */
-    public function hSetSafely($key, $hashKey, $value, array $expire = array()) {
+    public function hSetSafely($key, $hashKey, $value, array $expire = array())
+    {
         $this->hSet($key, $hashKey, $value);
         $expireKey = key($expire);
         switch ($expireKey) {
@@ -149,7 +151,7 @@ class BaseRedis extends Redis
                 break;
         }
 
-        $nullMutexKey = $this->getNullMutexKey($key.'_'.$hashKey);
+        $nullMutexKey = $this->getNullMutexKey($key . '_' . $hashKey);
         $this->del($nullMutexKey);
     }
 
@@ -159,8 +161,9 @@ class BaseRedis extends Redis
      * @param $key
      * @return string
      */
-    private function getMutexKey($key) {
-        return 'mutex_'.$key;
+    private function getMutexKey($key)
+    {
+        return 'mutex_' . $key;
     }
 
     /**
@@ -169,8 +172,9 @@ class BaseRedis extends Redis
      * @param $key
      * @return string
      */
-    private function getNullMutexKey($key) {
-        return 'null_mutex_'.$key;
+    private function getNullMutexKey($key)
+    {
+        return 'null_mutex_' . $key;
     }
 
     /**
@@ -179,7 +183,8 @@ class BaseRedis extends Redis
      * @param $key
      * @param $seconds
      */
-    public function randExpire($key, $seconds) {
+    public function randExpire($key, $seconds)
+    {
         $this->expire($key, $seconds + mt_rand(0, 86400));
     }
 
@@ -189,7 +194,8 @@ class BaseRedis extends Redis
      * @param $key
      * @param $timestamp
      */
-    public function randExpireAt($key, $timestamp) {
+    public function randExpireAt($key, $timestamp)
+    {
         $this->expireAt($key, $timestamp + mt_rand(0, 86400));
     }
 }

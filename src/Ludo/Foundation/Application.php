@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Foundation;
 
 use Ludo\Routing\Router;
@@ -18,7 +19,7 @@ class Application
      * @param string $path
      * @return string
      */
-    public function run($path = '')
+    public function run(string $path = ''): string
     {
         try {
             if (PHP_SAPI != 'cli') {
@@ -69,10 +70,10 @@ class Application
             if (Config::get('app.debug')) {
                 self::debug($output);
             }
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             error_log($ex);
             if (Config::get('app.debug')) {
-                $error = '<pre>'.$ex->getMessage()."\n\n".$ex->getTraceAsString().'</pre>';
+                $error = '<pre>' . $ex->getMessage() . "\n\n" . $ex->getTraceAsString() . '</pre>';
                 echo $error;
                 self::debug($error);
             }
@@ -81,15 +82,15 @@ class Application
 
     public static function debug($lastOutput = '')
     {
-        $debugInfo = '<h2>Time:'.date('Y-m-d H:i:s').':'.currUrl().'</h2>';
-        $debugInfo .= '@@@@error:<pre>'.var_export(error_get_last(), true).'</pre>@@@@<br />';
+        $debugInfo = '<h2>Time:' . date('Y-m-d H:i:s') . ':' . currUrl() . '</h2>';
+        $debugInfo .= '@@@@error:<pre>' . var_export(error_get_last(), true) . '</pre>@@@@<br />';
         if (!empty($lastOutput)) {
-            $debugInfo .= '@@@@output:<pre>'.htmlentities($lastOutput, ENT_QUOTES).'</pre>@@@@';
+            $debugInfo .= '@@@@output:<pre>' . htmlentities($lastOutput, ENT_QUOTES) . '</pre>@@@@';
         }
 
         $connections = ServiceProvider::getInstance()->getDBManagerHandler()->getConnections();
         if (!empty($connections)) {
-            foreach($connections as $connection) {
+            foreach ($connections as $connection) {
                 /**
                  * @var \Ludo\Database\Connection $connection
                  */
@@ -97,29 +98,29 @@ class Application
             }
         }
 
-        $debugInfo .= '<h2>GET:</h2><pre>'.(!empty($_GET)?var_export($_GET, true):'').'</pre>';
-        $debugInfo .= '<h2>POST:</h2><pre>'.(!empty($_POST)?var_export($_POST, true):'').'</pre>';
-        $debugInfo .= '<h2>COOKIE:</h2><pre>'.(!empty($_COOKIE)?var_export($_COOKIE, true):'').'</pre>';
-        $debugInfo .= '<h2>SESSION:</h2><pre>'.(!empty($_SESSION)?var_export($_SESSION, true):'').'</pre>';
-        $debugInfo .= '<h2>FILES:</h2><pre>'.(!empty($_FILES)?var_export($_FILES, true):'').'</pre>';
-        $debugInfo .= '<h2>SERVER:</h2><pre>'.(!empty($_SERVER)?var_export($_SERVER, true):'').'</pre>';
-        $debugInfo .= '<h2>ENV:</h2><pre>'.(!empty($_ENV)?var_export($_ENV, true):'').'</pre>';
+        $debugInfo .= '<h2>GET:</h2><pre>' . (!empty($_GET) ? var_export($_GET, true) : '') . '</pre>';
+        $debugInfo .= '<h2>POST:</h2><pre>' . (!empty($_POST) ? var_export($_POST, true) : '') . '</pre>';
+        $debugInfo .= '<h2>COOKIE:</h2><pre>' . (!empty($_COOKIE) ? var_export($_COOKIE, true) : '') . '</pre>';
+        $debugInfo .= '<h2>SESSION:</h2><pre>' . (!empty($_SESSION) ? var_export($_SESSION, true) : '') . '</pre>';
+        $debugInfo .= '<h2>FILES:</h2><pre>' . (!empty($_FILES) ? var_export($_FILES, true) : '') . '</pre>';
+        $debugInfo .= '<h2>SERVER:</h2><pre>' . (!empty($_SERVER) ? var_export($_SERVER, true) : '') . '</pre>';
+        $debugInfo .= '<h2>ENV:</h2><pre>' . (!empty($_ENV) ? var_export($_ENV, true) : '') . '</pre>';
         $debugInfo = str_replace('<?', '&lt;?', $debugInfo);
         $debugInfo = str_replace('?>', '&gt;?', $debugInfo);
 
-        $debugFile = LD_UPLOAD_PATH.'/debug_console.php';
-        $debugUrl = LD_UPLOAD_URL.'/debug_console.php';
+        $debugFile = LD_UPLOAD_PATH . '/debug_console.php';
+        $debugUrl = LD_UPLOAD_URL . '/debug_console.php';
 
 
-        if(file_exists("config.php")){
+        if (file_exists("config.php")) {
             $prefix = '<?php include_once("../config.php");';
-        }else{
+        } else {
             $prefix = '<?php include_once("../config.inc.php");';
         }
-        $prefix .= 'if (DEBUG) : '.
-            'if(@$_GET["clear"]) {'.
-            'file_put_contents("'.$debugFile.'", ""); '.
-            'header("location:'.$debugUrl.'");'.
+        $prefix .= 'if (DEBUG) : ' .
+            'if(@$_GET["clear"]) {' .
+            'file_put_contents("' . $debugFile . '", ""); ' .
+            'header("location:' . $debugUrl . '");' .
             '}	?>';
         $postfix = '<?php endif; ?>';
 
@@ -138,7 +139,7 @@ class Application
 
         $debugInfo = implode($delimiter, $arr);
 
-        $debugOutput = $prefix.$debugInfo.$postfix;
+        $debugOutput = $prefix . $debugInfo . $postfix;
         file_put_contents($debugFile, $debugOutput);
     }
 }

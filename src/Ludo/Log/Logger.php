@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Log;
 
 use Exception;
@@ -21,20 +22,20 @@ class Logger
     public function __construct()
     {
         $this->logger = new Monolog(Config::get('app.name'));
-        $dir = LD_LOG_PATH.DIRECTORY_SEPARATOR.date(DATE_FORMAT).DIRECTORY_SEPARATOR.date('G').DIRECTORY_SEPARATOR;
+        $dir = LD_LOG_PATH . DIRECTORY_SEPARATOR . date(DATE_FORMAT) . DIRECTORY_SEPARATOR . date('G') . DIRECTORY_SEPARATOR;
 
         if (Config::get('app.debug')) {
-            $this->logger->pushHandler(new StreamHandler($dir.'debug.log', Monolog::DEBUG));
+            $this->logger->pushHandler(new StreamHandler($dir . 'debug.log', Monolog::DEBUG));
         } else {
             $this->logger->pushHandler(new NullHandler(Monolog::DEBUG));
         }
-        $this->logger->pushHandler(new StreamHandler($dir.'info.log', Monolog::INFO));
-        $this->logger->pushHandler(new StreamHandler($dir.'notice.log', Monolog::NOTICE));
-        $this->logger->pushHandler(new StreamHandler($dir.'warning.log', Monolog::WARNING));
-        $this->logger->pushHandler(new StreamHandler($dir.'error.log', Monolog::ERROR));
-        $this->logger->pushHandler(new StreamHandler($dir.'critical.log', Monolog::CRITICAL));
-        $this->logger->pushHandler(new StreamHandler($dir.'alert.log', Monolog::ALERT));
-        $this->logger->pushHandler(new StreamHandler($dir.'emergency.log', Monolog::EMERGENCY));
+        $this->logger->pushHandler(new StreamHandler($dir . 'info.log', Monolog::INFO));
+        $this->logger->pushHandler(new StreamHandler($dir . 'notice.log', Monolog::NOTICE));
+        $this->logger->pushHandler(new StreamHandler($dir . 'warning.log', Monolog::WARNING));
+        $this->logger->pushHandler(new StreamHandler($dir . 'error.log', Monolog::ERROR));
+        $this->logger->pushHandler(new StreamHandler($dir . 'critical.log', Monolog::CRITICAL));
+        $this->logger->pushHandler(new StreamHandler($dir . 'alert.log', Monolog::ALERT));
+        $this->logger->pushHandler(new StreamHandler($dir . 'emergency.log', Monolog::EMERGENCY));
     }
 
     /**

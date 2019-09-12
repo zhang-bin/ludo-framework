@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Config;
 
 /**
@@ -18,7 +19,7 @@ class Repository
      */
     public function __construct()
     {
-        $dir = SITE_ROOT.'/config/';
+        $dir = SITE_ROOT . '/config/';
         $this->readDirectory($dir);
     }
 
@@ -50,7 +51,7 @@ class Repository
             if ($file[0] == '.' || $file[0] == '..') {
                 continue;
             }
-            $filename = $dir.$file;
+            $filename = $dir . $file;
             $ext = ext($filename);
             if ($ext != 'php') {
                 continue;

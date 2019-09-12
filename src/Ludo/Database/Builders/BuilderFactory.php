@@ -1,20 +1,23 @@
 <?php
+
 namespace Ludo\Database\Builders;
 
 use Ludo\Database\Connection;
+use InvalidArgumentException;
 
 class BuilderFactory
 {
     /**
      * get a aql builder based on the configuration.
      *
-     * @param Connection   $connection
+     * @param Connection $connection
      * @param string $tableName
      * @param string $tableAlias
      *
-     * @return \Ludo\Database\Builders\Builder
+     * @return Builder
+     * @throws InvalidArgumentException
      */
-    public function make(Connection $connection, $tableName, $tableAlias = '')
+    public function make(Connection $connection, string $tableName, string $tableAlias = ''): Builder
     {
         $driver = $connection->getDriverName();
         switch ($driver) {
@@ -24,6 +27,6 @@ class BuilderFactory
                 return new PgSqlBuilder($connection, $tableName, $tableAlias);
         }
 
-        throw new \InvalidArgumentException("Unsupported driver [$driver]");
+        throw new InvalidArgumentException(sprintf('Unsupported driver [%s]', $driver));
     }
 }

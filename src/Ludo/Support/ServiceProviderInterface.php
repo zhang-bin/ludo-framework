@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Support;
 
 interface ServiceProviderInterface

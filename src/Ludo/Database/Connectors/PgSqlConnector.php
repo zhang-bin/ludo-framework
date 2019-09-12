@@ -1,15 +1,18 @@
 <?php
+
 namespace Ludo\Database\Connectors;
+
+use PDO;
 
 class PgSqlConnector extends Connector implements ConnectorInterface
 {
     /**
      * Establish a database connection.
      *
-     * @param  array  $config
-     * @return \PDO
+     * @param array $config
+     * @return PDO
      */
-    public function connect(array $config)
+    public function connect(array $config): PDO
     {
         $dsn = $this->getDsn($config);
 
@@ -34,24 +37,23 @@ class PgSqlConnector extends Connector implements ConnectorInterface
     /**
      * Create a DSN string from a configuration.
      *
-     * @param  array   $config
+     * @param array $config
      * @return string
      */
-    protected function getDsn(array $config)
+    protected function getDsn(array $config): string
     {
         // First we will create the basic DSN setup as well as the port if it is in
         // in the configuration options. This will give us the basic DSN we will
         // need to establish the PDO connections and return them back for use.
-        extract($config);
 
-        $host = isset($host) ? "host={$host};" : '';
-        $dsn = "pgsql:{$host}dbname={$database}";
+        $host = isset($config['host']) ? "host={$config['host']};" : '';
+        $dsn = "pgsql:{$config['host']}dbname={$config['database']}";
 
         // If a port was specified, we will add it to this Postgres DSN connections
         // format. Once we have done that we are ready to return this connection
         // string back out for usage, as this has been fully constructed here.
         if (isset($config['port'])) {
-            $dsn .= ";port={$port}";
+            $dsn .= ";port={$config['port']}";
         }
         return $dsn;
     }

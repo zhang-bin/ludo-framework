@@ -38,11 +38,11 @@ class Channel
 
     public function __construct(string $channel)
     {
-        $this->waiting = $channel.'_waiting';
-        $this->reserved = $channel.'_reserved';
-        $this->delayed = $channel.'_delayed';
-        $this->failed = $channel.'_failed';
-        $this->timeout = $channel.'_timeout';
+        $this->waiting = $channel . '_waiting';
+        $this->reserved = $channel . '_reserved';
+        $this->delayed = $channel . '_delayed';
+        $this->failed = $channel . '_failed';
+        $this->timeout = $channel . '_timeout';
     }
 
     /**

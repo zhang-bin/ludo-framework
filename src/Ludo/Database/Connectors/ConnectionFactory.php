@@ -1,175 +1,178 @@
 <?php
+
 namespace Ludo\Database\Connectors;
 
 use PDO;
 use Ludo\Database\MySqlConnection;
 use Ludo\Database\PgSqlConnection;
+use Ludo\Database\Connection;
+use InvalidArgumentException;
 
 class ConnectionFactory
 {
-	/**
-	 * Establish a PDO connection based on the configuration.
-	 *
-	 * @param  array   $config
-	 * @param  string  $name
-	 * @return \Ludo\Database\Connection
-	 */
-	public function make(array $config, $name = null)
+    /**
+     * Establish a PDO connection based on the configuration.
+     *
+     * @param array $config
+     * @param string $name
+     * @return Connection
+     */
+    public function make(array $config, string $name = null): Connection
     {
-		$config = $this->parseConfig($config, $name);
-		if (isset($config['read'])) {
-			return $this->createReadWriteConnection($config);
-		} else {
-			return $this->createSingleConnection($config);
-		}
-	}
+        $config = $this->parseConfig($config, $name);
+        if (isset($config['read'])) {
+            return $this->createReadWriteConnection($config);
+        } else {
+            return $this->createSingleConnection($config);
+        }
+    }
 
-	/**
-	 * Create a single database connection instance.
-	 *
-	 * @param  array  $config
-	 * @return \Ludo\Database\Connection
-	 */
-	protected function createSingleConnection(array $config)
+    /**
+     * Create a single database connection instance.
+     *
+     * @param array $config
+     * @return Connection
+     */
+    protected function createSingleConnection(array $config): Connection
     {
-		$pdo = $this->createConnector($config)->connect($config);
-		return $this->createConnection($config['driver'], $pdo, $config['database'], $config['prefix'], $config);
-	}
+        $pdo = $this->createConnector($config)->connect($config);
+        return $this->createConnection($config['driver'], $pdo, $config['database'], $config['prefix'], $config);
+    }
 
-	/**
-	 * Create a single database connection instance.
-	 *
-	 * @param  array  $config
-	 * @return \Ludo\Database\Connection
-	 */
-	protected function createReadWriteConnection(array $config)
+    /**
+     * Create a single database connection instance.
+     *
+     * @param array $config
+     * @return Connection
+     */
+    protected function createReadWriteConnection(array $config): Connection
     {
-		$connection = $this->createSingleConnection($this->getWriteConfig($config));
-		return $connection->setReadPdo($this->createReadPdo($config));
-	}
+        $connection = $this->createSingleConnection($this->getWriteConfig($config));
+        return $connection->setReadPdo($this->createReadPdo($config));
+    }
 
-	/**
-	 * Create a new PDO instance for reading.
-	 *
-	 * @param  array  $config
-	 * @return \PDO
-	 */
-	protected function createReadPdo(array $config)
+    /**
+     * Create a new PDO instance for reading.
+     *
+     * @param array $config
+     * @return PDO
+     */
+    protected function createReadPdo(array $config): PDO
     {
-		$readConfig = $this->getReadConfig($config);
-		return $this->createConnector($readConfig)->connect($readConfig);
-	}
+        $readConfig = $this->getReadConfig($config);
+        return $this->createConnector($readConfig)->connect($readConfig);
+    }
 
-	/**
-	 * Get the read configuration for a read / write connection.
-	 *
-	 * @param  array  $config
-	 * @return array
-	 */
-	protected function getReadConfig(array $config)
+    /**
+     * Get the read configuration for a read / write connection.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function getReadConfig(array $config): array
     {
-		$readConfig = $this->getReadWriteConfig($config, 'read');
-		return $this->mergeReadWriteConfig($config, $readConfig);
-	}
+        $readConfig = $this->getReadWriteConfig($config, 'read');
+        return $this->mergeReadWriteConfig($config, $readConfig);
+    }
 
-	/**
-	 * Get the read configuration for a read / write connection.
-	 *
-	 * @param  array  $config
-	 * @return array
-	 */
-	protected function getWriteConfig(array $config)
+    /**
+     * Get the read configuration for a read / write connection.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function getWriteConfig(array $config): array
     {
-		$writeConfig = $this->getReadWriteConfig($config, 'write');
-		return $this->mergeReadWriteConfig($config, $writeConfig);
-	}
+        $writeConfig = $this->getReadWriteConfig($config, 'write');
+        return $this->mergeReadWriteConfig($config, $writeConfig);
+    }
 
-	/**
-	 * Get a read / write level configuration.
-	 *
-	 * @param  array  $config
-	 * @param  string  $type
-	 * @return array
-	 */
-	protected function getReadWriteConfig(array $config, $type)
+    /**
+     * Get a read / write level configuration.
+     *
+     * @param array $config
+     * @param string $type
+     * @return array
+     */
+    protected function getReadWriteConfig(array $config, string $type): array
     {
-		if (isset($config[$type][0])) {
-			return $config[$type][array_rand($config[$type])];
-		} else {
-			return $config[$type];
-		}
-	}
+        if (isset($config[$type][0])) {
+            return $config[$type][array_rand($config[$type])];
+        } else {
+            return $config[$type];
+        }
+    }
 
-	/**
-	 * Merge a configuration for a read / write connection.
-	 *
-	 * @param  array  $config
-	 * @param  array  $merge
-	 * @return array
-	 */
-	protected function mergeReadWriteConfig(array $config, array $merge)
+    /**
+     * Merge a configuration for a read / write connection.
+     *
+     * @param array $config
+     * @param array $merge
+     * @return array
+     */
+    protected function mergeReadWriteConfig(array $config, array $merge): array
     {
-		return array_except(array_merge($config, $merge), array('read', 'write'));
-	}
+        return array_except(array_merge($config, $merge), array('read', 'write'));
+    }
 
-	/**
-	 * Parse and prepare the database configuration.
-	 *
-	 * @param  array   $config
-	 * @param  string  $name
-	 * @return array
-	 */
-	protected function parseConfig(array $config, $name)
+    /**
+     * Parse and prepare the database configuration.
+     *
+     * @param array $config
+     * @param string $name
+     * @return array
+     */
+    protected function parseConfig(array $config, string $name): array
     {
-		return array_add(array_add($config, 'prefix', ''), 'name', $name);
-	}
+        return array_add(array_add($config, 'prefix', ''), 'name', $name);
+    }
 
-	/**
-	 * Create a connector instance based on the configuration.
-	 *
-	 * @param  array  $config
-	 * @return \Ludo\Database\Connectors\ConnectorInterface
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	public function createConnector(array $config)
+    /**
+     * Create a connector instance based on the configuration.
+     *
+     * @param array $config
+     * @return ConnectorInterface
+     *
+     * @throws InvalidArgumentException
+     */
+    public function createConnector(array $config): ConnectorInterface
     {
-		if (!isset($config['driver'])) {
-			throw new \InvalidArgumentException("A driver must be specified.");
-		}
+        if (!isset($config['driver'])) {
+            throw new InvalidArgumentException('A driver must be specified.');
+        }
 
-		switch ($config['driver']) {
-			case 'mysql':
-				return new MySqlConnector;
-			case 'pgsql':
-				return new PgSqlConnector;
-		}
+        switch ($config['driver']) {
+            case 'mysql':
+                return new MySqlConnector;
+            case 'pgsql':
+                return new PgSqlConnector;
+        }
 
-		throw new \InvalidArgumentException("Unsupported driver [{$config['driver']}]");
-	}
+        throw new InvalidArgumentException(sprintf('Unsupported driver [%s]', $config['driver']));
+    }
 
-	/**
-	 * Create a new connection instance.
-	 *
-	 * @param  string  $driver
-	 * @param  PDO     $connection
-	 * @param  string  $database
-	 * @param  string  $prefix
-	 * @param  array   $config
-	 * @return \Ludo\Database\Connection
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function createConnection($driver, PDO $connection, $database, $prefix = '', array $config = array())
+    /**
+     * Create a new connection instance.
+     *
+     * @param string $driver
+     * @param PDO $connection
+     * @param string $database
+     * @param string $prefix
+     * @param array $config
+     * @return Connection
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function createConnection(string $driver, PDO $connection, string $database, string $prefix = '', array $config = array()): Connection
     {
-		switch ($driver) {
-			case 'mysql':
-				return new MySqlConnection($connection, $database, $prefix, $config);
-			case 'pgsql':
-				return new PgSqlConnection($connection, $database, $prefix, $config);
-		}
+        switch ($driver) {
+            case 'mysql':
+                return new MySqlConnection($connection, $database, $prefix, $config);
+            case 'pgsql':
+                return new PgSqlConnection($connection, $database, $prefix, $config);
+        }
 
-		throw new \InvalidArgumentException("Unsupported driver [$driver]");
-	}
+        throw new InvalidArgumentException(sprintf('Unsupported driver [%s]', $driver));
+    }
 }
 

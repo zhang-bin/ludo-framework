@@ -1,7 +1,9 @@
 <?php
+
 namespace Ludo\Routing;
 
 use Ludo\Support\ServiceProvider;
+use Ludo\View\View;
 
 abstract class Controller
 {
@@ -11,7 +13,7 @@ abstract class Controller
     protected $name;
 
     /**
-     * @var \Ludo\View\View
+     * @var View
      */
     protected $tpl;
 
@@ -21,30 +23,32 @@ abstract class Controller
      * another example is using header("Content-Disposition", "attachment;filename=xxxx.zip"); to popup a SaveAS dialog. <br>
      * when using more than one header common, you should use array here.
      *
-     * @var String|Array
+     * @var mixed
      */
     public $httpHeader = null;
 
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
-        $this->httpHeader = 'Content-Type:text/html;charset='.PROGRAM_CHARSET;
-        $this->tpl 	  = ServiceProvider::getInstance()->getTplHandler();
+        $this->httpHeader = 'Content-Type:text/html;charset=' . PROGRAM_CHARSET;
+        $this->tpl = ServiceProvider::getInstance()->getTplHandler();
     }
 
-    public function getCurrentCtrlName()
+    public function getCurrentCtrlName(): string
     {
         return $this->name;
     }
 
-    protected function resetGet()
+    protected function resetGet(): string
     {
         $get = $_GET;
         unset($get['pager']);
         $params = http_build_query($get);
-        if (!empty($params)) $params .= '&';
+        if (!empty($params)) {
+            $params .= '&';
+        }
 
-        return '?'.$params.'pager=';
+        return '?' . $params . 'pager=';
     }
 
     /**

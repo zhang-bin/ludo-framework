@@ -1,20 +1,26 @@
 <?php
+
 namespace Ludo\Support;
+
+use DateTime;
 
 class Validator
 {
-    public static function email($data)
+    public static function email(string $data): bool
     {
-        if (empty($data)) return false;
+        if (empty($data)) {
+            return false;
+        }
+
         return filter_var($data, FILTER_VALIDATE_EMAIL) !== false;
     }
 
-    public static function uname($data)
+    public static function uname(string $data): bool
     {
         return !empty($data) && preg_match('/^[a-zA-Z0-9]{5,16}$/', $data);
     }
 
-    public static function password($data)
+    public static function password(string $data): bool
     {
         return !empty($data) && preg_match('/^[a-zA-Z0-9]{6,16}$/', $data);
     }
@@ -22,12 +28,12 @@ class Validator
     /**
      * validate if length of data is between the range( including the min and max value);
      *
-     * @param String $data
+     * @param string $data
      * @param int $min
      * @param int $max
      * @return bool true if valid
      */
-    public static function range($data, $min, $max)
+    public static function range(string $data, int $min, int $max): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
         $min = intval($min);
@@ -35,45 +41,48 @@ class Validator
         return $len >= $min && $len <= $max;
     }
 
-    public static function len($data, $length)
+    public static function len(string $data, int $length): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
         $length = intval($length);
         return $len == $length;
     }
 
-    public static function minLength($data, $min)
+    public static function minLength(string $data, int $min): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
         $min = intval($min);
         return $len >= $min;
     }
 
-    public static function maxLength($data, $max)
+    public static function maxLength(string $data, int $max): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
         $max = intval($max);
         return $len <= $max;
     }
 
-    public static function chinese($data)
+    public static function chinese(string $data): bool
     {
         return preg_match('/^[\x{4e00}-\x{9fa5}]+$/u', $data);
     }
 
-    public static function postcode($data)
+    public static function postcode(string $data): bool
     {
         return !empty($data) && preg_match('/^\d{6}$/', $data);
     }
 
     /**
      * whether data is an valid ip format
-     * @param String $data ip string
+     * @param string $data ip string
      * @return bool true for well formatted ip, vise versa.
      */
-    public static function ip($data)
+    public static function ip(string $data): bool
     {
-        if (empty($data)) return false;
+        if (empty($data)) {
+            return false;
+        }
+
         return filter_var($data, FILTER_VALIDATE_IP) !== false;
     }
 
@@ -85,13 +94,15 @@ class Validator
      *
      * default the reserved range 169.254.0.0 through 169.254.255.255 will also include.
      *
-     * @param String $data ip string
+     * @param string $data ip string
      * @param bool $includeReserved whether to include reserved ip range (169.254.0.0/16), default is true.
      * @return bool true for private ip, vise versa.
      */
-    public static function privateIp($data, $includeReserved = true)
+    public static function privateIp(string $data, $includeReserved = true): bool
     {
-        if (!self::ip($data)) return false; //kick non-ip off.
+        if (!self::ip($data)) {//kick non-ip off.
+            return false;
+        }
 
         if ($includeReserved) { //private ip + reserved ip.
             return !self::publicIp($data);
@@ -107,22 +118,44 @@ class Validator
      * @param bool $noReserved whether to exclude reserved ip range (169.254/16), default is true.
      * @return bool true for public ip, vise versa.
      */
-    public static function publicIp($data, $noReserved = true)
+    public static function publicIp(string $data, bool $noReserved = true): bool
     {
-        if (!self::ip($data)) return false; //kick non-ip off.
+        if (!self::ip($data)) {//kick non-ip off.
+            return false;
+        }
 
-        $flag = $noReserved ? FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE : FILTER_FLAG_NO_PRIV_RANGE;
+        $flag = $noReserved ? FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE : FILTER_FLAG_NO_PRIV_RANGE;
         return filter_var($data, FILTER_VALIDATE_IP, $flag) !== false ? true : false;
     }
 
-    public static function url( $data, $schemeRequired = false, $hostRequired = true, $pathRequired = false, $queryStringRequired = false)
+    /**
+     * Whether data is a valid url
+     *
+     * @param string $data
+     * @param bool $schemeRequired
+     * @param bool $hostRequired
+     * @param bool $pathRequired
+     * @param bool $queryStringRequired
+     * @return bool
+     */
+    public static function url(string $data, bool $schemeRequired = false, bool $hostRequired = true, bool $pathRequired = false, bool $queryStringRequired = false): bool
     {
-        if (empty($data)) return false;
+        if (empty($data)) {
+            return false;
+        }
+
+        $url = parse_url($data);
+        if ($schemeRequired && empty($url['scheme'])) {
+            return false;
+        }
+
+        if ($hostRequired && empty($url['host'])) {
+            return false;
+        }
+
         $flags = 0;
-        if ($schemeRequired) $flags |= FILTER_FLAG_SCHEME_REQUIRED;
         if ($pathRequired) $flags |= FILTER_FLAG_PATH_REQUIRED;
         if ($queryStringRequired) $flags |= FILTER_FLAG_QUERY_REQUIRED;
-        if ($hostRequired) $flags |= FILTER_FLAG_HOST_REQUIRED;
 
         return filter_var($data, FILTER_VALIDATE_URL, $flags) !== false;
     }
@@ -130,14 +163,18 @@ class Validator
     /**
      * whether data is a valid date
      *
-     * @param  string $data
+     * @param string $data
      * @return bool
      */
-    public static function date($data)
+    public static function date(string $data): bool
     {
-        if ($data instanceof \DateTime) return true;
+        if ($data instanceof DateTime) {
+            return true;
+        }
 
-        if (strtotime($data) === false) return false;
+        if (strtotime($data) === false) {
+            return false;
+        }
 
         $date = date_parse($data);
 
@@ -150,9 +187,12 @@ class Validator
      * @param $data
      * @return bool
      */
-    public static function mobile($data)
+    public static function mobile(string $data): bool
     {
-        if (empty($data)) return false;
+        if (empty($data)) {
+            return false;
+        }
+
         return (preg_match('/^1[34578]\d{9}$/', $data, $match) !== 0);
     }
 }

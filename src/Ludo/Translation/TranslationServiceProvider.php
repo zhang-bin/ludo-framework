@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Translation;
 
 use Ludo\Support\ServiceProvider;
@@ -8,7 +9,7 @@ class TranslationServiceProvider implements ServiceProviderInterface
 {
     public function register(): void
     {
-        ServiceProvider::getInstance()->register(Translator::class, function() {
+        ServiceProvider::getInstance()->register(Translator::class, function () {
             return new Translator();
         });
     }

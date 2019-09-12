@@ -49,7 +49,7 @@ abstract class MessageQueue implements MessageQueueInterface
      * @param MessageInterface $message message object
      * @return bool
      */
-    abstract protected function retry(MessageInterface $message): bool ;
+    abstract protected function retry(MessageInterface $message): bool;
 
     /**
      * Remove job from reserved queue
@@ -57,5 +57,5 @@ abstract class MessageQueue implements MessageQueueInterface
      * @param string $data stringify job
      * @return bool
      */
-    abstract protected function remove(string $data): bool ;
+    abstract protected function remove(string $data): bool;
 }

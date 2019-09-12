@@ -1,20 +1,23 @@
 <?php
+
 namespace Ludo\Support;
+
+use Ludo\Database\Dao;
 
 class Factory
 {
     /**
      * @param string $name
      * @param string $connectionName
-     * @return \Ludo\Database\Dao
+     * @return Dao
      */
-    public static function dao($name, $connectionName = null)
+    public static function dao(string $name, string $connectionName = null): Dao
     {
-        $daoName = trim($name, '/').'Dao';
+        $daoName = trim($name, '/') . 'Dao';
         $daoName = ucfirst($daoName);
         $dirs = ClassLoader::getDirectories();
         foreach ($dirs as $dir) {
-            $filename = $dir.DIRECTORY_SEPARATOR.$daoName.php;
+            $filename = $dir . DIRECTORY_SEPARATOR . $daoName . php;
             if (file_exists($filename)) {
                 return new $daoName;
             }

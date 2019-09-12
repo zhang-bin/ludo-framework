@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Translation;
 
 use RuntimeException;
@@ -39,7 +40,7 @@ class Translator
      */
     public function setLanguage(string $lang): void
     {
-        $langDir = LD_LANGUAGE_PATH.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR;
+        $langDir = LD_LANGUAGE_PATH . DIRECTORY_SEPARATOR . $lang . DIRECTORY_SEPARATOR;
         if (!file_exists($langDir)) {
             throw new RuntimeException(sprintf('language file [%s] does not exist.', $lang));
         }
@@ -63,7 +64,7 @@ class Translator
 
         list($group, $item) = explode('.', $key);
         if (!isset($this->translation[$group])) {
-            $filename = LD_LANGUAGE_PATH.DIRECTORY_SEPARATOR.$locale.DIRECTORY_SEPARATOR.$group.'.lang.php';
+            $filename = LD_LANGUAGE_PATH . DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR . $group . '.lang.php';
             file_exists($filename) && $this->translation[$group] = include $filename;
         }
 
@@ -71,7 +72,7 @@ class Translator
 
         if (!empty($replace)) {
             foreach ($replace as $k => $v) {
-                $value = str_replace(':'.$k, $v, $value);
+                $value = str_replace(':' . $k, $v, $value);
             }
         }
         return $value;
@@ -106,19 +107,19 @@ class Translator
      *
      * @param string $base base directory of language files
      * @param string $lang language
-     * @param array $data  translated data
+     * @param array $data translated data
      */
     public function merge(string $base, string $lang, array $data): void
     {
-        $baseLangDir = $base.DIRECTORY_SEPARATOR.DEFAULT_LANGUAGE.DIRECTORY_SEPARATOR;
+        $baseLangDir = $base . DIRECTORY_SEPARATOR . DEFAULT_LANGUAGE . DIRECTORY_SEPARATOR;
 
         foreach ($data as $filename => $datum) {
-            $baseLangFilename = $baseLangDir.$filename.'.lang.php';
+            $baseLangFilename = $baseLangDir . $filename . '.lang.php';
             if (!file_exists($baseLangFilename)) {
                 continue;
             }
 
-            $diffLangFilename = $base.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR.$filename.'.lang.php';
+            $diffLangFilename = $base . DIRECTORY_SEPARATOR . $lang . DIRECTORY_SEPARATOR . $filename . '.lang.php';
             $diffData = array();
             if (file_exists($diffLangFilename)) {
                 $diffData = require $diffLangFilename;
@@ -128,7 +129,7 @@ class Translator
                 $diffData[$k] = $v;
             }
             $str = var_export($diffData, true);
-            $str = "<?php\nreturn ".$str.';';
+            $str = "<?php\nreturn " . $str . ';';
             file_put_contents($diffLangFilename, $str);
         }
     }
@@ -142,7 +143,7 @@ class Translator
      */
     private function getTranslate(string $base, string $lang): array
     {
-        $langDirectory = $base.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR;
+        $langDirectory = $base . DIRECTORY_SEPARATOR . $lang . DIRECTORY_SEPARATOR;
         $files = scandir($langDirectory);
         $languages = [];
         foreach ($files as $file) {
@@ -150,7 +151,7 @@ class Translator
                 continue;
             }
 
-            $filename = $langDirectory.$file;
+            $filename = $langDirectory . $file;
             $ext = ext($filename);
             if ($ext != 'php') {
                 continue;

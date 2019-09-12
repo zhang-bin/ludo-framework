@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\AsyncTask;
 
 interface MessageInterface
@@ -8,12 +9,12 @@ interface MessageInterface
      *
      * @return JobInterface
      */
-    public function job(): JobInterface ;
+    public function job(): JobInterface;
 
     /**
      * Whether the queue should handle job again
      *
      * @return bool
      */
-    public function shouldHandleAgain(): bool ;
+    public function shouldHandleAgain(): bool;
 }

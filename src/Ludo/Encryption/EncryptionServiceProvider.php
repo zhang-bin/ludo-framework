@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Encryption;
 
 use Ludo\Support\ServiceProvider;
@@ -8,7 +9,7 @@ class EncryptionServiceProvider implements ServiceProviderInterface
 {
     public function register(): void
     {
-        ServiceProvider::getInstance()->register(Encrypter::class, function() {
+        ServiceProvider::getInstance()->register(Encrypter::class, function () {
             return new Encrypter();
         });
     }

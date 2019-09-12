@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\AsyncTask;
 
 class Message implements MessageInterface

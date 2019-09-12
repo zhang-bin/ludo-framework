@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Config;
 
 use Ludo\Support\ServiceProvider;
@@ -8,7 +9,7 @@ class ConfigServiceProvider implements ServiceProviderInterface
 {
     public function register(): void
     {
-        ServiceProvider::getInstance()->register(Repository::class, function() {
+        ServiceProvider::getInstance()->register(Repository::class, function () {
             return new Repository();
         });
     }

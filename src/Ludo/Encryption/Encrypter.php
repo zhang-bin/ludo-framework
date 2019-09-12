@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Encryption;
 
 use RuntimeException;
@@ -49,7 +50,7 @@ class Encrypter
      * @throws RuntimeException
      * @throws Exception
      */
-    public function encrypt($value)
+    public function encrypt(string $value): string
     {
         if (function_exists('random_bytes')) {
             $iv = random_bytes(16);
@@ -75,7 +76,7 @@ class Encrypter
      * @param $payload
      * @return string
      */
-    public function decrypt($payload)
+    public function decrypt(string $payload): string
     {
         $payload = $this->getJsonPayload($payload);
 
@@ -94,7 +95,7 @@ class Encrypter
      * @param $cipher
      * @return bool
      */
-    public static function supported($key, $cipher)
+    public static function supported(string $key, string $cipher): bool
     {
         $length = mb_strlen($key, '8bit');
 
@@ -109,18 +110,18 @@ class Encrypter
      * @param $value
      * @return string
      */
-    private function hash($iv, $value)
+    private function hash(string $iv, string $value): string
     {
-        return hash_hmac('sha256', $iv.$value, self::$key);
+        return hash_hmac('sha256', $iv . $value, self::$key);
     }
 
     /**
      * Get the JSON array from the given payload.
-     * 
+     *
      * @param $payload
      * @return mixed
      */
-    private function getJsonPayload($payload)
+    private function getJsonPayload(string $payload): array
     {
         $payload = json_decode(base64_decode($payload), true);
 

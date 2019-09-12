@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\AsyncTask\Command;
 
 use Ludo\AsyncTask\MessageQueue\MessageQueueFactory;
