@@ -1,36 +1,31 @@
 <?php
-namespace LudoTest\AsyncTask;
+namespace LudoTest;
 
 use Ludo\AsyncTask\Job;
 use Ludo\AsyncTask\MessageInterface;
 use Ludo\AsyncTask\MessageQueue\RedisMessageQueue;
-use Ludo\Config\Config;
-use Ludo\Utils\Context;
+use Ludo\Support\Facades\Config;
 use PHPUnit\Framework\TestCase;
 use Redis;
 
 class AsyncTaskTest extends TestCase
 {
     private $redis;
-    private $config;
     private $context;
 
     public function setUp(): void
     {
-        $this->config = Config::getInstance();
-        $this->context = Context::getInstance();
-
         $this->redis = new Redis();
-        $this->redis->connect($this->config->get('async_queue.host'), $this->config->get('async_queue.port'));
+        $this->redis->connect(Config::get('async_queue.host'), Config::get('async_queue.port'));
     }
 
     public function testPush()
     {
-        $waitingQueue = $this->config->get('async_queue.channel_prefix').'_waiting';
-        $delayedQueue = $this->config->get('async_queue.channel_prefix').'_delayed';
+        $waitingQueue = Config::get('async_queue.channel_prefix').'_waiting';
+        $delayedQueue = Config::get('async_queue.channel_prefix').'_delayed';
         $this->redis->del($waitingQueue, $delayedQueue);
 
-        $messageQueue = new RedisMessageQueue($this->config->get('async_queue'));
+        $messageQueue = new RedisMessageQueue(Config::get('async_queue'));
 
         $job = $this->createMock(Job::class);
         $job->id = uniqid();

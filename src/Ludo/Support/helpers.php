@@ -1,4 +1,8 @@
 <?php
+
+use Ludo\Support\Facades\Config;
+use \Ludo\Foundation\Application;
+
 /**
  * get an pathInfo url from an innerUrl.
  * e.g. url('blog/add') will get http://SITE_URL/index.php/blog/add
@@ -47,7 +51,10 @@ function redirect($innerUrl = '')
 {
 	if (!isAjax()) {
 		header('location:'.url($innerUrl));
-		if (DEBUG) \Ludo\Foundation\Application::debug();die;
+        if (Config::get('app.debug')) {
+            Application::debug();
+        }
+        die;
 	} else {
 		echo json_encode(array(STATUS => GO, URL => url($innerUrl)));die;
 	}
@@ -57,7 +64,10 @@ function redirectOut($outUrl)
 {
 	if (!isAjax()) {
 		header('location:'.$outUrl);
-		if (DEBUG) \Ludo\Foundation\Application::debug();die;
+        if (Config::get('app.debug')) {
+            Application::debug();
+        }
+        die;
 	} else {
 		echo json_encode(array(STATUS => GO, URL => $outUrl));die;
 	}
@@ -446,8 +456,14 @@ function array_forget(&$array, $key)
  */
 function array_get($array, $key, $default = null)
 {
-	if (is_null($key)) return $array;
-	if (isset($array[$key])) return $array[$key];
+	if (is_null($key)) {
+	    return $array;
+    }
+
+	if (isset($array[$key])) {
+	    return $array[$key];
+    }
+
 	foreach (explode('.', $key) as $segment) {
 		if (!is_array($array) || !array_key_exists($segment, $array)) {
 			return $default;
@@ -455,6 +471,33 @@ function array_get($array, $key, $default = null)
 		$array = $array[$segment];
 	}
 	return $array;
+}
+
+/**
+ * Set an item to a given value using "dot" notation
+ *
+ * @param array $array
+ * @param string $key
+ * @param mixed $value
+ * @return mixed
+ */
+function array_set(array &$array, string $key, $value)
+{
+    if (is_null($key)) {
+        return $array;
+    }
+
+    $keys = explode('.', $key);
+    while(count($keys) > 1) {
+        $key = array_shift($keys);
+
+        if (!isset($array[$key]) || !is_array($array[$key])) {
+            $array[$key] = [];
+        }
+        $array = &$array[$key];
+    }
+
+    $array[array_shift($keys)] = $value;
 }
 
 /**

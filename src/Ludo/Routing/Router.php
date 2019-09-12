@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Routing;
 
 class Router
@@ -15,7 +16,7 @@ class Router
 
             //==如果ctrl是aaa_bbb的格式，那么会取最后一个下划线后面的字母作为ctrl
             if (false !== ($pos = strrpos($ctrl, '_'))) {
-                $ctrl = ucfirst(substr($ctrl, $pos+1));
+                $ctrl = ucfirst(substr($ctrl, $pos + 1));
             }
 
             //==Act
@@ -30,7 +31,10 @@ class Router
 
             //==id
             $cnt = count($pathInfo);
-            if ($cnt < 2) return array($ctrl, $act); //if path info only one param which is ctrl, just return back;
+            //if path info only one param which is ctrl, just return back;
+            if ($cnt < 2) {
+                return array($ctrl, $act);
+            }
 
             $paramStart = 2;
             if ($cnt % 2 != 0) {
@@ -38,8 +42,8 @@ class Router
                 $paramStart = 3;
             }
             //==other Variables
-            for ($i = $paramStart; $i < $cnt; $i+=2) {
-                $_REQUEST[$pathInfo[$i]] = $_GET[$pathInfo[$i]] = $pathInfo[$i+1];
+            for ($i = $paramStart; $i < $cnt; $i += 2) {
+                $_REQUEST[$pathInfo[$i]] = $_GET[$pathInfo[$i]] = $pathInfo[$i + 1];
             }
         }
         return array($ctrl, $act);

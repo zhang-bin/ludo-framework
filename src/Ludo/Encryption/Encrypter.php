@@ -1,8 +1,9 @@
 <?php
-namespace Ludo\Encrypter;
+namespace Ludo\Encryption;
 
 use RuntimeException;
-use Ludo\Config\Config;
+use Exception;
+use Ludo\Support\Facades\Config;
 
 /**
  * Class Encrypter
@@ -27,12 +28,11 @@ class Encrypter
     /**
      * Encrypter constructor.
      *
-     * @param $key
-     * @param string $cipher
+     * @throws RuntimeException
      */
     public function __construct()
     {
-        $config = Config::getInstance()->get('app');
+        $config = Config::get('app');
         if (self::supported($config['key'], $config['cipher'])) {
             self::$key = $config['key'];
             self::$cipher = $config['cipher'];
@@ -46,6 +46,8 @@ class Encrypter
      *
      * @param $value
      * @return string
+     * @throws RuntimeException
+     * @throws Exception
      */
     public function encrypt($value)
     {
@@ -57,7 +59,7 @@ class Encrypter
         $value = openssl_encrypt($value, self::$cipher, self::$key, 0, $iv);
 
         if (false === $value) {
-            throw new EncryptException('Could not encrypt the data.');
+            throw new RuntimeException('Could not encrypt the data.');
         }
         $iv = base64_encode($iv);
         $mac = $this->hash($iv, $value);
@@ -80,7 +82,7 @@ class Encrypter
         $iv = base64_decode($payload['iv']);
         $value = openssl_decrypt($payload['value'], self::$cipher, self::$key, 0, $iv);
         if (false === $value) {
-            throw new EncryptException('Could not decrypt the data.');
+            throw new RuntimeException('Could not decrypt the data.');
         }
         return $value;
     }
@@ -123,12 +125,12 @@ class Encrypter
         $payload = json_decode(base64_decode($payload), true);
 
         if (!is_array($payload) && isset($payload['iv'], $payload['value'], $payload['mac'])) {
-            throw new EncryptException('The payload is invalid.');
+            throw new RuntimeException('The payload is invalid.');
         }
 
         $mac = $this->hash($payload['iv'], $payload['value']);
         if (!hash_equals($payload['mac'], $mac)) {
-            throw new EncryptException('The mac is invalid.');
+            throw new RuntimeException('The mac is invalid.');
         }
 
         return $payload;

@@ -3,7 +3,8 @@
 namespace Ludo\AsyncTask\MessageQueue;
 
 use Ludo\AsyncTask\MessageInterface;
-use Ludo\Config\Config;
+use Ludo\Support\Facades\Config;
+use RuntimeException;
 
 /**
  * Message Queue Factory
@@ -22,16 +23,16 @@ class MessageQueueFactory
      */
     public function __construct()
     {
-        $config = Config::getInstance()->get('async_queue');
+        $config = Config::get('async_queue');
 
         $messageQueueClass = $config['message_queue'];
         if (!class_exists($messageQueueClass)) {
-            throw new \RuntimeException(sprintf('[Error] class %s not found', $messageQueueClass));
+            throw new RuntimeException(sprintf('[Error] class %s not found', $messageQueueClass));
         }
 
         $messageQueue = new $messageQueueClass($config);
         if (!$messageQueue instanceof MessageQueueInterface) {
-            throw new \RuntimeException(sprintf('[Error] class %s is not instanceof %s', $messageQueueClass, MessageQueueInterface::class));
+            throw new RuntimeException(sprintf('[Error] class %s is not instanceof %s', $messageQueueClass, MessageQueueInterface::class));
         }
 
         $this->messageQueue = $messageQueue;

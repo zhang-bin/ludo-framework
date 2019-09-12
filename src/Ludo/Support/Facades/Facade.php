@@ -4,7 +4,8 @@ namespace Ludo\Support\Facades;
 use RuntimeException;
 use Ludo\Support\ServiceProvider;
 
-class Facade {
+abstract class Facade implements FacadeInterface
+{
     public static function __callStatic($method, $args)
     {
         $instance = ServiceProvider::getInstance()->getRegisteredAbstract(static::getFacadeAccessor());
@@ -12,9 +13,5 @@ class Facade {
             throw new RuntimeException('A facade root has not been set.');
         }
         return $instance->$method(...$args);
-    }
-
-    public static function getFacadeAccessor() {
-        throw new RuntimeException('Facade does not implement getFacadeAccessor method.');
     }
 }

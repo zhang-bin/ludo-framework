@@ -1,6 +1,7 @@
 <?php
 namespace Ludo\Database;
 
+use Ludo\Support\Facades\Config;
 use Ludo\Support\ServiceProvider;
 use PDO;
 use Closure;
@@ -340,7 +341,10 @@ class Connection
 	 */
 	public function logQuery($query, $params, $time = null, $err = null)
 	{
-		if (!DEBUG) return;
+        if (!Config::get('app.debug')) {
+            return;
+        }
+
 		$this->queryLog[] = compact('query', 'params', 'time', 'err');
 	}
 
@@ -522,7 +526,9 @@ class Connection
 	 */
 	public function debug()
 	{
-		if (!DEBUG) return null;
+		if (!Config::get('app.debug')) {
+		    return null;
+        }
 		$totalProcessTime = 0;
 		$totalSQL = 0;
 

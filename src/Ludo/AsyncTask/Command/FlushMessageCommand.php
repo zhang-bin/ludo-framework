@@ -29,6 +29,6 @@ class FlushMessageCommand extends Command
 
         $messageQueue->flush($channel);
 
-        $output->writeln('<fg=ref>Flush all message.</>');
+        $output->writeln('<fg=red>Flush all message.</>');
     }
 }

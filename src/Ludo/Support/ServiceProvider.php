@@ -3,9 +3,8 @@ namespace Ludo\Support;
 
 use Ludo\Database\DatabaseManager;
 use Ludo\Database\Connectors\ConnectionFactory;
-use Ludo\Config\Config;
+use Ludo\Support\Facades\Config;
 use Ludo\View\View;
-use Ludo\Task\TaskQueueServer;
 use Ludo\Log\Logger;
 
 /**
@@ -14,15 +13,13 @@ use Ludo\Log\Logger;
 class ServiceProvider
 {
 	private $db = array();
-	private $config = array();
-
 	/**
-	 * @var \Ludo\View\View
+	 * @var View
 	 */
 	private $tpl = null;
 
 	/**
-	 * @var \Ludo\Database\DatabaseManager
+	 * @var DatabaseManager
 	 */
 	private $dbManager = null;
 
@@ -34,11 +31,6 @@ class ServiceProvider
 	private static $instance = null;
 
 	private $bindings = [];
-
-	private function __construct()
-    {
-		$this->config = Config::getInstance()->getConfig();
-	}
 
 	/**
 	 * get unique instance of kernel
@@ -85,7 +77,7 @@ class ServiceProvider
 	public function getDBManagerHandler()
     {
 		if (empty($this->dbManager)) {
-			$this->dbManager = new DatabaseManager($this->config['database'], new ConnectionFactory());
+			$this->dbManager = new DatabaseManager(Config::get('database'), new ConnectionFactory());
 		}
 		return $this->dbManager;
 	}
@@ -117,7 +109,9 @@ class ServiceProvider
 	}
 
     public function register($abstract, $concrete) {
-        if (isset($this->bindings[$abstract])) return;//已经注册了
+        if (isset($this->bindings[$abstract])) {//已经注册了
+            return;
+        }
 
         $this->bindings[$abstract] = call_user_func($concrete);
     }

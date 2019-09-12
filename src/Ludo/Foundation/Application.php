@@ -2,8 +2,13 @@
 namespace Ludo\Foundation;
 
 use Ludo\Routing\Router;
+use Ludo\Routing\Controller;
 use Ludo\Support\ServiceProvider;
 use ReflectionMethod;
+use BadMethodCallException;
+use Ludo\Support\Facades\Context;
+use Ludo\Support\Facades\Config;
+
 
 class Application
 {
@@ -11,6 +16,7 @@ class Application
      * auto route
      *
      * @param string $path
+     * @return string
      */
     public function run($path = '')
     {
@@ -23,29 +29,31 @@ class Application
 
             list($ctrl, $act) = Router::parse($pathInfo);
 
-            define('CURRENT_CONTROLLER', $ctrl);
-            define('CURRENT_ACTION', $act);
+            Context::set('current-controller', $ctrl);
+            Context::set('current-action', $act);
             /**
-             * @var \Ludo\Routing\Controller $controller
+             * @var Controller $controller
              */
             $controller = new $ctrl();
             $action = $act;
 
             if (!method_exists($controller, $action)) {
-                throw new \BadMethodCallException("Method [$ctrl->$action] Not Found");
+                throw new BadMethodCallException(sprintf('Method [%s] Not Found', $ctrl->$action));
             }
 
             $method = new ReflectionMethod($ctrl, $action);
             if ($method->isStatic()) {
-                throw new \BadMethodCallException("Method [$ctrl->$action] Can not Static");
+                throw new BadMethodCallException(sprintf('Method [%s] Can not Static', $ctrl->$action));
             }
 
-            $controller->beforeAction($action);
-            $output = $method->invoke($controller);
-            $controller->afterAction($action, $output);
+            $output = $controller->beforeAction($action);
+            if (empty($output)) {
+                $output = $method->invoke($controller);
+                $controller->afterAction($action, $output);
+            }
 
             //if have output, means this action is an ajax call.
-            if (isset($output)) {
+            if (!empty($output)) {
                 if (!empty($controller->httpHeader)) {
                     if (!is_array($controller->httpHeader)) {
                         header($controller->httpHeader);
@@ -56,12 +64,14 @@ class Application
                     }
                 }
                 is_array($output) && $output = json_encode($output);
-                echo $output;
+                return $output;
             }
-            if (DEBUG) self::debug($output);
+            if (Config::get('app.debug')) {
+                self::debug($output);
+            }
         } catch(\Exception $ex) {
             error_log($ex);
-            if (DEBUG) {
+            if (Config::get('app.debug')) {
                 $error = '<pre>'.$ex->getMessage()."\n\n".$ex->getTraceAsString().'</pre>';
                 echo $error;
                 self::debug($error);

@@ -1,32 +1,19 @@
 <?php
-namespace Ludo\Utils;
+namespace Ludo\Context;
 
 use Swoole\Coroutine;
 
-class Context
+/**
+ * Class Repository
+ *
+ * @package Ludo\Context
+ */
+class Repository
 {
     /**
      * @var array $context
      */
-    private static $context = [];
-
-    /**
-     * @var Context $instance context instance
-     */
-    private static $instance;
-
-    /**
-     * Get context instance
-     *
-     * @return Context
-     */
-    public static function getInstance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new Context();
-        }
-        return self::$instance;
-    }
+    private $context = [];
 
     /**
      * Get context data
@@ -45,7 +32,7 @@ class Context
                 return Coroutine::getContext()[$id] ?? $default;
             }
         } else {
-            return self::$context[$id] ?? $default;
+            return $this->context[$id] ?? $default;
         }
     }
 
@@ -60,7 +47,7 @@ class Context
         if (Coroutine::getCid() > 0) {
             Coroutine::getContext()[$id] = $value;
         } else {
-            self::$context[$id] = $value;
+            $this->context[$id] = $value;
         }
     }
 }

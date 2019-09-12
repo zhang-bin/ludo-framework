@@ -1,185 +1,138 @@
 <?php
 namespace Ludo\Log;
 
-/* Finally, A light, permissions-checking logging class.
- *
- * Author	: Kenneth Katzgrau < katzgrau@gmail.com >
- * Date	: July 26, 2008
- * Comments	: Originally written for use with wpSearch
- * Website	: http://codefury.net
- * Version	: 1.0
- *
- * Usage:
- *		$log = new LdLogger(LdLogger::INFO);
- *		$log->info("Returned a million search results");	//Prints to the log file
- *		$log->fatal("Oh dear.");				//Prints to the log file
- *		$log->debug("x = 5");					//Prints nothing due to priority setting
-*/
+use Exception;
+use Ludo\Support\Facades\Config;
+use Ludo\Support\Facades\Context;
+use Monolog\Handler\NullHandler;
+use Monolog\Logger as Monolog;
+use Monolog\Handler\StreamHandler;
+
 
 class Logger
 {
-    private static $instance;
+    private $logger;
 
-    private static $_logFilename = [
-        LOGGER_LEVEL_INFO => 'info',
-        LOGGER_LEVEL_DEBUG => 'debug',
-        LOGGER_LEVEL_WARN => 'warning',
-        LOGGER_LEVEL_ERROR => 'error',
-        LOGGER_LEVEL_FATAL => 'fatal'
-    ];
-
+    /**
+     * Logger constructor.
+     *
+     * @throws Exception
+     */
     public function __construct()
     {
+        $this->logger = new Monolog(Config::get('app.name'));
         $dir = LD_LOG_PATH.DIRECTORY_SEPARATOR.date(DATE_FORMAT).DIRECTORY_SEPARATOR.date('G').DIRECTORY_SEPARATOR;
-        if (!is_dir($dir)) {
-            $oldMask = umask(0);
-            mkdir($dir, 0777, true);
-            umask($oldMask);
+
+        if (Config::get('app.debug')) {
+            $this->logger->pushHandler(new StreamHandler($dir.'debug.log', Monolog::DEBUG));
+        } else {
+            $this->logger->pushHandler(new NullHandler(Monolog::DEBUG));
         }
-        self::$_logFilename = array(
-            LOGGER_LEVEL_INFO => $dir.'info.log',
-            LOGGER_LEVEL_DEBUG => $dir.'debug.log',
-            LOGGER_LEVEL_WARN => $dir.'warning.log',
-            LOGGER_LEVEL_ERROR => $dir.'error.log',
-            LOGGER_LEVEL_FATAL => $dir.'fatal.log'
-        );
+        $this->logger->pushHandler(new StreamHandler($dir.'info.log', Monolog::INFO));
+        $this->logger->pushHandler(new StreamHandler($dir.'notice.log', Monolog::NOTICE));
+        $this->logger->pushHandler(new StreamHandler($dir.'warning.log', Monolog::WARNING));
+        $this->logger->pushHandler(new StreamHandler($dir.'error.log', Monolog::ERROR));
+        $this->logger->pushHandler(new StreamHandler($dir.'critical.log', Monolog::CRITICAL));
+        $this->logger->pushHandler(new StreamHandler($dir.'alert.log', Monolog::ALERT));
+        $this->logger->pushHandler(new StreamHandler($dir.'emergency.log', Monolog::EMERGENCY));
     }
 
     /**
-     * @return Logger
-     */
-    public static function getInstance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
-     * 记录LOGGER_LEVEL_INFO级别的日志
+     * Log a debug message to the logs
      *
-     * @param string $info 日志内容
-     * @return Logger
+     * @param string $message
      */
-    public function info($info)
+    public function debug(string $message): void
     {
-        $this->log($info, LOGGER_LEVEL_INFO);
-        return self::$instance;
+        $this->write(__FUNCTION__, $message);
     }
 
     /**
-     * 记录LOGGER_LEVEL_DEBUG级别的日志
+     * Log an information message to the logs
      *
-     * @param string $info 日志内容
-     * @return Logger
+     * @param string $message
      */
-    public function debug($info)
+    public function info(string $message): void
     {
-        $this->log($info, LOGGER_LEVEL_DEBUG);
-        return self::$instance;
+        $this->write(__FUNCTION__, $message);
     }
 
     /**
-     * 记录LOGGER_LEVEL_WARN级别的日志
+     *  Log a notice message to the logs
      *
-     * @param string $info 日志内容
-     * @return Logger
+     * @param string $message
      */
-    public function warn($info)
+    public function notice(string $message): void
     {
-        $this->log($info, LOGGER_LEVEL_WARN);
-        return self::$instance;
+        $this->write(__FUNCTION__, $message);
     }
 
     /**
-     * 记录LOGGER_LEVEL_ERROR级别的日志
+     * Log a warning message to the logs
      *
-     * @param string $info 日志内容
-     * @return Logger
+     * @param string $message
      */
-    public function error($info)
+    public function warning(string $message): void
     {
-        $this->log($info, LOGGER_LEVEL_ERROR);
-        return self::$instance;
+        $this->write(__FUNCTION__, $message);
     }
 
     /**
-     * 记录LOGGER_LEVEL_FATAL级别的日志
+     *  Log an error message to the logs
      *
-     * @param string $info 日志内容
-     * @return Logger
+     * @param string $message
      */
-    public function fatal($info)
+    public function error(string $message): void
     {
-        $this->log($info, LOGGER_LEVEL_FATAL);
-        return self::$instance;
+        $this->write(__FUNCTION__, $message);
     }
 
     /**
-     * 记录日志, 如果日志级别小于default,那么不记录日志
+     *  Log a critical message to the logs
      *
-     * @param string $info 日志内容
-     * @param int $priority 当前日志级别,例如LOGGER_LEVEL_FATAL,LOGGER_LEVEL_INFO
+     * @param string $message
      */
-    public function log($info, $priority)
+    public function critical(string $message): void
     {
-        //== get file and line from debug_backtrace.
+        $this->write(__FUNCTION__, $message);
+    }
+
+    /**
+     * Log a alert message to the logs
+     *
+     * @param string $message
+     */
+    public function alert(string $message): void
+    {
+        $this->write(__FUNCTION__, $message);
+    }
+
+    /**
+     * Log an emergency message to the logs
+     *
+     * @param string $message
+     */
+    public function emergency(string $message): void
+    {
+        $this->write(__FUNCTION__, $message);
+    }
+
+    /**
+     * Log message to logs
+     *
+     * @param string $level
+     * @param string $message
+     */
+    protected function write(string $level, string $message): void
+    {
         $backtrace = debug_backtrace();
-        $file = $backtrace[2]['file'];
-        $line = $backtrace[2]['line'];
-        $class = CURRENT_CONTROLLER.'::';
-        $function = CURRENT_ACTION.'-->';
+        $context = [
+            'ctrl' => Context::get('current-controller'),
+            'act' => Context::get('current-action'),
+            'file' => $backtrace[2]['file'],
+            'line' => $backtrace[2]['line'],
+        ];
 
-        $status = $this->getTimeLine($priority);
-        $log = $status.$class.$function.$info;
-        if (!empty($file)) $log .= " in $file on line $line";
-        $log .= "\n";
-        $this->save($priority, $log);
-    }
-
-    /**
-     * 记录日志
-     *
-     * @param int $priority 日志级别
-     * @param string $log 内容
-     * @return mixed
-     */
-    public function save($priority, $log)
-    {
-        if (!empty($log)) {
-            $filename = self::$_logFilename[$priority];
-            $fp = fopen($filename, 'a');
-            fwrite($fp, $log);
-            fclose($fp);
-        }
-        return self::$instance;
-    }
-
-    private function getTimeLine($level)
-    {
-        $time = date(TIME_FORMAT);
-
-        switch($level) {
-            case LOGGER_LEVEL_INFO:
-                $line = "$time - INFO  --> ";
-                break;
-            case LOGGER_LEVEL_WARN:
-                $line = "$time - WARN  --> ";
-                break;
-            case LOGGER_LEVEL_DEBUG:
-                $line = "$time - DEBUG --> ";
-                break;
-            case LOGGER_LEVEL_ERROR:
-                $line = "$time - ERROR --> ";
-                break;
-            case LOGGER_LEVEL_FATAL:
-                $line = "$time - FATAL --> ";
-                break;
-            default:
-                $line = "$time - LOG   --> ";
-                break;
-        }
-        return $line;
+        $this->logger->{$level}($message, $context);
     }
 }

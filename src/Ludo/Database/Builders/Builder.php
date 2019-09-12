@@ -22,7 +22,7 @@ class Builder
     protected $tableAlias = '';
 
     /**
-     * @var String fields part of the select clause, default is '*'
+     * @var array fields part of the select clause, default is '*'
      */
     protected $fields = array();
 
@@ -134,18 +134,6 @@ class Builder
     public function setField($fieldName)
     {
         if (!empty($fieldName)) array_push($this->fields, $fieldName);
-//        if ($fieldName) {
-//            if ($this->fields && $this->fields != '*') {
-//                if ($fieldName !='*') {
-//                    $this->fields .= ",$fieldName";
-//                } else {
-//                    if (strpos($this->fields, $this->tableAlias.'.*') === false)
-//                        $this->fields .= ','.$this->tableAlias.'.*';
-//                }
-//            } else {
-//                $this->fields = $fieldName;
-//            }
-//        }
         return $this;
     }
 
@@ -181,11 +169,6 @@ class Builder
     protected function addJoinField($fields)
     {
         array_push($this->fields, $fields);
-//        if ($this->fields == '*') {
-//            $this->fields = "{$this->tableAlias}.*, {$fields}";
-//        } else {
-//            $this->fields .= ','.$fields;
-//        }
         return $this;
     }
 
@@ -263,7 +246,7 @@ class Builder
      *
      * @param String $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
      *                               'field1=:name & tableAlias.field3=:user'
-     * @param Array $params
+     * @param array|null $params
      * @return $this
      */
     public function where($condition, $params = NULL)
@@ -280,7 +263,7 @@ class Builder
      *
      * @param String $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
      *                               'field1=:name & tableAlias.field3=:user'
-     * @param Array $params
+     * @param array|null $params
      * @return $this
      */
     public function having($condition, $params = NULL)
@@ -368,7 +351,7 @@ class Builder
     /**
      * do an query directly, which will return a result
      *
-     * @param Array/String $params
+     * @param array/String $params
      * @param int $fetchMode
      * @param mixed $fetchArgument
      * @return array
@@ -393,7 +376,7 @@ class Builder
 
     /**
      * get one row from table into an array
-     * @param String|Array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     * @param String|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
      * 	A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @param int $fetchMode PDO::FETCH_ASSOC, PDO::FETCH_NUM, PDO::FETCH_BOTH
@@ -415,7 +398,7 @@ class Builder
     /**
      * get all rows from table into an 2D array
      *
-     * @param String|Array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
      * 	A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @param int $fetchMode Controls the contents of the returned array.
@@ -434,7 +417,7 @@ class Builder
      * eg. select col1 from table limit 0,3.
      * will return: array(row1_col1, row2_col1, row3_col1);
      *
-     * @param String|Array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
      * 	A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return array represents an table
@@ -463,7 +446,7 @@ class Builder
      * will return: array(row1_col1=>row1_col2, row2_col1=>row2_col2, row3_col1=>row3_col2);
      * </pre>
      *
-     * @param String|Array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
      * 	A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
      * @return array represents an table
@@ -476,10 +459,10 @@ class Builder
     /**
      * Returns a single column from the next row of a result set
      *
-     * @param String|Array $multi_call_params params used for multi call, assign only if you wanna using multi-call
+     * @param string|array $multi_call_params params used for multi call, assign only if you wanna using multi-call
      * 	A multi-call means that sql have been prepared to do multiple call with different params.
      *   if $multi_call_params is not null, means this is an multi-call.
-     * @return String Returns a single column from the next row of a result set or FALSE if there are no more rows.
+     * @return mixed Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
     public function fetchColumn($multi_call_params = null)
     {
@@ -544,7 +527,7 @@ class Builder
      *                      'field2_name' => 'value',
      *                      ...
      *                    );
-     * @param String|Array $condition The query condition. with following format:<br />
+     * @param string|array $condition The query condition. with following format:<br />
      * 		String: 'id=2 and username="test"'
      * 		Array:  array('id=? and uname=?', array(2, 'test')); //
      *
@@ -581,9 +564,9 @@ class Builder
     /**
      * delete record from table
      *
-     * @param String $condition The query condition. with following format:<br />
+     * @param string $condition The query condition. with following format:<br />
      * 		String: 'id=2 and uanme="libok"' or 'id=? and uname=?' or 'id=:id and uname=:uname'
-     * @param String|Array $params params which will be used in prepared statement, with following format: <br />
+     * @param string|array $params params which will be used in prepared statement, with following format: <br />
      * 		String: if you just need one parameter in above prepared statement. e.g. '1111'
      *		Array: array(2, 'libok') or array(':id'=>2, ':uname'=>'libok')
      *
@@ -641,7 +624,7 @@ class Builder
     /**
      * just for inner use to auto wrap any param to an array.
      *
-     * @param String|Array $params
+     * @param string|array $params
      * @return array
      */
     protected function autoArr($params)
@@ -662,7 +645,8 @@ class Builder
      * @param bool $ignore
      * @return int if insert successful, else SqlException will be throwed
      */
-    function batchInsert($arr, $fieldNames=array(), $ignore = false) {
+    public function batchInsert($arr, $fieldNames=array(), $ignore = false)
+    {
         if (empty($arr)) return false;
 
         if (!empty($fieldNames)) {

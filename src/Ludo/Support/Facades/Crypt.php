@@ -1,13 +1,19 @@
 <?php
 namespace Ludo\Support\Facades;
 
+use Ludo\Encryption\Encrypter;
+
+
 /**
- * @see \Ludo\Encrypter\Encrypter
- * @method static
+ * @see Encrypter
+ *
+ * @method static encrypt($value)
+ * @method static decrypt($payload)
  */
-class Crypt extends Facade {
-    public static function getFacadeAccessor()
+class Crypt extends Facade implements FacadeInterface
+{
+    public static function getFacadeAccessor(): string
     {
-        return 'encrypter';
+        return Encrypter::class;
     }
 }

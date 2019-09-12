@@ -2,34 +2,16 @@
 namespace Ludo\Config;
 
 /**
- * Class Config
+ * Class Repository
  *
  * @package Ludo\Config
  */
-class Config
+class Repository
 {
     /**
      * @var array $config config data
      */
-    public static $config = array();
-
-    /**
-     * @var Config $instance config instance
-     */
-    private static $instance;
-
-    /**
-     * Get config instance
-     *
-     * @return Config
-     */
-    public static function getInstance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new Config();
-        }
-        return self::$instance;
-    }
+    public $config = array();
 
     /**
      * Config constructor.
@@ -51,7 +33,7 @@ class Config
             $config = require $filename;
             $basename = basename($filename, '.php');
             foreach ($config as $k => $v) {
-                self::$config[$basename][$k] = $v;
+                $this->config[$basename][$k] = $v;
             }
         }
     }
@@ -84,28 +66,19 @@ class Config
      * @param $name
      * @return mixed
      */
-    public function get($name)
+    public function get(string $name = null)
     {
-        $segments = explode('.', $name);
-        $length = count($segments);
-        if ($length == 1) {
-            return self::$config[$segments[0]];
-        }
-        $item = self::$config[$segments[0]];
-        unset($segments[0]);
-
-        $name = implode('.', $segments);
-        empty($name) && $name = null;
-        return array_get($item, $name);
+        return array_get($this->config, $name);
     }
 
     /**
-     * Get all config data
+     * Set config value
      *
-     * @return array
+     * @param string $name
+     * @param $value
      */
-    public function getConfig()
+    public function set(string $name, $value): void
     {
-        return self::$config;
+        array_set($this->config, $name, $value);
     }
 }

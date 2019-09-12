@@ -1,27 +1,20 @@
 <?php
-\Ludo\Foundation\Lang::init();
 
-$providers = [
-    Ludo\Encrypter\EncrypterServiceProvider::class,
+$facades = [
+    Ludo\Config\ConfigServiceProvider::class,
+    Ludo\Encryption\EncryptionServiceProvider::class,
+    Ludo\Context\ContextServiceProvider::class,
+    Ludo\Translation\TranslationServiceProvider::class,
+    Ludo\Log\LogServiceProvider::class,
 ];
 
-foreach ($providers as $provider) {
-    if (is_string($provider)) $provider = new $provider();
-    if (method_exists($provider, 'register')) {
-        $provider->register();
+foreach ($facades as $facade) {
+    if (is_string($facade)) {
+        $facade = new $facade();
+    }
+
+    if (method_exists($facade, 'register')) {
+        $facade->register();
     }
 }
-
-$alias = [
-    'Filter' => Ludo\Support\Filter::class,
-    'Validator' => Ludo\Support\Validator::class,
-    'Lang' => Ludo\Foundation\Lang::class,
-    'Config' => Ludo\Config\Config::class,
-    'Factory' => Ludo\Support\Factory::class,
-    'View' => Ludo\View\View::class,
-    'QueryException' => Ludo\Database\QueryException::class,
-    'Counter' => Ludo\Counter\Counter::class,
-    'Crypt' => Ludo\Support\Facades\Crypt::class,
-];
-\Ludo\Support\AliasLoader::getInstance($alias)->register();
 
