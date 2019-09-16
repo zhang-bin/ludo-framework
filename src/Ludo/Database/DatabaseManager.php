@@ -120,7 +120,7 @@ class DatabaseManager
         $name = $name ?: $this->getDefaultConnection();
         $connections = $this->config['connections'];
         if (is_null($config = array_get($connections, $name))) {
-            throw new InvalidArgumentException("Database [$name] not configured.");
+            throw new InvalidArgumentException(sprintf('Database [%s] not configured.', $name));
         }
 
         return $config;

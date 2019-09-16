@@ -194,7 +194,10 @@ abstract class Dao
      */
     public function find(string $condition, array $params, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): array
     {
-        if (!empty($fields)) $this->builder->setField($fields);
+        if (!empty($fields)) {
+            $this->builder->setField($fields);
+        }
+
         return $this->builder->where($condition, $params)->fetch(NULL, $fetchMode);
     }
 
@@ -208,7 +211,10 @@ abstract class Dao
      */
     public function findColumn(string $condition, array $params, string $column): string
     {
-        if (!empty($column)) $this->builder->setField($column);
+        if (!empty($column)) {
+            $this->builder->setField($column);
+        }
+
         return $this->builder->where($condition, $params)->fetchColumn();
     }
 
@@ -221,7 +227,10 @@ abstract class Dao
      */
     public function fetchColumn(int $id, string $column): string
     {
-        if (!empty($column)) $this->builder->setField($column);
+        if (!empty($column)) {
+            $this->builder->setField($column);
+        }
+
         return $this->builder->where($this->tblName . '.id = ?', array($id))->fetchColumn();
     }
 

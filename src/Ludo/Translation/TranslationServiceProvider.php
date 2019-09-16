@@ -9,7 +9,7 @@ class TranslationServiceProvider implements ServiceProviderInterface
 {
     public function register(): void
     {
-        ServiceProvider::getInstance()->register(Translator::class, function () {
+        ServiceProvider::getMainInstance()->register(Translator::class, function () {
             return new Translator();
         });
     }

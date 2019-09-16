@@ -508,7 +508,9 @@ class Builder
      */
     public function insert(array $arr): int
     {
-        if (empty($arr)) return false;
+        if (empty($arr)) {
+            return false;
+        }
 
         $comma = '';
         $setFields = '(';

@@ -26,7 +26,7 @@ class Repository
      */
     public function get(string $id, $default = null, $coroutineId = null)
     {
-        if (Coroutine::getCid() > 0) {
+        if (inCoroutine()) {
             if (is_null($coroutineId)) {
                 return Coroutine::getContext($coroutineId)[$id] ?? $default;
             } else {
@@ -45,7 +45,7 @@ class Repository
      */
     public function set(string $id, $value)
     {
-        if (Coroutine::getCid() > 0) {
+        if (inCoroutine()) {
             Coroutine::getContext()[$id] = $value;
         } else {
             $this->context[$id] = $value;

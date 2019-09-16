@@ -9,7 +9,7 @@ abstract class Facade implements FacadeInterface
 {
     public static function __callStatic($method, $args)
     {
-        $instance = ServiceProvider::getInstance()->getRegisteredAbstract(static::getFacadeAccessor());
+        $instance = ServiceProvider::getMainInstance()->getRegisteredAbstract(static::getFacadeAccessor());
         if (!$instance) {
             throw new RuntimeException('A facade root has not been set.');
         }

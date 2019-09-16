@@ -1,6 +1,7 @@
 <?php
 
 use Ludo\Utils\Parallel;
+use Swoole\Coroutine;
 
 /**
  * Parallel execute batch tasks
@@ -15,4 +16,13 @@ function parallel(array $callbacks)
         $parallel->add($callback, $key);
     }
     return $parallel->wait();
+}
+
+/**
+ * Decide current environment is in coroutine
+ *
+ * @return bool
+ */
+function inCoroutine() {
+    return Coroutine::getCid() > 0;
 }

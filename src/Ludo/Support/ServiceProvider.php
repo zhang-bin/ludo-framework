@@ -4,20 +4,26 @@ namespace Ludo\Support;
 
 use Ludo\Database\DatabaseManager;
 use Ludo\Database\Connectors\ConnectionFactory;
+use Ludo\Redis\BaseRedis;
+use Ludo\Redis\RedisManager;
 use Ludo\Support\Facades\Config;
-use Ludo\Support\Facades\Facade;
 use Ludo\Support\Facades\Log;
 use Ludo\View\View;
 use Ludo\Log\Logger;
 use Ludo\Database\Connection;
 use Closure;
+use Swoole\Coroutine;
 
 /**
  * The kernel of the framework which holds all available resource
  */
 class ServiceProvider
 {
+    /**
+     * @var array
+     */
     private $db = array();
+
     /**
      * @var View
      */
@@ -29,25 +35,50 @@ class ServiceProvider
     private $dbManager = null;
 
     /**
+     * @var RedisManager
+     */
+    private $redisManager = null;
+
+    /**
+     * @var array
+     */
+    private $redis = array();
+
+    /**
      * @var Logger
      */
     private $log = null;
 
-    private static $instance = null;
+    private static $instance = [];
 
     private $bindings = [];
 
     /**
      * get unique instance of kernel
      *
+     * @param int $cid
      * @return ServiceProvider
      */
-    public static function getInstance()
+    public static function getInstance(int $cid = null)
     {
-        if (self::$instance == null) {
-            self::$instance = new ServiceProvider();
+        if (is_null($cid)) {
+            $cid = Coroutine::getCid();
         }
-        return self::$instance;
+
+        if (!isset(self::$instance[$cid])) {
+            self::$instance[$cid] = new ServiceProvider();
+        }
+        return self::$instance[$cid];
+    }
+
+    /**
+     * Get current main process instance
+     *
+     * @return ServiceProvider
+     */
+    public static function getMainInstance()
+    {
+        return self::getInstance(-1);
     }
 
     /**
@@ -68,7 +99,7 @@ class ServiceProvider
 
     /**
      * delete all DB connections
-     * $param $name
+     * @param string $name
      */
     public function delDBHandler(string $name = null): void
     {
@@ -86,6 +117,45 @@ class ServiceProvider
             $this->dbManager = new DatabaseManager(Config::get('database'), new ConnectionFactory());
         }
         return $this->dbManager;
+    }
+
+    /**
+     * Get redis handler
+     *
+     * @param string|null $name
+     * @return BaseRedis
+     */
+    public function getRedisHandler(string $name = null): BaseRedis
+    {
+        $this->getRedisManagerHandler();
+        $name = $name ?: $this->redisManager->getDefaultConnection();
+        if (empty($this->redis[$name])) {
+            $this->redis[$name] = $this->redisManager->connection($name);
+        }
+        return $this->redis[$name];
+    }
+
+    /**
+     * delete redis handler
+     *
+     * @param string|null $name
+     */
+    public function delRedisHandler(string $name = null)
+    {
+        $this->redis[$name] = null;
+    }
+
+    /**
+     * get Redis Manager Handler
+     *
+     * @return RedisManager
+     */
+    public function getRedisManagerHandler(): RedisManager
+    {
+        if (empty($this->redisManager)) {
+            $this->redisManager = new RedisManager(Config::get('database'));
+        }
+        return $this->redisManager;
     }
 
     /**
