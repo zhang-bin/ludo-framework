@@ -9,15 +9,23 @@ use RuntimeException;
 
 class Server implements ServerInterface
 {
+
+    /**
+     * @var string process name
+     */
+    private $processName;
+
     /**
      * @var SwooleServer $server
      */
     private $server;
 
-    public function __construct(string $managerProcessName)
+    public function __construct(string $processName)
     {
+        $this->processName = $processName;
+
         if (PHP_OS == 'Linux') {
-            swoole_set_process_name($managerProcessName);
+            swoole_set_process_name(sprintf('php %s manager', $processName));
         }
     }
 

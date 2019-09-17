@@ -8,7 +8,7 @@ interface ServerInterface
     const SERVER_HTTP = 2;
     const SERVER_WEB_SOCKET = 3;
 
-    public function __construct(string $managerProcessName);
+    public function __construct(string $processName);
 
     public function init(array $config): void;
 
