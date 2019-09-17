@@ -38,12 +38,29 @@ class Server implements ServerInterface
         $this->server->set($config['settings']);
 
         foreach ($config['callbacks'] as $eventName => $callback) {
-            $this->server->on($eventName, $callback);
+            [$className, $method] = $callback;
+            $class = new $className();
+            /**
+             * @var $class ServerCallback
+             */
+            if (method_exists($class, 'setConfig')) {
+                $class->setConfig($this->processName, $config);
+            }
+
+            $this->server->on($eventName, [$class, $method]);
         }
 
         if (!empty($config['processes'])) {
             foreach ($config['processes'] as $callback) {
-                $this->server->addProcess($callback);
+                [$className, $method] = $callback;
+                $class = new $className();
+                /**
+                 * @var $class ServerCallback
+                 */
+                if (method_exists($class, 'setConfig')) {
+                    $class->setConfig($this->processName, $config);
+                }
+                $this->server->addProcess($class->$method());
             }
         }
     }
