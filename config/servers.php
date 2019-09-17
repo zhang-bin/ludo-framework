@@ -1,6 +1,7 @@
 <?php
 
 use Ludo\Server\ServerInterface;
+use Ludo\Server\SwooleEvent;
 
 return [
     'servers' => [
@@ -37,6 +38,7 @@ return [
 
     ],
     'callbacks' => [
-
+        SwooleEvent::ON_START => [Ludo\Server\ServerCallback::class, 'start'],
+        SwooleEvent::ON_WORKER_START => [Ludo\Server\ServerCallback::class, 'workerStart'],
     ],
 ];
