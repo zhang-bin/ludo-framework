@@ -23,6 +23,7 @@ function parallel(array $callbacks)
  *
  * @return bool
  */
-function inCoroutine() {
+function inCoroutine()
+{
     return Coroutine::getCid() > 0;
 }
