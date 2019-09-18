@@ -82,7 +82,7 @@ class Application
 
     public static function debug($lastOutput = '')
     {
-        $debugInfo = '<h2>Time:' . date('Y-m-d H:i:s') . ':' . currUrl() . '</h2>';
+        $debugInfo = '<h2>Time:' . date('Y-m-d H:i:s') . ':' . currentUrl() . '</h2>';
         $debugInfo .= '@@@@error:<pre>' . var_export(error_get_last(), true) . '</pre>@@@@<br />';
         if (!empty($lastOutput)) {
             $debugInfo .= '@@@@output:<pre>' . htmlentities($lastOutput, ENT_QUOTES) . '</pre>@@@@';

@@ -325,3 +325,17 @@ function str_random($length = 16)
     $pool = '3456789abcdefghjkmnpqrstuvwxyz';
     return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
 }
+
+/**
+ * return the current page url, including http protocol, domain, port, and url, and query string.
+ * e.g.: http://test.com/index.php?libk=yes
+ *
+ * @return string current page url
+ */
+function currentUrl(): string
+{
+    $schema = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+
+    $port = ($_SERVER['SERVER_PORT'] != '80') ? ':' . $_SERVER['SERVER_PORT'] : '';
+    return $schema . '://' . $_SERVER['HTTP_HOST'] . $port . $_SERVER['REQUEST_URI'];
+}
