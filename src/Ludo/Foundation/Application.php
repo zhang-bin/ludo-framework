@@ -17,9 +17,9 @@ class Application
      * auto route
      *
      * @param string $path
-     * @return string
+     * @return string|void
      */
-    public function run(string $path = ''): string
+    public function run(string $path = '')
     {
         try {
             if (PHP_SAPI != 'cli') {

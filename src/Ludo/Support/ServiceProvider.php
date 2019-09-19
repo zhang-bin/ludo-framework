@@ -153,7 +153,7 @@ class ServiceProvider
     public function getRedisManagerHandler(): RedisManager
     {
         if (empty($this->redisManager)) {
-            $this->redisManager = new RedisManager(Config::get('database'));
+            $this->redisManager = new RedisManager(Config::get('redis'));
         }
         return $this->redisManager;
     }

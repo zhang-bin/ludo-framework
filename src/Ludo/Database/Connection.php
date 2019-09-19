@@ -459,9 +459,9 @@ class Connection
     /**
      * Get the default fetch argument for the connection.
      *
-     * @return int
+     * @return int|null
      */
-    public function getFetchArgument(): int
+    public function getFetchArgument()
     {
         return $this->fetchArgument;
     }
@@ -469,10 +469,10 @@ class Connection
     /**
      * Set the default fetch argument for the connection.
      *
-     * @param int $fetchArgument
+     * @param int|null $fetchArgument
      * @return void
      */
-    public function setFetchArgument(int $fetchArgument): void
+    public function setFetchArgument($fetchArgument): void
     {
         $this->fetchArgument = $fetchArgument;
     }
