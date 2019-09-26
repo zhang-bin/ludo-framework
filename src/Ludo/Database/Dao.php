@@ -156,10 +156,10 @@ abstract class Dao
      * delete record with condition
      *
      * @param string $condition
-     * @param null|array $params
+     * @param array $params
      * @return int affected row
      */
-    public function deleteWhere(string $condition, $params = null): int
+    public function deleteWhere(string $condition, array $params = []): int
     {
         return $this->builder->delete($condition, $params);
     }
@@ -281,7 +281,7 @@ abstract class Dao
             $params = $condition[1];
         } else {
             $where = $condition;
-            $params = null;
+            $params = [];
         }
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAll(null, $fetchMode);
     }
@@ -303,7 +303,7 @@ abstract class Dao
             $params = $condition[1];
         } else {
             $where = $condition;
-            $params = null;
+            $params = [];
         }
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllUnique();
     }
@@ -325,7 +325,7 @@ abstract class Dao
             $params = $condition[1];
         } else {
             $where = $condition;
-            $params = null;
+            $params = [];
         }
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllKvPair();
     }
@@ -347,7 +347,7 @@ abstract class Dao
             $params = $condition[1];
         } else {
             $where = $condition;
-            $params = null;
+            $params = [];
         }
         return $this->builder->field($fields)->where($where)->orderby($order)->limit($rows, $start)->select($params);
     }
@@ -356,11 +356,11 @@ abstract class Dao
      * count records
      *
      * @param string $condition
-     * @param null $params
+     * @param array $params
      * @param bool $distinct
      * @return int
      */
-    public function count(string $condition = '', $params = null, bool $distinct = false): int
+    public function count(string $condition = '', array $params = [], bool $distinct = false): int
     {
         if (!empty($condition)) {
             $this->builder->where($condition, $params);
@@ -372,10 +372,10 @@ abstract class Dao
      * Check if the records exists according to the $condition.
      *
      * @param string $condition
-     * @param mixed $params
+     * @param array $params
      * @return bool
      */
-    public function exists(string $condition = '', $params = null): bool
+    public function exists(string $condition = '', array $params = []): bool
     {
         if (!is_array($params)) {
             $params = array($params);
@@ -391,11 +391,11 @@ abstract class Dao
      * If exists, result[1] will store the "1st db row" result
      *
      * @param string $condition
-     * @param string|array $params
+     * @param array $params
      * @param string $fields
      * @return array list(exists, row) = Array(0=>true/false, 1=>rowArray/false)
      */
-    public function existsRow(string $condition = '', $params = null, string $fields = null): array
+    public function existsRow(string $condition = '', array $params = [], string $fields = null): array
     {
         if (!empty($fields)) {
             $this->builder->setField($fields);
