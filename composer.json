@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=7.3.0",
     "ezyang/htmlpurifier": ">=4.6",
     "phpmailer/phpmailer": "5.2.*",
     "ext-redis": "*",
