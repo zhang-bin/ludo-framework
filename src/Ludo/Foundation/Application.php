@@ -28,10 +28,12 @@ class Application
                 $pathInfo = $path;
             }
 
-            list($ctrl, $act) = Router::parse($pathInfo);
+            [$ctrl, $act] = Router::parse($pathInfo);
 
             Context::set('current-controller', $ctrl);
             Context::set('current-action', $act);
+
+            $ctrl = Config::get('app.controller').$ctrl;
             /**
              * @var Controller $controller
              */

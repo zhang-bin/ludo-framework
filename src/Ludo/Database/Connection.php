@@ -95,9 +95,9 @@ class Connection
      *
      * @param string $query
      * @param array $params
-     * @return array
+     * @return mixed
      */
-    public function selectColumn(string $query, array $params = array()): array
+    public function selectColumn(string $query, array $params = array())
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -114,9 +114,9 @@ class Connection
      *
      * @param string $query
      * @param array $params
-     * @return array
+     * @return mixed
      */
-    public function selectOne(string $query, array $params = array()): array
+    public function selectOne(string $query, array $params = array())
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**

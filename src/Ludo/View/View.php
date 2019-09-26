@@ -2,8 +2,6 @@
 
 namespace Ludo\View;
 
-use phpDocumentor\Reflection\Types\Void_;
-
 class View
 {
     /**
@@ -42,10 +40,10 @@ class View
      * if two: the 1st arg should be the $varName, the 2nd arg should be $varValue
      * assign the key => value pair to template
      * @param string $varName variable name
-     * @param string $varValue variable value
+     * @param mixed $varValue variable value
      * @return $this
      */
-    public function assign(string $varName, string $varValue = ''): View
+    public function assign(string $varName, $varValue): View
     {
         $argNumbers = func_num_args();
         if ($argNumbers == 2) {

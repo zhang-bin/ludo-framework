@@ -35,7 +35,7 @@ class Router
             $cnt = count($pathInfo);
             //if path info only one param which is ctrl, just return back;
             if ($cnt < 2) {
-                return [Config::get('app.controller').$ctrl, $act];
+                return [$ctrl, $act];
             }
 
             $paramStart = 2;
@@ -48,6 +48,6 @@ class Router
                 $_REQUEST[$pathInfo[$i]] = $_GET[$pathInfo[$i]] = $pathInfo[$i + 1];
             }
         }
-        return [Config::get('app.controller').$ctrl, $act];
+        return [$ctrl, $act];
     }
 }
