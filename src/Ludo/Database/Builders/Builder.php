@@ -539,13 +539,12 @@ class Builder
      *                      'field2_name' => 'value',
      *                      ...
      *                    );
-     * @param string|array $condition The query condition. with following format:<br />
-     *        String: 'id=2 and username="test"'
+     * @param array $condition The query condition. with following format:<br />
      *        Array:  array('id=? and uname=?', array(2, 'test')); //
      *
      * @return int row number if insert successful, else SqlException will be throw
      */
-    public function update(array $arr, string $condition = ''): int
+    public function update(array $arr, array $condition = []): int
     {
         if (empty($arr)) {
             return false;
@@ -563,13 +562,8 @@ class Builder
         $sql = "UPDATE {$this->db->quoteIdentifier($this->tableName)} set {$setFields}";
 
         if (!empty($condition)) {
-            if (is_array($condition)) {
-                $sql .= ' WHERE ' . $condition[0];
-                $params = array_merge($params, $this->autoArr($condition[1]));
-            } else {
-                $sql .= ' WHERE ' . $condition;
-                $params = null;
-            }
+            $sql .= ' WHERE ' . $condition[0];
+            $params = array_merge($params, $this->autoArr($condition[1]));
         }
 
         return $this->db->update($sql, $params);
