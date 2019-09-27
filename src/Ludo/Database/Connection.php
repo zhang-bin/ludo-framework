@@ -158,7 +158,7 @@ class Connection
      * @param array $params
      * @return bool
      */
-    public function insert(string $query, array $params = array()): array
+    public function insert(string $query, array $params = array()): bool
     {
         return $this->statement($query, $params);
     }
