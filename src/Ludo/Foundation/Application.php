@@ -33,7 +33,7 @@ class Application
             Context::set('current-controller', $ctrl);
             Context::set('current-action', $act);
 
-            $ctrl = Config::get('app.controller').$ctrl;
+            $ctrl = Config::get('app.controller') . $ctrl;
             /**
              * @var Controller $controller
              */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Redis;
 
 use InvalidArgumentException;

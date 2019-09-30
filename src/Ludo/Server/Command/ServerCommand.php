@@ -1,4 +1,5 @@
 <?php
+
 namespace Ludo\Server\Command;
 
 use Ludo\Server\Server;
@@ -131,6 +132,6 @@ class ServerCommand extends Command
      */
     protected function getPid()
     {
-        return file_exists($this->pidFile) ? file_get_contents($this->pidFile) :false;
+        return file_exists($this->pidFile) ? file_get_contents($this->pidFile) : false;
     }
 }
