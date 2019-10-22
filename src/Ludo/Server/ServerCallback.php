@@ -6,13 +6,19 @@ use Swoole\Server;
 
 class ServerCallback
 {
-    private $config;
+    protected $config;
     private $processName;
 
-    public function setConfig($processName, $config)
+    /**
+     * @var Server
+     */
+    protected $server;
+
+    public function setConfig($server, $processName, $config)
     {
         $this->config = $config;
         $this->processName = $processName;
+        $this->server = $server;
     }
 
     public function start(Server $server)

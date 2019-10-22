@@ -33,12 +33,14 @@ class ServerCommand extends Command
         $serverName = $input->getArgument('name');
 
         $config = Config::get('servers');
-        $config[$serverName]['settings'] = array_replace($config['settings'], $config[$serverName]['settings']);
-        $config[$serverName]['processes'] = array_replace($config['processes'], $config[$serverName]['processes']);
-        $config[$serverName]['callbacks'] = array_replace($config['callbacks'], $config[$serverName]['callbacks']);
+        $serverConfig = $config['servers'][$serverName];
+        $this->config = $config['servers'][$serverName];
 
-        $this->config = $config[$serverName];
-        $this->pidFile = $this->config['pid_file'];
+        $this->config['settings'] = array_replace($config['settings'], empty($serverConfig['settings']) ? [] : $serverConfig['settings']);
+        $this->config['processes'] = array_replace($config['processes'], empty($serverConfig['processes']) ? [] : $serverConfig['processes']);
+        $this->config['callbacks'] = array_replace($config['callbacks'], empty($serverConfig['callbacks']) ? [] : $serverConfig['callbacks']);
+
+        $this->pidFile = $this->config['settings']['pid_file'];
 
         $command = $input->getOption('command');
         switch ($command) {

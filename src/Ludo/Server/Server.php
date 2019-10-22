@@ -44,7 +44,7 @@ class Server implements ServerInterface
              * @var $class ServerCallback
              */
             if (method_exists($class, 'setConfig')) {
-                $class->setConfig($this->processName, $config);
+                $class->setConfig($this->server, $this->processName, $config);
             }
 
             $this->server->on($eventName, [$class, $method]);

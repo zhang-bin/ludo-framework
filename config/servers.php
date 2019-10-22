@@ -13,7 +13,7 @@ return [
             'port' => 1234,
             'settings' => [
                 'worker_num' => 1,
-                'daemonize' => 'yes',
+                'daemonize' => '1',
             ]
         ]
     ],
