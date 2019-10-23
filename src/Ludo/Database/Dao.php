@@ -190,7 +190,7 @@ abstract class Dao
      * @param array $params
      * @param string $fields fields needs to be fetched, comma separated
      * @param int $fetchMode
-     * @return array|bool
+     * @return array
      */
     public function find(string $condition, array $params, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): array
     {

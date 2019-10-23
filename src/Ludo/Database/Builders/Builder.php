@@ -379,7 +379,9 @@ class Builder
         if (is_null($multi_call_params)) {//once-call, this->sql have no value
             return $this->db->select($this->constructSql(), $this->params);
         } else { //multiple-call:
-            if (empty($this->sql)) $this->constructSql(false);
+            if (empty($this->sql)) {
+                $this->constructSql(false);
+            }
             return $this->db->select($this->sql, $this->autoArr($multi_call_params));
         }
     }
@@ -391,18 +393,22 @@ class Builder
      *   if $multi_call_params is not null, means this is an multi-call.
      * @param int $fetchMode PDO::FETCH_ASSOC, PDO::FETCH_NUM, PDO::FETCH_BOTH
      *
-     * @return array|bool represent one row in a table, or false if failure
+     * @return array represent one row in a table, or false if failure
      */
     public function fetch($multi_call_params = NULL, int $fetchMode = PDO::FETCH_ASSOC)
     {
         $this->limit(1);
         $this->db->setFetchMode($fetchMode);
         if (is_null($multi_call_params)) {//once-call, this->sql have no value
-            return $this->db->selectOne($this->constructSql(), $this->params);
+            $result = $this->db->selectOne($this->constructSql(), $this->params);
         } else { //multiple-call:
-            if (empty($this->sql)) $this->constructSql(false);
-            return $this->db->selectOne($this->sql, $this->autoArr($multi_call_params));
+            if (empty($this->sql)) {
+                $this->constructSql(false);
+            }
+            $result = $this->db->selectOne($this->sql, $this->autoArr($multi_call_params));
         }
+        (false === $result) && ($result = []);
+        return $result;
     }
 
     /**
