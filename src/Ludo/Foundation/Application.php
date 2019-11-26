@@ -72,7 +72,7 @@ class Application
             if (Config::get('app.debug')) {
                 self::debug($output);
             }
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             error_log($ex);
             if (Config::get('app.debug')) {
                 $error = '<pre>' . $ex->getMessage() . "\n\n" . $ex->getTraceAsString() . '</pre>';
