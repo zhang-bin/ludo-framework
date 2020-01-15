@@ -88,4 +88,14 @@ class RedisManager
 
         return $config;
     }
+
+    /**
+     * Return all of the created connections.
+     *
+     * @return array
+     */
+    public function getConnections(): array
+    {
+        return $this->connections;
+    }
 }
