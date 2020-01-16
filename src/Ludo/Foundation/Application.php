@@ -21,6 +21,8 @@ class Application
      */
     public function run(string $path = '')
     {
+        Context::set('begin-timestamp', microtime(true));
+
         try {
             if (PHP_SAPI != 'cli') {
                 $pathInfo = str_replace('.html', '', $_SERVER['PATH_INFO']);
