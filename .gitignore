@@ -1,0 +1,6 @@
+# Created by .ignore support plugin (hsz.mobi)
+include.php
+config.inc.php
+test.php
+vendor
+.idea
