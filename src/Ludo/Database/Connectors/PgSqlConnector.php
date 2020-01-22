@@ -47,7 +47,7 @@ class PgSqlConnector extends Connector implements ConnectorInterface
         // need to establish the PDO connections and return them back for use.
 
         $host = isset($config['host']) ? "host={$config['host']};" : '';
-        $dsn = "pgsql:{$config['host']}dbname={$config['database']}";
+        $dsn = "pgsql:{$host}dbname={$config['database']}";
 
         // If a port was specified, we will add it to this Postgres DSN connections
         // format. Once we have done that we are ready to return this connection

@@ -6,6 +6,7 @@ use Ludo\Support\Facades\Config;
 use Ludo\Support\ServiceProvider;
 use PDO;
 use Closure;
+use Throwable;
 
 class Connection
 {
@@ -302,9 +303,8 @@ class Connection
         // took to execute and log the query SQL, bindings and time in our memory.
         $err = '';
         try {
-            $result = $callback($this, $query, $params);
-            return $result;
-        } catch (\Exception $e) {
+            return $callback($this, $query, $params);
+        } catch (Throwable $e) {
             $err = $e->getMessage();
             if (strpos($err, 'server has gone away') !== false) {//if mysql server has gone away, try reconnect
                 $dbManager = ServiceProvider::getInstance()->getDBManagerHandler();
@@ -315,8 +315,7 @@ class Connection
                     $dbManager->reconnect($name);
                 }
 
-                $result = $callback($this, $query, $params);
-                return $result;
+                return $callback($this, $query, $params);
             }
             $time = '[' . date('Y-m-d H:i:s') . ']    ';
             error_log($time . $e->getTraceAsString());

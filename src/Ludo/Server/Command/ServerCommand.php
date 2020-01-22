@@ -83,6 +83,7 @@ class ServerCommand extends Command
         $server->start();
 
         $output->writeln(sprintf('<fg=green>Start server %s successful.</>', $serverName));
+        return true;
     }
 
     /**
@@ -104,6 +105,7 @@ class ServerCommand extends Command
         } else {
             $output->writeln(sprintf('<fg=red>Stop server %s failed.</>', $serverName));
         }
+        return true;
     }
 
     /**
@@ -125,6 +127,7 @@ class ServerCommand extends Command
         } else {
             $output->writeln(sprintf('<fg=red>Reload server %s failed.</>', $serverName));
         }
+        return true;
     }
 
     /**

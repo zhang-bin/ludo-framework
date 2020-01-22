@@ -2,8 +2,6 @@
 
 namespace Ludo\Routing;
 
-use Ludo\Support\Facades\Config;
-
 class Router
 {
     public static function parse(string $pathInfo)

@@ -4,7 +4,6 @@ namespace Ludo\Database\Builders;
 
 use Ludo\Database\Connection;
 use PDO;
-use phpDocumentor\Reflection\Types\This;
 
 class Builder
 {

@@ -149,7 +149,7 @@ abstract class Dao
      */
     public function delete(int $id): int
     {
-        return $this->deleteWhere('id = ?', $id);
+        return $this->deleteWhere('id = ?', [$id]);
     }
 
     /**

@@ -208,12 +208,12 @@ function array_get($array, $key, $default = null)
  * @param array $array
  * @param string $key
  * @param mixed $value
- * @return mixed
+ * @return mixed|void
  */
 function array_set(array &$array, string $key, $value)
 {
     if (is_null($key)) {
-        return $array;
+        return;
     }
 
     $keys = explode('.', $key);

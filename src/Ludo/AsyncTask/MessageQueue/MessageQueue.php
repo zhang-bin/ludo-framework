@@ -4,6 +4,7 @@ namespace Ludo\AsyncTask\MessageQueue;
 
 use Ludo\AsyncTask\Message;
 use Ludo\AsyncTask\MessageInterface;
+use Throwable;
 
 /**
  * Message Queue to consume job
@@ -32,7 +33,7 @@ abstract class MessageQueue implements MessageQueueInterface
                     }
 
                     $this->ack($data);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     if ($message->shouldHandleAgain() && $this->remove($data)) {
                         $this->retry($message);
                     } else {

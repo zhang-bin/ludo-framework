@@ -3,7 +3,6 @@
 namespace Ludo\Redis;
 
 use Redis;
-use Closure;
 
 class BaseRedis extends Redis
 {

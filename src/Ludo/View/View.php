@@ -2,6 +2,8 @@
 
 namespace Ludo\View;
 
+use Exception;
+
 class View
 {
     /**
@@ -58,7 +60,7 @@ class View
     {
         $templateFileWithFullPath = TPL_ROOT . '/' . $this->tplFile . php;
         if (!file_exists($templateFileWithFullPath)) {
-            throw new \Exception("File [$templateFileWithFullPath] Not Found");
+            throw new Exception("File [$templateFileWithFullPath] Not Found");
         }
         extract($this->assignValues);
         include $templateFileWithFullPath;
