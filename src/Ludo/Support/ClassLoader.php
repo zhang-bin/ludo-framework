@@ -10,7 +10,7 @@ class ClassLoader
      *
      * @var array
      */
-    protected static $directories = array();
+    protected static $directories = [];
 
     /**
      * Indicates if a ClassLoader has been registered.
@@ -47,7 +47,7 @@ class ClassLoader
             $className = substr($className, 1);
         }
 
-        return str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $className) . '.php';
+        return str_replace(['\\', '_'], DIRECTORY_SEPARATOR, $className) . '.php';
     }
 
     /**
@@ -58,7 +58,7 @@ class ClassLoader
     public static function register(): void
     {
         if (!self::$registered) {
-            self::$registered = spl_autoload_register(array('\Ludo\Support\ClassLoader', 'load'));
+            self::$registered = spl_autoload_register(['\Ludo\Support\ClassLoader', 'load']);
         }
     }
 
@@ -83,7 +83,7 @@ class ClassLoader
     public static function removeDirectories($directories = null): void
     {
         if (is_null($directories)) {
-            static::$directories = array();
+            static::$directories = [];
         } else {
             $directories = (array)$directories;
 

@@ -69,7 +69,7 @@ abstract class Dao
      * @param bool $ignore
      * @return int true if insert successful, else SqlException will be throw
      */
-    public function batchInsert(array $arr, array $fieldNames = array(), bool $ignore = false): int
+    public function batchInsert(array $arr, array $fieldNames = [], bool $ignore = false): int
     {
         if (empty($arr)) {
             return false;
@@ -97,11 +97,13 @@ abstract class Dao
         $keys .= ')';
 
         $sql = 'INSERT';
-        if ($ignore) $sql .= ' IGNORE ';
+        if ($ignore) {
+            $sql .= ' IGNORE ';
+        }
         $sql .= ' INTO ' . $this->connection->quoteIdentifier($this->tblName) . " {$keys} VALUES ";
 
         $comma = '';
-        $params = array();
+        $params = [];
         foreach ($arr as $a) {
             $sql .= $comma . '(';
             $comma2 = '';
@@ -125,7 +127,7 @@ abstract class Dao
      */
     public function update(int $id, array $arr): int
     {
-        return $this->updateWhere($arr, 'id = ?', array($id));
+        return $this->updateWhere($arr, 'id = ?', [$id]);
     }
 
     /**
@@ -136,9 +138,9 @@ abstract class Dao
      * @param array $params
      * @return int affected row
      */
-    public function updateWhere(array $newData, string $condition, array $params = array()): int
+    public function updateWhere(array $newData, string $condition, array $params = []): int
     {
-        return $this->builder->update($newData, array($condition, $params));
+        return $this->builder->update($newData, [$condition, $params]);
     }
 
     /**
@@ -231,7 +233,7 @@ abstract class Dao
             $this->builder->setField($column);
         }
 
-        return $this->builder->where($this->tblName . '.id = ?', array($id))->fetchColumn();
+        return $this->builder->where($this->tblName . '.id = ?', [$id])->fetchColumn();
     }
 
     /**
@@ -378,7 +380,7 @@ abstract class Dao
     public function exists(string $condition = '', array $params = []): bool
     {
         if (!is_array($params)) {
-            $params = array($params);
+            $params = [$params];
         }
 
         $cnt = $this->builder->setField('count(*)')->where($condition, $params)->fetchColumn();
@@ -403,7 +405,7 @@ abstract class Dao
 
         $row = $this->builder->where($condition, $params)->fetch(null, PDO::FETCH_BOTH);
         $exists = empty($row) ? false : true;
-        return array($exists, $row);
+        return [$exists, $row];
     }
 
     /**

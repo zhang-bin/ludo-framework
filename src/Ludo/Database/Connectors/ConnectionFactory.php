@@ -112,7 +112,7 @@ class ConnectionFactory
      */
     protected function mergeReadWriteConfig(array $config, array $merge): array
     {
-        return array_except(array_merge($config, $merge), array('read', 'write'));
+        return array_except(array_merge($config, $merge), ['read', 'write']);
     }
 
     /**
@@ -163,7 +163,7 @@ class ConnectionFactory
      *
      * @throws InvalidArgumentException
      */
-    protected function createConnection(string $driver, PDO $connection, string $database, string $prefix = '', array $config = array()): Connection
+    protected function createConnection(string $driver, PDO $connection, string $database, string $prefix = '', array $config = []): Connection
     {
         switch ($driver) {
             case 'mysql':

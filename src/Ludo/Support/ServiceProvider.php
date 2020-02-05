@@ -22,7 +22,7 @@ class ServiceProvider
     /**
      * @var array
      */
-    private $db = array();
+    private $db = [];
 
     /**
      * @var View
@@ -42,7 +42,7 @@ class ServiceProvider
     /**
      * @var array
      */
-    private $redis = array();
+    private $redis = [];
 
     /**
      * @var Logger

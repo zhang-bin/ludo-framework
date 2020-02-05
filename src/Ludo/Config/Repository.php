@@ -12,7 +12,7 @@ class Repository
     /**
      * @var array $config config data
      */
-    public $config = array();
+    public $config = [];
 
     /**
      * Config constructor.

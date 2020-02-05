@@ -14,22 +14,22 @@ class View
     /**
      * @var array all data used in template
      */
-    private $assignValues = array();
+    private $assignValues = [];
 
     /**
      * @var array  javascript blocks needed by this template
      */
-    private static $jsStrings = array();
+    private static $jsStrings = [];
 
     /**
      * @var array  javascript files needed by this template
      */
-    private static $jsFiles = array();
+    private static $jsFiles = [];
 
     /**
      * @var array  css files needed by this template
      */
-    private static $cssFiles = array();
+    private static $cssFiles = [];
 
     public function __construct()
     {
@@ -75,7 +75,7 @@ class View
     public function setFile(string $tplFile): View
     {
         $this->tplFile = $tplFile;
-        $this->assignValues = array();
+        $this->assignValues = [];
         return $this;
     }
 
@@ -103,16 +103,16 @@ class View
     {
         switch ($type) {
             case 'js':
-                self::$jsFiles = array();
-                self::$jsStrings = array();
+                self::$jsFiles = [];
+                self::$jsStrings = [];
                 break;
             case 'css':
-                self::$cssFiles = array();
+                self::$cssFiles = [];
                 break;
             default:
-                self::$jsFiles = array();
-                self::$jsStrings = array();
-                self::$cssFiles = array();
+                self::$jsFiles = [];
+                self::$jsStrings = [];
+                self::$cssFiles = [];
                 break;
         }
     }

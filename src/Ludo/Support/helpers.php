@@ -89,7 +89,7 @@ function array_add($array, $key, $value)
  */
 function array_divide($array)
 {
-    return array(array_keys($array), array_values($array));
+    return [array_keys($array), array_values($array)];
 }
 
 /**
@@ -101,7 +101,7 @@ function array_divide($array)
  */
 function array_dot($array, $prepend = '')
 {
-    $results = array();
+    $results = [];
     foreach ($array as $key => $value) {
         if (is_array($value)) {
             $results = array_merge($results, array_dot($value, $prepend . $key . '.'));

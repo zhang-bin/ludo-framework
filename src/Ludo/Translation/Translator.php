@@ -9,7 +9,7 @@ use RuntimeException;
  */
 class Translator
 {
-    private $translation = array();
+    private $translation = [];
     private $language;
 
     public function __construct()
@@ -56,7 +56,7 @@ class Translator
      * @param string $locale
      * @return string
      */
-    public function get(string $key, array $replace = array(), string $locale = null): string
+    public function get(string $key, array $replace = [], string $locale = null): string
     {
         if (is_null($locale)) {
             $locale = $this->language;
@@ -91,7 +91,7 @@ class Translator
         $baseLanguages = $this->getTranslate($base, $baseLang);
         $diffLanguages = $this->getTranslate($base, $diffLang);
 
-        $result = array();
+        $result = [];
         foreach ($baseLanguages as $filename => $languages) {
             foreach ($languages as $k => $v) {
                 if (empty($diffLanguages[$filename][$k])) {
@@ -120,7 +120,7 @@ class Translator
             }
 
             $diffLangFilename = $base . DIRECTORY_SEPARATOR . $lang . DIRECTORY_SEPARATOR . $filename . '.lang.php';
-            $diffData = array();
+            $diffData = [];
             if (file_exists($diffLangFilename)) {
                 $diffData = require $diffLangFilename;
             }

@@ -38,7 +38,7 @@ class Connection
      *
      * @var array
      */
-    protected $queryLog = array();
+    protected $queryLog = [];
 
     /**
      * The default fetch mode of the connection.
@@ -73,7 +73,7 @@ class Connection
      *
      * @var array
      */
-    protected $config = array();
+    protected $config = [];
 
     /**
      * Create a new database connection instance.
@@ -83,7 +83,7 @@ class Connection
      * @param string $tablePrefix
      * @param array $config
      */
-    public function __construct(PDO $pdo, string $database = '', string $tablePrefix = '', array $config = array())
+    public function __construct(PDO $pdo, string $database = '', string $tablePrefix = '', array $config = [])
     {
         $this->pdo = $pdo;
         $this->database = $database;
@@ -98,7 +98,7 @@ class Connection
      * @param array $params
      * @return mixed
      */
-    public function selectColumn(string $query, array $params = array())
+    public function selectColumn(string $query, array $params = [])
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -117,7 +117,7 @@ class Connection
      * @param array $params
      * @return mixed
      */
-    public function selectOne(string $query, array $params = array())
+    public function selectOne(string $query, array $params = [])
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -136,7 +136,7 @@ class Connection
      * @param array $params
      * @return array
      */
-    public function select(string $query, array $params = array()): array
+    public function select(string $query, array $params = []): array
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -159,7 +159,7 @@ class Connection
      * @param array $params
      * @return bool
      */
-    public function insert(string $query, array $params = array()): bool
+    public function insert(string $query, array $params = []): bool
     {
         return $this->statement($query, $params);
     }
@@ -171,7 +171,7 @@ class Connection
      * @param array $params
      * @return int affected row
      */
-    public function update(string $query, array $params = array()): int
+    public function update(string $query, array $params = []): int
     {
         return $this->affectingStatement($query, $params);
     }
@@ -183,7 +183,7 @@ class Connection
      * @param array $params
      * @return int affected row
      */
-    public function delete(string $query, array $params = array()): int
+    public function delete(string $query, array $params = []): int
     {
         return $this->affectingStatement($query, $params);
     }
@@ -195,7 +195,7 @@ class Connection
      * @param array $params
      * @return bool
      */
-    public function statement(string $query, array $params = array()): bool
+    public function statement(string $query, array $params = []): bool
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -212,7 +212,7 @@ class Connection
      * @param array $params
      * @return int
      */
-    public function affectingStatement(string $query, array $params = array()): int
+    public function affectingStatement(string $query, array $params = []): int
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -232,7 +232,7 @@ class Connection
      */
     public function unprepared(string $query): bool
     {
-        return $this->run($query, array(), function ($me, $query) {
+        return $this->run($query, [], function ($me, $query) {
             /**
              * @var Connection $me
              */

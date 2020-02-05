@@ -25,7 +25,7 @@ class Builder
     /**
      * @var array fields part of the select clause, default is '*'
      */
-    protected $fields = array();
+    protected $fields = [];
 
     /**
      * @var string Join clause
@@ -45,7 +45,7 @@ class Builder
     /**
      * @var array params used to replace the placeholder in condition
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @var string order by
@@ -443,7 +443,7 @@ class Builder
             return $this->select($multi_call_params, PDO::FETCH_COLUMN | PDO::FETCH_UNIQUE, 0);
         } else {
             $data = $this->select($multi_call_params, PDO::FETCH_COLUMN);
-            $result = array();
+            $result = [];
             foreach ($data as $datum) {
                 $result[$datum] = $datum;
             }
@@ -520,7 +520,7 @@ class Builder
         $comma = '';
         $setFields = '(';
         $setValues = '(';
-        $params = array();
+        $params = [];
         foreach ($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
@@ -557,7 +557,7 @@ class Builder
 
         $comma = '';
         $setFields = '';
-        $params = array();
+        $params = [];
         foreach ($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
@@ -592,7 +592,7 @@ class Builder
 
         if (!empty($condition)) {
             if (!is_null($params) && !is_array($params)) { //using prepared statement.
-                $params = array($params);
+                $params = [$params];
             }
             $sql .= ' WHERE ' . $condition;
         }
@@ -606,7 +606,7 @@ class Builder
      */
     protected function reset()
     {
-        $this->fields = array();
+        $this->fields = [];
         $this->join = '';
         $this->where = '';
         $this->having = '';
@@ -643,7 +643,7 @@ class Builder
     protected function autoArr($params)
     {
         if (!is_null($params) && !is_array($params)) {
-            $params = array($params);
+            $params = [$params];
         }
         return $params;
     }
