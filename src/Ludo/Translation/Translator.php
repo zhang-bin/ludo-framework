@@ -69,6 +69,9 @@ class Translator
         }
 
         $value = $this->translation[$group][$item];
+        if (is_null($value)) {
+            throw new RuntimeException(sprintf('language key [%s] does not exit.', $key));
+        }
 
         if (!empty($replace)) {
             foreach ($replace as $k => $v) {
