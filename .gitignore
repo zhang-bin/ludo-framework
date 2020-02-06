@@ -4,3 +4,7 @@ config.inc.php
 test.php
 vendor
 .idea
+bin
+config
+log
+tests
