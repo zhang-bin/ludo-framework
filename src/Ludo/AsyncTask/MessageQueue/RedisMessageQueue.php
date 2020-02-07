@@ -7,6 +7,7 @@ use Ludo\AsyncTask\Message;
 use Ludo\AsyncTask\MessageInterface;
 use Redis;
 use RuntimeException;
+use Ludo\Support\ServiceProvider;
 
 class RedisMessageQueue extends MessageQueue
 {
@@ -44,8 +45,7 @@ class RedisMessageQueue extends MessageQueue
     {
         $channel = $config['channel_prefix'] ?? 'queue';
 
-        $this->redis = new Redis();
-        $this->redis->connect($config['host'], $config['port']);
+        $this->redis = ServiceProvider::getInstance()->getRedisHandler($config['redis']);
         $this->timeout = $config['timeout'] ?? 10;
         $this->retryDelaySeconds = $config['retry_seconds'] ?? 10;
         $this->handleTimeout = $config['handle_timeout'] ?? 10;

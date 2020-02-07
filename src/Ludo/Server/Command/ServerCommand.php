@@ -56,6 +56,7 @@ class ServerCommand extends Command
                 $this->start($serverName, $output);
                 break;
             case 'reload':
+                $this->reload($serverName, $output);
                 break;
             default:
                 $output->writeln('<fg=red>Command not found.</>');
