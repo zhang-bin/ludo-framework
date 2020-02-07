@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Swoole\Process;
+use ReflectionClass;
+use ReflectionException;
+use phpDocumentor\Reflection\DocBlockFactory;
 
 class ServerCommand extends Command
 {
@@ -25,14 +28,34 @@ class ServerCommand extends Command
     {
         $this->setDescription('Start server.');
         $this->addArgument('name', InputOption::VALUE_REQUIRED, 'The name of server.');
-        $this->addOption('command', 'C', InputOption::VALUE_REQUIRED, 'The command with server.', 'start');
+        $this->addOption('command', 'c', InputOption::VALUE_REQUIRED, 'The command with server.', 'start');
+        $this->addOption('list', 'l', InputOption::VALUE_OPTIONAL, 'List available server.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $config = Config::get('servers');
+
+        if ($input->hasOption('list')) {
+            try {
+                foreach ($config['servers'] as $name => $item) {
+                    $message = sprintf('<fg=green>%s</>', $name);
+                    if (!empty($item['class'])) {
+                        $reflection = new ReflectionClass($item['class']);
+                        $doc = DocBlockFactory::createInstance()->create($reflection->getDocComment());
+                        $message .= sprintf(' <fg=default>%s</>', $doc->getDescription());
+                    }
+                    $output->writeln($message);
+                }
+            } catch (ReflectionException $e) {
+                $output->writeln(sprintf('<fg=red>Server %s can not instantiate.</>', $input['class']));
+            }
+
+            return;
+        }
+
         $serverName = $input->getArgument('name');
 
-        $config = Config::get('servers');
         $serverConfig = $config['servers'][$serverName];
         $this->config = $config['servers'][$serverName];
 
