@@ -454,7 +454,7 @@ abstract class Dao
      *
      * @param bool $switchConnection 事务开启后，如果该值为true，那么事务内的查询操作会切换到主库
      */
-    public function beginTransaction(bool $switchConnection = false): void
+    public function beginTransaction(bool $switchConnection = true): void
     {
         $this->connection->beginTransaction($switchConnection);
     }
