@@ -29,14 +29,14 @@ class ProcessCommand extends Command
         $this->setDescription('Start process.');
         $this->addArgument('name', InputOption::VALUE_REQUIRED, 'The name of process.');
         $this->addOption('command', 'c', InputOption::VALUE_REQUIRED, 'The command with process.', 'start');
-        $this->addOption('list', 'l', InputOption::VALUE_OPTIONAL, 'List available process.');
+        $this->addOption('list', 'l', InputOption::VALUE_NONE, 'List available process.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $config = Config::get('processes');
 
-        if ($input->hasOption('list')) {
+        if (!empty($input->getOption('list'))) {
             try {
                 foreach ($config['processes'] as $name => $item) {
                     $reflection = new ReflectionClass($item['class']);

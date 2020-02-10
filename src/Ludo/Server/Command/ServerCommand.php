@@ -29,14 +29,14 @@ class ServerCommand extends Command
         $this->setDescription('Start server.');
         $this->addArgument('name', InputOption::VALUE_REQUIRED, 'The name of server.');
         $this->addOption('command', 'c', InputOption::VALUE_REQUIRED, 'The command with server.', 'start');
-        $this->addOption('list', 'l', InputOption::VALUE_OPTIONAL, 'List available server.');
+        $this->addOption('list', 'l', InputOption::VALUE_NONE, 'List available server.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $config = Config::get('servers');
 
-        if ($input->hasOption('list')) {
+        if (!empty($input->getOption('list'))) {
             try {
                 foreach ($config['servers'] as $name => $item) {
                     $message = sprintf('<fg=green>%s</>', $name);
