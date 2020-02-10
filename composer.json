@@ -17,7 +17,8 @@
     "ext-pdo": "*",
     "ext-openssl": "*",
     "ext-json": "*",
-    "monolog/monolog": "^2.0"
+    "monolog/monolog": "^2.0",
+    "phpdocumentor/reflection-docblock": "^4.3"
   },
   "autoload": {
     "files": [
