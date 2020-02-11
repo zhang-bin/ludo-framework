@@ -22,7 +22,8 @@ abstract class Process implements ProcessInterface
         SwooleProcess::signal(SIGCHLD, function ($signal) use (&$workers) {
             while (true) {
                 $result = SwooleProcess::wait(false);
-                if (!$result) {
+                debug(json_encode($result));
+                if (!$result || $result['signal'] == SIGKILL) {
                     break;
                 }
 
@@ -34,6 +35,14 @@ abstract class Process implements ProcessInterface
                 $newPid = $childProcess->start();
                 $workers[$newPid] = $childProcess;
             }
+        });
+
+        SwooleProcess::signal(SIGTERM, function ($signal) use ($workers) {
+            foreach ($workers as $pid => $process) {
+                SwooleProcess::kill($pid, SIGKILL);
+            }
+
+            exit();
         });
 
         foreach ($workers as $process) {

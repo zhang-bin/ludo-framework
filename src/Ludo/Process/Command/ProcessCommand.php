@@ -116,7 +116,7 @@ class ProcessCommand extends Command
             return false;
         }
 
-        if (SwooleProcess::kill($pid)) {
+        if (SwooleProcess::kill($pid, SIGTERM)) {
             $output->writeln(sprintf('<fg=green>Stop process %s successful.</>', $processName));
         } else {
             $output->writeln(sprintf('<fg=red>Stop process %s failed.</>', $processName));
