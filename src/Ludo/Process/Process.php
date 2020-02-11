@@ -7,6 +7,9 @@ use Swoole\Event;
 
 abstract class Process implements ProcessInterface
 {
+
+    private $workers = [];
+
     /**
      * 运行程序
      *
@@ -17,12 +20,11 @@ abstract class Process implements ProcessInterface
         SwooleProcess::daemon();
         $process = new SwooleProcess([$this, 'handle']);
         $pid = $process->start();
-        $workers[$pid] = $process;
+        $this->workers[$pid] = $process;
 
-        SwooleProcess::signal(SIGCHLD, function ($signal) use (&$workers) {
+        SwooleProcess::signal(SIGCHLD, function ($signal) {
             while (true) {
                 $result = SwooleProcess::wait(false);
-                debug(json_encode($result));
                 if (!$result || $result['signal'] == SIGKILL) {
                     break;
                 }
@@ -31,21 +33,22 @@ abstract class Process implements ProcessInterface
                 /**
                  * @var $childProcess SwooleProcess
                  */
-                $childProcess = $workers[$pid];
+                $childProcess = $this->workers[$pid];
+                unset($this->workers[$pid]);
                 $newPid = $childProcess->start();
-                $workers[$newPid] = $childProcess;
+                $this->workers[$newPid] = $childProcess;
             }
         });
 
-        SwooleProcess::signal(SIGTERM, function ($signal) use ($workers) {
-            foreach ($workers as $pid => $process) {
+        SwooleProcess::signal(SIGTERM, function ($signal) {
+            foreach ($this->workers as $pid => $process) {
                 SwooleProcess::kill($pid, SIGKILL);
             }
 
             exit();
         });
 
-        foreach ($workers as $process) {
+        foreach ($this->workers as $process) {
             Event::add($process->pipe, function ($pipe) use ($process) {
                 return;
             });
