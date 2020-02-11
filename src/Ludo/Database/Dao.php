@@ -138,9 +138,9 @@ abstract class Dao
      * @param array $params
      * @return int affected row
      */
-    public function updateWhere(array $newData, string $condition, array $params = []): int
+    public function updateWhere(array $newData, string $condition = null, array $params = []): int
     {
-        return $this->builder->update($newData, [$condition, $params]);
+        return $this->builder->update($newData, $condition, $params);
     }
 
     /**
@@ -181,8 +181,8 @@ abstract class Dao
         }
 
         $this->builder->setField($fields);
-        $this->builder->where($this->tblName . '.id = ?', $id);
-        return $this->builder->fetch(null, $fetchMode);
+        $this->builder->where($this->tblName . '.id = ?', [$id]);
+        return $this->builder->fetch($fetchMode);
     }
 
     /**
@@ -200,7 +200,7 @@ abstract class Dao
             $this->builder->setField($fields);
         }
 
-        return $this->builder->where($condition, $params)->fetch(NULL, $fetchMode);
+        return $this->builder->where($condition, $params)->fetch($fetchMode);
     }
 
     /**
@@ -248,7 +248,7 @@ abstract class Dao
      */
     public function fetchAll(int $rows = 0, int $start = 0, string $order = '', string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): array
     {
-        return $this->builder->field($fields)->limit($rows, $start)->orderby($order)->fetchAll(null, $fetchMode);
+        return $this->builder->field($fields)->limit($rows, $start)->orderby($order)->fetchAll($fetchMode);
     }
 
     /**
@@ -285,7 +285,7 @@ abstract class Dao
             $where = $condition;
             $params = [];
         }
-        return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAll(null, $fetchMode);
+        return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAll($fetchMode);
     }
 
     /**
@@ -330,28 +330,6 @@ abstract class Dao
             $params = [];
         }
         return $this->builder->field($fields)->where($where, $params)->orderby($order)->limit($rows, $start)->fetchAllKvPair();
-    }
-
-    /**
-     * Do query, and return the PDOStatement Object
-     *
-     * @param mixed $condition
-     * @param int $rows
-     * @param int $start
-     * @param String $order
-     * @param String $fields
-     * @return array
-     */
-    function queryAll($condition = '', int $rows = 0, int $start = 0, string $order = 'id DESC', string $fields = ''): array
-    {
-        if (is_array($condition)) {
-            $where = $condition[0];
-            $params = $condition[1];
-        } else {
-            $where = $condition;
-            $params = [];
-        }
-        return $this->builder->field($fields)->where($where)->orderby($order)->limit($rows, $start)->select($params);
     }
 
     /**
@@ -403,7 +381,7 @@ abstract class Dao
             $this->builder->setField($fields);
         }
 
-        $row = $this->builder->where($condition, $params)->fetch(null, PDO::FETCH_BOTH);
+        $row = $this->builder->where($condition, $params)->fetch(PDO::FETCH_BOTH);
         $exists = empty($row) ? false : true;
         return [$exists, $row];
     }
