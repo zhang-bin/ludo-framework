@@ -47,6 +47,10 @@ class ClassLoader
             $className = substr($className, 1);
         }
 
+        if (start_with($className, 'App\\')) {
+            $className = lcfirst($className);
+        }
+
         return str_replace(['\\', '_'], DIRECTORY_SEPARATOR, $className) . '.php';
     }
 
