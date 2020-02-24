@@ -2,9 +2,9 @@
 include.php
 config.inc.php
 test.php
-vendor
-.idea
-bin
-config
-log
-tests
+/vendor
+/.idea
+/bin
+/config
+/log
+/tests
