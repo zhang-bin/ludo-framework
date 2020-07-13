@@ -44,7 +44,7 @@ class ProcessCommand extends Command
                     $output->writeln(sprintf('<fg=green>%s</> <fg=default>%s</>', $name, $doc->getDescription()));
                 }
             } catch (ReflectionException $e) {
-                $output->writeln(sprintf('<fg=red>Process %s can not instantiate.</>', $input['class']));
+                $output->writeln(sprintf('<fg=red>Process %s can not instantiate.</>', $item['class']));
             }
 
             return;
