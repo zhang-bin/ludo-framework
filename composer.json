@@ -13,7 +13,8 @@
     "ezyang/htmlpurifier": ">=4.6",
     "phpmailer/phpmailer": "5.2.*",
     "symfony/console": "^4.3",
-    "ext-redis": "*"
+    "ext-redis": "*",
+    "phpdocumentor/reflection-docblock": "^5.1"
   },
   "autoload": {
     "files": [
