@@ -4,8 +4,20 @@ namespace Ludo\Support;
 
 use DateTime;
 
+
+/**
+ * Class Validator
+ *
+ * @package Ludo\Support
+ */
 class Validator
 {
+    /**
+     * Validate email data
+     *
+     * @param string $data raw data
+     * @return bool
+     */
     public static function email(string $data): bool
     {
         if (empty($data)) {
@@ -15,22 +27,34 @@ class Validator
         return filter_var($data, FILTER_VALIDATE_EMAIL) !== false;
     }
 
+    /**
+     * Validate username
+     *
+     * @param string $data raw data
+     * @return bool
+     */
     public static function uname(string $data): bool
     {
         return !empty($data) && preg_match('/^[a-zA-Z0-9]{5,16}$/', $data);
     }
 
+    /**
+     * Validate password
+     *
+     * @param string $data raw data
+     * @return bool
+     */
     public static function password(string $data): bool
     {
         return !empty($data) && preg_match('/^[a-zA-Z0-9]{6,16}$/', $data);
     }
 
     /**
-     * validate if length of data is between the range( including the min and max value);
+     * Validate if length of data is between the range( including the min and max value);
      *
-     * @param string $data
-     * @param int $min
-     * @param int $max
+     * @param string $data raw data
+     * @param int $min minimum size
+     * @param int $max maximum size
      * @return bool true if valid
      */
     public static function range(string $data, int $min, int $max): bool
@@ -41,6 +65,13 @@ class Validator
         return $len >= $min && $len <= $max;
     }
 
+    /**
+     * Validate data length
+     *
+     * @param string $data raw data
+     * @param int $length data length
+     * @return bool
+     */
     public static function len(string $data, int $length): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
@@ -48,6 +79,13 @@ class Validator
         return $len == $length;
     }
 
+    /**
+     * Validate data minimum size
+     *
+     * @param string $data raw data
+     * @param int $min minimum size
+     * @return bool
+     */
     public static function minLength(string $data, int $min): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
@@ -55,6 +93,13 @@ class Validator
         return $len >= $min;
     }
 
+    /**
+     * Validate data maximum size
+     *
+     * @param string $data raw data
+     * @param int $max maximum size
+     * @return bool
+     */
     public static function maxLength(string $data, int $max): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
@@ -62,18 +107,31 @@ class Validator
         return $len <= $max;
     }
 
+    /**
+     * Validate chinese word
+     *
+     * @param string $data raw data
+     * @return bool
+     */
     public static function chinese(string $data): bool
     {
         return preg_match('/^[\x{4e00}-\x{9fa5}]+$/u', $data);
     }
 
+    /**
+     * Validate postcode
+     *
+     * @param string $data raw data
+     * @return bool
+     */
     public static function postcode(string $data): bool
     {
         return !empty($data) && preg_match('/^\d{6}$/', $data);
     }
 
     /**
-     * whether data is an valid ip format
+     * Whether data is an valid ip format
+     *
      * @param string $data ip string
      * @return bool true for well formatted ip, vise versa.
      */
@@ -87,7 +145,7 @@ class Validator
     }
 
     /**
-     * whether data is an valid private ip
+     * Whether data is an valid private ip
      * 10.0.0.0 through 10.255.255.255 (10/8)
      * 172.16.0.0 through 172.31.255.255 (172.16/12)
      * 192.168.0.0 through 192.168.255.255 (192.168/16)
@@ -112,7 +170,7 @@ class Validator
     }
 
     /**
-     * whether data is an valid public ip
+     * Whether data is an valid public ip
      *
      * @param String $data ip string
      * @param bool $noReserved whether to exclude reserved ip range (169.254/16), default is true.
@@ -125,17 +183,17 @@ class Validator
         }
 
         $flag = $noReserved ? FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE : FILTER_FLAG_NO_PRIV_RANGE;
-        return filter_var($data, FILTER_VALIDATE_IP, $flag) !== false ? true : false;
+        return filter_var($data, FILTER_VALIDATE_IP, $flag) !== false;
     }
 
     /**
      * Whether data is a valid url
      *
-     * @param string $data
-     * @param bool $schemeRequired
-     * @param bool $hostRequired
-     * @param bool $pathRequired
-     * @param bool $queryStringRequired
+     * @param string $data raw data
+     * @param bool $schemeRequired whether require scheme
+     * @param bool $hostRequired whether require host
+     * @param bool $pathRequired whether require path
+     * @param bool $queryStringRequired whether require query
      * @return bool
      */
     public static function url(string $data, bool $schemeRequired = false, bool $hostRequired = true, bool $pathRequired = false, bool $queryStringRequired = false): bool
@@ -161,9 +219,9 @@ class Validator
     }
 
     /**
-     * whether data is a valid date
+     * Whether data is a valid date
      *
-     * @param string $data
+     * @param string $data raw data
      * @return bool
      */
     public static function date(string $data): bool
@@ -182,9 +240,9 @@ class Validator
     }
 
     /**
-     * whether data is a valid mobile phone number
+     * Whether data is a valid mobile phone number
      *
-     * @param $data
+     * @param string $data raw data
      * @return bool
      */
     public static function mobile(string $data): bool

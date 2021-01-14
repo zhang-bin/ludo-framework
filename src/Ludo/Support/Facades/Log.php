@@ -18,6 +18,11 @@ use Ludo\Log\Logger;
  */
 class Log extends Facade implements FacadeInterface
 {
+    /**
+     * Get facade accessor
+     *
+     * @return string
+     */
     public static function getFacadeAccessor(): string
     {
         return Logger::class;

@@ -4,12 +4,18 @@ namespace Ludo\Database\Connectors;
 
 use PDO;
 
+
+/**
+ * PostgreSql Connector
+ *
+ * @package Ludo\Database\Connectors
+ */
 class PgSqlConnector extends Connector implements ConnectorInterface
 {
     /**
      * Establish a database connection.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return PDO
      */
     public function connect(array $config): PDO
@@ -37,7 +43,7 @@ class PgSqlConnector extends Connector implements ConnectorInterface
     /**
      * Create a DSN string from a configuration.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return string
      */
     protected function getDsn(array $config): string

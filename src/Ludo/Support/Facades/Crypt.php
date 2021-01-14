@@ -13,6 +13,11 @@ use Ludo\Encryption\Encrypter;
  */
 class Crypt extends Facade implements FacadeInterface
 {
+    /**
+     * Get facade accessor
+     *
+     * @return string
+     */
     public static function getFacadeAccessor(): string
     {
         return Encrypter::class;

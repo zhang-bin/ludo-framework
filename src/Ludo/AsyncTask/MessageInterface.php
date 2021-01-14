@@ -2,6 +2,11 @@
 
 namespace Ludo\AsyncTask;
 
+/**
+ * Message Interface
+ *
+ * @package Ludo\AsyncTask
+ */
 interface MessageInterface
 {
     /**

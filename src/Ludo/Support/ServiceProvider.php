@@ -9,10 +9,10 @@ use Ludo\Redis\RedisManager;
 use Ludo\Support\Facades\Config;
 use Ludo\Support\Facades\Log;
 use Ludo\View\View;
-use Ludo\Log\Logger;
 use Ludo\Database\Connection;
 use Closure;
 use Swoole\Coroutine;
+
 
 /**
  * The kernel of the framework which holds all available resource
@@ -20,46 +20,52 @@ use Swoole\Coroutine;
 class ServiceProvider
 {
     /**
-     * @var array
+     * @var Connection[] $db connections
      */
-    private $db = [];
+    private array $db = [];
 
     /**
-     * @var View
+     * @var ?View $tpl view object
      */
-    private $tpl = null;
+    private ?View $tpl = null;
 
     /**
-     * @var DatabaseManager
+     * @var ?DatabaseManager $dbManager database manager object
      */
-    private $dbManager = null;
+    private ?DatabaseManager $dbManager = null;
 
     /**
-     * @var RedisManager
+     * @var ?RedisManager $redisManager redis manager object
      */
-    private $redisManager = null;
+    private ?RedisManager $redisManager = null;
 
     /**
-     * @var array
+     * @var BaseRedis[] $redis redis object
      */
-    private $redis = [];
+    private array $redis = [];
 
     /**
-     * @var Logger
+     * @var ?Log $log log object
      */
-    private $log = null;
-
-    private static $instance = [];
-
-    private $bindings = [];
+    private ?Log $log = null;
 
     /**
-     * get unique instance of kernel
+     * @var ServiceProvider[] $instance self instances
+     */
+    private static array $instance = [];
+
+    /**
+     * @var array $bindings register class relationship
+     */
+    private array $bindings = [];
+
+    /**
+     * Get unique instance of kernel
      *
-     * @param int $cid
+     * @param ?int $cid coroutine id
      * @return ServiceProvider
      */
-    public static function getInstance(int $cid = null)
+    public static function getInstance(int $cid = null): ServiceProvider
     {
         if (is_null($cid)) {
             $cid = Coroutine::getCid();
@@ -76,15 +82,15 @@ class ServiceProvider
      *
      * @return ServiceProvider
      */
-    public static function getMainInstance()
+    public static function getMainInstance(): ServiceProvider
     {
         return self::getInstance(-1);
     }
 
     /**
-     * get DB Handler
+     * Get DB Handler
      *
-     * @param string $name db instance in database config
+     * @param ?string $name db instance in database config
      * @return Connection an instance of DBHandler
      */
     public function getDBHandler(string $name = null): Connection
@@ -98,8 +104,9 @@ class ServiceProvider
     }
 
     /**
-     * delete all DB connections
-     * @param string $name
+     * Delete all DB connections
+     *
+     * @param ?string $name db instance
      */
     public function delDBHandler(string $name = null): void
     {
@@ -107,7 +114,7 @@ class ServiceProvider
     }
 
     /**
-     * get DB Manager Handler
+     * Get DB Manager Handler
      *
      * @return DatabaseManager
      */
@@ -122,7 +129,7 @@ class ServiceProvider
     /**
      * Get redis handler
      *
-     * @param string|null $name
+     * @param ?string $name redis name
      * @return BaseRedis
      */
     public function getRedisHandler(string $name = null): BaseRedis
@@ -136,17 +143,17 @@ class ServiceProvider
     }
 
     /**
-     * delete redis handler
+     * Delete redis handler
      *
-     * @param string|null $name
+     * @param ?string $name redis name
      */
-    public function delRedisHandler(string $name = null)
+    public function delRedisHandler(string $name = null): void
     {
         $this->redis[$name] = null;
     }
 
     /**
-     * get Redis Manager Handler
+     * Get Redis Manager Handler
      *
      * @return RedisManager
      */
@@ -159,7 +166,7 @@ class ServiceProvider
     }
 
     /**
-     * get View Handler
+     * Get View Handler
      *
      * @return View
      */
@@ -172,7 +179,7 @@ class ServiceProvider
     }
 
     /**
-     * get Log Handler
+     * Get Log Handler
      *
      * @return Log
      */
@@ -184,6 +191,12 @@ class ServiceProvider
         return $this->log;
     }
 
+    /**
+     * Register class callback
+     *
+     * @param string $abstract class name
+     * @param Closure $concrete callback
+     */
     public function register(string $abstract, Closure $concrete): void
     {
         if (isset($this->bindings[$abstract])) {//已经注册了
@@ -193,9 +206,14 @@ class ServiceProvider
         $this->bindings[$abstract] = call_user_func($concrete);
     }
 
-    public function getRegisteredAbstract(string $abstract)
+    /**
+     * Get registered class callback
+     *
+     * @param string $abstract class name
+     * @return Closure
+     */
+    public function getRegisteredAbstract(string $abstract): Closure
     {
         return $this->bindings[$abstract];
     }
-
 }

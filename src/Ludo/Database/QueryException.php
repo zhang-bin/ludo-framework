@@ -5,29 +5,30 @@ namespace Ludo\Database;
 use PDOException;
 use Exception;
 
+
+/**
+ * Query Exception
+ *
+ * @package Ludo\Database
+ */
 class QueryException extends PDOException
 {
+    /**
+     * @var string $sql sql statement
+     */
+    protected string $sql;
 
     /**
-     * The SQL for the query.
-     *
-     * @var string
+     * @var array sql parameters
      */
-    protected $sql;
-
-    /**
-     * The params for the query.
-     *
-     * @var array
-     */
-    protected $params;
+    protected array $params;
 
     /**
      * Create a new query exception instance.
      *
-     * @param string $sql
-     * @param array $params
-     * @param Exception $previous
+     * @param string $sql sql statement
+     * @param array $params where parameters
+     * @param Exception $previous sql exception
      */
     public function __construct(string $sql, array $params, Exception $previous)
     {
@@ -47,12 +48,12 @@ class QueryException extends PDOException
     /**
      * Format the SQL error message.
      *
-     * @param string $sql
-     * @param array $params
-     * @param Exception $previous
+     * @param string $sql sql statement
+     * @param array $params where parameters
+     * @param Exception $previous sql exception
      * @return string
      */
-    protected function formatMessage($sql, $params, $previous): string
+    protected function formatMessage(string $sql, array $params, Exception $previous): string
     {
         return $previous->getMessage() . ' (SQL: ' . str_replace_array('\?', $params, $sql) . ')';
     }

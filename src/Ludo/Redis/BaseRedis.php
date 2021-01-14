@@ -4,9 +4,20 @@ namespace Ludo\Redis;
 
 use Redis;
 
+
+/**
+ * BaseRedis
+ *
+ * @package Ludo\Redis
+ */
 class BaseRedis extends Redis
 {
-    public function __construct($config)
+    /**
+     * BaseRedis constructor.
+     *
+     * @param array $config redis config
+     */
+    public function __construct(array $config)
     {
         parent::__construct();
         $timeout = $config['timeout'] ?? 5;
@@ -21,7 +32,12 @@ class BaseRedis extends Redis
         }
     }
 
-    protected function getSafelyExpireSeconds()
+    /**
+     * Random expire seconds
+     *
+     * @return int
+     */
+    protected function getSafelyExpireSeconds(): int
     {
         return mt_rand(0, 86400);
     }
@@ -29,10 +45,10 @@ class BaseRedis extends Redis
     /**
      * 随机延长过期时间，防止同一时间有大量key过期
      *
-     * @param $key
-     * @param $seconds
+     * @param string $key redis key
+     * @param int $seconds expire seconds
      */
-    public function randExpire($key, $seconds)
+    public function randExpire(string $key, int $seconds)
     {
         $this->expire($key, $seconds + $this->getSafelyExpireSeconds());
     }
@@ -40,10 +56,10 @@ class BaseRedis extends Redis
     /**
      * 随机延长过期时间，防止同一时间有大量key过期
      *
-     * @param $key
-     * @param $timestamp
+     * @param string $key redis key
+     * @param int $timestamp expire timestamp
      */
-    public function randExpireAt($key, $timestamp)
+    public function randExpireAt(string $key, int $timestamp)
     {
         $this->expireAt($key, $timestamp + $this->getSafelyExpireSeconds());
     }

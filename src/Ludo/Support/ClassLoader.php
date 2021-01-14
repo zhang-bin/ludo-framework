@@ -2,27 +2,28 @@
 
 namespace Ludo\Support;
 
+
+/**
+ * Class ClassLoader
+ *
+ * @package Ludo\Support
+ */
 class ClassLoader
 {
+    /**
+     * @var array $directories registered directories
+     */
+    protected static array $directories = [];
 
     /**
-     * The registered directories.
-     *
-     * @var array
+     * @var bool $registered Indicates if a ClassLoader has been registered
      */
-    protected static $directories = [];
-
-    /**
-     * Indicates if a ClassLoader has been registered.
-     *
-     * @var bool
-     */
-    protected static $registered = false;
+    protected static bool $registered = false;
 
     /**
      * Load the given class file.
      *
-     * @param string $class
+     * @param string $class class name
      */
     public static function load(string $class): void
     {
@@ -38,7 +39,7 @@ class ClassLoader
     /**
      * Get the normal file name for a class.
      *
-     * @param string $className
+     * @param string $className class name
      * @return string
      */
     public static function normalizeClass(string $className): string
@@ -69,7 +70,7 @@ class ClassLoader
     /**
      * Add directories to the class loader.
      *
-     * @param string|array $directories
+     * @param string|array $directories class directory
      * @return void
      */
     public static function addDirectories($directories): void
@@ -81,7 +82,7 @@ class ClassLoader
     /**
      * Remove directories from the class loader.
      *
-     * @param string|array $directories
+     * @param string|array $directories class directory
      * @return void
      */
     public static function removeDirectories($directories = null): void

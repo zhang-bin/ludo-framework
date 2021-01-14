@@ -13,18 +13,33 @@ use ReflectionClass;
 use ReflectionException;
 use phpDocumentor\Reflection\DocBlockFactory;
 
+
+/**
+ * Server Command
+ *
+ * @package Ludo\Server\Command
+ */
 class ServerCommand extends Command
 {
-    protected $pidFile;
+    /**
+     * @var string $pidFile pid filename
+     */
+    protected string $pidFile;
 
-    protected $config;
+    /**
+     * @var array $config server config
+     */
+    protected array $config;
 
     public function __construct()
     {
         parent::__construct('server');
     }
 
-    protected function configure()
+    /**
+     * Configure the current command
+     */
+    protected function configure(): void
     {
         $this->setDescription('Start server.');
         $this->addArgument('name', InputOption::VALUE_REQUIRED, 'The name of server.');
@@ -32,7 +47,13 @@ class ServerCommand extends Command
         $this->addOption('list', 'l', InputOption::VALUE_NONE, 'List available server.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Execute the current command
+     *
+     * @param InputInterface $input input handle
+     * @param OutputInterface $output output handle
+     */
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $config = Config::get('servers');
 
@@ -90,11 +111,11 @@ class ServerCommand extends Command
     /**
      * Start server
      *
-     * @param string $serverName
-     * @param OutputInterface $output
+     * @param string $serverName server name
+     * @param OutputInterface $output output handle
      * @return bool
      */
-    protected function start(string $serverName, OutputInterface $output)
+    protected function start(string $serverName, OutputInterface $output): bool
     {
         $pid = $this->getPid();
         if ($pid && Process::kill($pid, 0)) {
@@ -113,11 +134,11 @@ class ServerCommand extends Command
     /**
      * Stop server
      *
-     * @param string $serverName
-     * @param OutputInterface $output
+     * @param string $serverName server name
+     * @param OutputInterface $output output handle
      * @return bool
      */
-    protected function stop(string $serverName, OutputInterface $output)
+    protected function stop(string $serverName, OutputInterface $output): bool
     {
         if (!$pid = $this->getPid()) {
             $output->writeln(sprintf('<fg=red>%s not start.</>', $serverName));
@@ -135,11 +156,11 @@ class ServerCommand extends Command
     /**
      * Reload server
      *
-     * @param string $serverName
-     * @param OutputInterface $output
+     * @param string $serverName server name
+     * @param OutputInterface $output output handle
      * @return bool
      */
-    protected function reload(string $serverName, OutputInterface $output)
+    protected function reload(string $serverName, OutputInterface $output): bool
     {
         if (!$pid = $this->getPid()) {
             $output->writeln(sprintf('<fg=red>%s not start.</>', $serverName));

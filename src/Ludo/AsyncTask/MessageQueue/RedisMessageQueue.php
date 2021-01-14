@@ -9,10 +9,16 @@ use Redis;
 use RuntimeException;
 use Ludo\Support\ServiceProvider;
 
+
+/**
+ * Message Queue use redis
+ *
+ * @package Ludo\AsyncTask\MessageQueue
+ */
 class RedisMessageQueue extends MessageQueue
 {
     /**
-     * @var Redis
+     * @var Redis $redis
      */
     protected $redis;
 
@@ -34,14 +40,14 @@ class RedisMessageQueue extends MessageQueue
     /**
      * @var Channel $channel Channel object
      */
-    protected $channel;
+    protected Channel $channel;
 
     /**
      * RedisMessageQueue constructor.
      *
-     * @param $config
+     * @param array $config message queue config
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $channel = $config['channel_prefix'] ?? 'queue';
 
@@ -75,7 +81,7 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Delete a job from delayed queue
      *
-     * @param JobInterface $job
+     * @param JobInterface $job job need to be executed
      * @return bool
      */
     public function delete(JobInterface $job): bool
@@ -115,10 +121,10 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Ack message when handle successful
      *
-     * @param string $data
+     * @param string $data message
      * @return bool
      */
-    public function ack($data): bool
+    public function ack(string $data): bool
     {
         return $this->remove($data);
     }
@@ -126,10 +132,10 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Failed message
      *
-     * @param string $data
+     * @param string $data message
      * @return bool
      */
-    public function fail($data): bool
+    public function fail(string $data): bool
     {
         if ($this->remove($data)) {
             return boolval($this->redis->lPush($this->channel->getFailed(), $data));
@@ -141,7 +147,7 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Retry execute failed message
      *
-     * @param MessageInterface $message
+     * @param MessageInterface $message message object
      * @return bool
      */
     public function retry(MessageInterface $message): bool
@@ -153,7 +159,7 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Reload failed message into waiting queue
      *
-     * @param string|null $channel
+     * @param ?string $channel channel name
      * @return int
      */
     public function reload(string $channel = null): int
@@ -177,7 +183,7 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Flush message queue
      *
-     * @param string|null $channel
+     * @param ?string $channel failed channel name
      * @return bool
      */
     public function flush(string $channel = null): bool
@@ -193,10 +199,10 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Remove message from reserved channel
      *
-     * @param string $data
+     * @param string $data message
      * @return bool
      */
-    protected function remove($data): bool
+    protected function remove(string $data): bool
     {
         return $this->redis->zRem($this->channel->getReserved(), $data) > 0;
     }
@@ -204,8 +210,8 @@ class RedisMessageQueue extends MessageQueue
     /**
      * Move message from channel to channel
      *
-     * @param string $from
-     * @param string $to
+     * @param string $from original channel name
+     * @param string $to target channel name
      */
     protected function move(string $from, string $to): void
     {

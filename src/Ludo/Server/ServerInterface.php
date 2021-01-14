@@ -2,15 +2,22 @@
 
 namespace Ludo\Server;
 
+/**
+ * Server Interface
+ *
+ * @package Ludo\Server
+ */
 interface ServerInterface
 {
-    const SERVER_TCP = 1;
-    const SERVER_HTTP = 2;
-    const SERVER_WEB_SOCKET = 3;
-
-    public function __construct(string $processName);
-
+    /**
+     * Init server
+     *
+     * @param array $config server config
+     */
     public function init(array $config): void;
 
+    /**
+     * Start server
+     */
     public function start(): void;
 }

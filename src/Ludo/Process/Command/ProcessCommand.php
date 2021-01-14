@@ -13,18 +13,33 @@ use ReflectionClass;
 use ReflectionException;
 use phpDocumentor\Reflection\DocBlockFactory;
 
+
+/**
+ * Process Command
+ *
+ * @package Ludo\Process\Command
+ */
 class ProcessCommand extends Command
 {
-    protected $pidFile;
+    /**
+     * @var string $pidFile pid filename
+     */
+    protected string $pidFile;
 
-    protected $config;
+    /**
+     * @var array $config process config
+     */
+    protected array $config;
 
     public function __construct()
     {
         parent::__construct('process');
     }
 
-    protected function configure()
+    /**
+     * Configure the current command
+     */
+    protected function configure(): void
     {
         $this->setDescription('Start process.');
         $this->addArgument('name', InputOption::VALUE_REQUIRED, 'The name of process.');
@@ -32,7 +47,13 @@ class ProcessCommand extends Command
         $this->addOption('list', 'l', InputOption::VALUE_NONE, 'List available process.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Execute the current command
+     *
+     * @param InputInterface $input input handle
+     * @param OutputInterface $output output handle
+     */
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $config = Config::get('processes');
 
@@ -75,13 +96,13 @@ class ProcessCommand extends Command
     }
 
     /**
-     * Start server
+     * Start process
      *
-     * @param string $processName
-     * @param OutputInterface $output
+     * @param string $processName process name
+     * @param OutputInterface $output output handle
      * @return bool
      */
-    protected function start(string $processName, OutputInterface $output)
+    protected function start(string $processName, OutputInterface $output): bool
     {
         $pid = $this->getPid();
         if ($pid && SwooleProcess::kill($pid, 0)) {
@@ -103,13 +124,13 @@ class ProcessCommand extends Command
     }
 
     /**
-     * Stop server
+     * Stop process
      *
-     * @param string $processName
-     * @param OutputInterface $output
+     * @param string $processName process name
+     * @param OutputInterface $output output handle
      * @return bool
      */
-    protected function stop(string $processName, OutputInterface $output)
+    protected function stop(string $processName, OutputInterface $output): bool
     {
         if (!$pid = $this->getPid()) {
             $output->writeln(sprintf('<fg=red>%s not start.</>', $processName));

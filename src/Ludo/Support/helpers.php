@@ -1,37 +1,36 @@
 <?php
 
-use Ludo\Support\Facades\Config;
-use \Ludo\Foundation\Application;
-
 /**
- * get the extension for a file
+ * Get the extension for a file
  *
- * @param String $fileName
+ * @param string $fileName file name
  * @return string extension of a file. like: jpg or PNG or txt or php
  */
-function ext($fileName)
+function ext(string $fileName): string
 {
     return substr(strrchr($fileName, '.'), 1);
 }
 
 /**
- * convert absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
+ * Convert absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
  * to relative path (which is relative to the site root,eg. /uploads/1.html)
- * @param string $path
+ *
+ * @param string $path path name
  * @return string
  */
-function abs2rel($path)
+function abs2rel(string $path): string
 {
     return str_replace(SITE_ROOT, '', $path);
 }
 
 /**
- * convert relative path (which is relative to the site root,eg. /uploads/1.html)
+ * Convert relative path (which is relative to the site root,eg. /uploads/1.html)
  * to absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
- * @param string $path
+ *
+ * @param string $path path name
  * @return string
  */
-function rel2abs($path)
+function rel2abs(string $path): string
 {
     if ($path[0] != '/') {
         $path = '/' . $path;
@@ -41,10 +40,10 @@ function rel2abs($path)
 }
 
 /**
- * refine a size data
+ * Refine a size data
  *
- * @param string $size
- * @param int $fix
+ * @param string $size raw size
+ * @param int $fix precision
  * @return string
  */
 function refineSize(string $size, int $fix = 2): string
@@ -60,7 +59,13 @@ function refineSize(string $size, int $fix = 2): string
     }
 }
 
-function debug($var, $print_r = true)
+/**
+ * Print pretty data
+ *
+ * @param mixed $var raw data
+ * @param bool $print_r print or var dump
+ */
+function debug($var, $print_r = true): void
 {
     echo '<pre>';
     $print_r ? print_r($var) : var_dump($var);
@@ -70,12 +75,12 @@ function debug($var, $print_r = true)
 /**
  * Add an element to an array if it doesn't exist.
  *
- * @param array $array
- * @param string $key
- * @param mixed $value
+ * @param array $array original array
+ * @param string $key array key
+ * @param mixed $value value
  * @return array
  */
-function array_add($array, $key, $value)
+function array_add(array $array, string $key, $value): array
 {
     if (!isset($array[$key])) $array[$key] = $value;
     return $array;
@@ -84,10 +89,10 @@ function array_add($array, $key, $value)
 /**
  * Divide an array into two arrays. One with keys and the other with values.
  *
- * @param array $array
+ * @param array $array original array
  * @return array
  */
-function array_divide($array)
+function array_divide(array $array): array
 {
     return [array_keys($array), array_values($array)];
 }
@@ -95,11 +100,11 @@ function array_divide($array)
 /**
  * Flatten a multi-dimensional associative array with dots.
  *
- * @param array $array
- * @param string $prepend
+ * @param array $array original array
+ * @param string $prepend prefix of key
  * @return array
  */
-function array_dot($array, $prepend = '')
+function array_dot(array $array, string $prepend = ''): array
 {
     $results = [];
     foreach ($array as $key => $value) {
@@ -115,11 +120,11 @@ function array_dot($array, $prepend = '')
 /**
  * Get all of the given array except for a specified array of items.
  *
- * @param array $array
- * @param array $keys
+ * @param array $array original array
+ * @param array $keys array keys
  * @return array
  */
-function array_except($array, $keys)
+function array_except(array $array, array $keys): array
 {
     return array_diff_key($array, array_flip((array)$keys));
 }
@@ -127,12 +132,12 @@ function array_except($array, $keys)
 /**
  * Return the first element in an array passing a given truth test.
  *
- * @param array $array
- * @param Closure $callback
- * @param mixed $default
+ * @param array $array original array
+ * @param Closure $callback array callback
+ * @param mixed $default default value
  * @return mixed
  */
-function array_first($array, $callback, $default = null)
+function array_first(array $array, Closure $callback, $default = null)
 {
     foreach ($array as $key => $value) {
         if (call_user_func($callback, $key, $value)) return $value;
@@ -144,12 +149,12 @@ function array_first($array, $callback, $default = null)
 /**
  * Return the last element in an array passing a given truth test.
  *
- * @param array $array
- * @param Closure $callback
- * @param mixed $default
+ * @param array $array original array
+ * @param Closure $callback array callback
+ * @param mixed $default default value
  * @return mixed
  */
-function array_last($array, $callback, $default = null)
+function array_last(array $array, Closure $callback, $default = null)
 {
     return array_first(array_reverse($array), $callback, $default);
 }
@@ -157,11 +162,11 @@ function array_last($array, $callback, $default = null)
 /**
  * Remove an array item from a given array using "dot" notation.
  *
- * @param array $array
- * @param string $key
+ * @param array $array original array
+ * @param string $key array key
  * @return void
  */
-function array_forget(&$array, $key)
+function array_forget(array &$array, string $key): void
 {
     $keys = explode('.', $key);
 
@@ -178,12 +183,12 @@ function array_forget(&$array, $key)
 /**
  * Get an item from an array using "dot" notation.
  *
- * @param array $array
- * @param string $key
- * @param mixed $default
+ * @param array $array original array
+ * @param string $key array key
+ * @param mixed $default default value
  * @return mixed
  */
-function array_get($array, $key, $default = null)
+function array_get(array $array, string $key, $default = null)
 {
     if (is_null($key)) {
         return $array;
@@ -205,12 +210,12 @@ function array_get($array, $key, $default = null)
 /**
  * Set an item to a given value using "dot" notation
  *
- * @param array $array
- * @param string $key
- * @param mixed $value
- * @return mixed|void
+ * @param array $array original array
+ * @param string $key array key
+ * @param mixed $value array value
+ * @return void
  */
-function array_set(array &$array, string $key, $value)
+function array_set(array &$array, string $key, $value): void
 {
     if (is_null($key)) {
         return;
@@ -232,9 +237,9 @@ function array_set(array &$array, string $key, $value)
 /**
  * Get a value from the array, and remove it.
  *
- * @param array $array
- * @param string $key
- * @param mixed $default
+ * @param array $array original array
+ * @param string $key array key
+ * @param mixed $default default value
  * @return mixed
  */
 function array_pull(array &$array, string $key, $default = null)
@@ -247,11 +252,11 @@ function array_pull(array &$array, string $key, $default = null)
 /**
  * Determine if a given string ends with a given substring.
  *
- * @param string $haystack
- * @param string|array $needles
+ * @param string $haystack haystack
+ * @param string|array $needles needles
  * @return bool
  */
-function end_with(string $haystack, $needles)
+function end_with(string $haystack, $needles): bool
 {
     foreach ((array)$needles as $needle) {
         if ($needle == substr($haystack, -strlen($needle))) {
@@ -264,11 +269,11 @@ function end_with(string $haystack, $needles)
 /**
  * Determine if a given string starts with a given substring.
  *
- * @param string $haystack
- * @param string|array $needles
+ * @param string $haystack haystack
+ * @param string|array $needles needles
  * @return bool
  */
-function start_with(string $haystack, $needles)
+function start_with(string $haystack, $needles): bool
 {
     foreach ((array)$needles as $needle) {
         if ($needle != '' && strpos($haystack, $needle) === 0) {
@@ -281,12 +286,12 @@ function start_with(string $haystack, $needles)
 /**
  * Replace a given value in the string sequentially with an array.
  *
- * @param string $search
- * @param array $replace
- * @param string $subject
+ * @param string $search original string
+ * @param array $replace replace from
+ * @param string $subject replace to
  * @return string
  */
-function str_replace_array($search, array $replace, $subject)
+function str_replace_array(string $search, array $replace, string $subject): string
 {
     foreach ($replace as $value) {
         $subject = preg_replace('/' . $search . '/', $value, $subject, 1);
@@ -299,11 +304,11 @@ function str_replace_array($search, array $replace, $subject)
  *
  * Should not be considered sufficient for cryptography, etc.
  *
- * @param int $length
+ * @param int $length random length
  * @return string
  * @throws Exception
  */
-function str_random($length = 16)
+function str_random(int $length = 16): string
 {
     $pool = '3456789abcdefghjkmnpqrstuvwxyz';
     return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);

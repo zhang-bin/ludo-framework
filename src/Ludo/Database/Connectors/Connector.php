@@ -4,15 +4,21 @@ namespace Ludo\Database\Connectors;
 
 use PDO;
 
+
+/**
+ * Database Connector
+ *
+ * @package Ludo\Database\Connectors
+ */
 class Connector
 {
 
     /**
      * The default PDO connection options.
      *
-     * @var array
+     * @var array $options
      */
-    protected $options = [
+    protected array $options = [
         PDO::ATTR_CASE => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
@@ -22,7 +28,7 @@ class Connector
     /**
      * Get the PDO options based on the configuration.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return array
      */
     public function getOptions(array $config): array
@@ -34,12 +40,12 @@ class Connector
     /**
      * Create a new PDO connection.
      *
-     * @param string $dsn
-     * @param array $config
-     * @param array $options
+     * @param string $dsn pdo dsn
+     * @param array $config connection config
+     * @param array $options connection options
      * @return PDO
      */
-    public function createConnection($dsn, array $config, array $options): PDO
+    public function createConnection(string $dsn, array $config, array $options): PDO
     {
         $username = array_get($config, 'username');
         $password = array_get($config, 'password');
@@ -59,7 +65,7 @@ class Connector
     /**
      * Set the default PDO connection options.
      *
-     * @param array $options
+     * @param array $options connection options
      * @return void
      */
     public function setDefaultOptions(array $options): void

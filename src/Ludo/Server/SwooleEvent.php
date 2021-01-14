@@ -3,6 +3,11 @@
 namespace Ludo\Server;
 
 
+/**
+ * Class SwooleEvent
+ *
+ * @package Ludo\Server
+ */
 class SwooleEvent
 {
     const ON_START = 'start';

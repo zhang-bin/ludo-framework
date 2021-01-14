@@ -8,6 +8,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+
+/**
+ * Flush Message Command
+ *
+ * @package Ludo\AsyncTask\Command
+ */
 class FlushMessageCommand extends Command
 {
     public function __construct()
@@ -15,13 +21,22 @@ class FlushMessageCommand extends Command
         parent::__construct('channel:flush');
     }
 
-    protected function configure()
+    /**
+     * Configure the current command
+     */
+    protected function configure(): void
     {
         $this->setDescription('Flush all message.');
         $this->addOption('channel', 'C', InputOption::VALUE_OPTIONAL, 'The channel name of queue.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Execute the current command
+     *
+     * @param InputInterface $input input handle
+     * @param OutputInterface $output output handle
+     */
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $channel = $input->getOption('channel');
 

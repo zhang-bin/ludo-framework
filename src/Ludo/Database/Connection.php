@@ -8,80 +8,68 @@ use PDO;
 use Closure;
 use Throwable;
 
+
+/**
+ * Database Connection
+ *
+ * @package Ludo\Database
+ */
 class Connection
 {
+    /**
+     * @var PDO $pdo The active PDO connection.
+     */
+    protected PDO $pdo;
 
     /**
-     * The active PDO connection.
-     *
-     * @var PDO
+     * @var PDO $readPdo The active PDO connection used for reads.
      */
-    protected $pdo;
+    protected PDO $readPdo;
 
     /**
-     * The active PDO connection used for reads.
+     * Decide select sql whether to switch main PDO connection default select use read pdo
      *
-     * @var PDO
+     * @var bool $switchConnection
      */
-    protected $readPdo;
+    protected bool $switchConnection = false;
 
     /**
-     * Decide select sql whether to switch main PDO connection
-     * default select use read pdo
-     *
-     * @var bool
+     * @var array $queryLog All of the queries run against the connection.
      */
-    protected $switchConnection = false;
+    protected array $queryLog = [];
 
     /**
-     * All of the queries run against the connection.
-     *
-     * @var array
+     * @var int $fetchMode The default fetch mode of the connection.
      */
-    protected $queryLog = [];
+    protected int $fetchMode = PDO::FETCH_ASSOC;
 
     /**
-     * The default fetch mode of the connection.
-     *
-     * @var int
+     * @var ?int $fetchArgument The default fetch argument of the connection.
      */
-    protected $fetchMode = PDO::FETCH_ASSOC;
+    protected ?int $fetchArgument = 0;
 
     /**
-     * The default fetch argument of the connection.
-     *
-     * @var int
+     * @var string $database The name of the connected database.
      */
-    protected $fetchArgument = null;
+    protected string $database;
 
     /**
-     * The name of the connected database.
-     *
-     * @var string
+     * @var string The table prefix for the connection.
      */
-    protected $database;
+    protected string $tablePrefix = '';
 
     /**
-     * The table prefix for the connection.
-     *
-     * @var string
+     * @var array $config The database connection configuration options.
      */
-    protected $tablePrefix = '';
-
-    /**
-     * The database connection configuration options.
-     *
-     * @var array
-     */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * Create a new database connection instance.
      *
-     * @param PDO $pdo
-     * @param string $database
-     * @param string $tablePrefix
-     * @param array $config
+     * @param PDO $pdo pdo object
+     * @param string $database database name
+     * @param string $tablePrefix prefix of table name
+     * @param array $config connection config
      */
     public function __construct(PDO $pdo, string $database = '', string $tablePrefix = '', array $config = [])
     {
@@ -94,8 +82,8 @@ class Connection
     /**
      * Run a select statement and return a single column result.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return mixed
      */
     public function selectColumn(string $query, array $params = [])
@@ -113,8 +101,8 @@ class Connection
     /**
      * Run a select statement and return a single result.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return mixed
      */
     public function selectOne(string $query, array $params = [])
@@ -132,8 +120,8 @@ class Connection
     /**
      * Run a select statement against the database.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return array
      */
     public function select(string $query, array $params = []): array
@@ -155,8 +143,8 @@ class Connection
     /**
      * Run an insert statement against the database.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return bool
      */
     public function insert(string $query, array $params = []): bool
@@ -167,8 +155,8 @@ class Connection
     /**
      * Run an update statement against the database.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return int affected row
      */
     public function update(string $query, array $params = []): int
@@ -179,8 +167,8 @@ class Connection
     /**
      * Run a delete statement against the database.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return int affected row
      */
     public function delete(string $query, array $params = []): int
@@ -191,8 +179,8 @@ class Connection
     /**
      * Execute an SQL statement and return the boolean result.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return bool
      */
     public function statement(string $query, array $params = []): bool
@@ -208,8 +196,8 @@ class Connection
     /**
      * Run an SQL statement and get the number of rows affected.
      *
-     * @param string $query
-     * @param array $params
+     * @param string $query sql statement
+     * @param array $params where parameters
      * @return int
      */
     public function affectingStatement(string $query, array $params = []): int
@@ -227,7 +215,7 @@ class Connection
     /**
      * Run a raw, unprepared query against the PDO connection.
      *
-     * @param string $query
+     * @param string $query sql statement
      * @return bool
      */
     public function unprepared(string $query): bool
@@ -241,9 +229,9 @@ class Connection
     }
 
     /**
-     * get last insert id
+     * Get last insert id
      *
-     * @param string $name
+     * @param string $name Name of the sequence object from which the ID should be returned.
      * @return int insert id
      */
     public function lastInsertId(string $name = 'id'): int
@@ -287,9 +275,9 @@ class Connection
     /**
      * Run a SQL statement and log its execution context.
      *
-     * @param string $query
-     * @param array $params
-     * @param Closure $callback
+     * @param string $query sql statement
+     * @param array $params where parameters
+     * @param Closure $callback sql callback
      * @return mixed
      *
      * @throws QueryException
@@ -333,13 +321,13 @@ class Connection
     /**
      * Log a query in the connection's query log.
      *
-     * @param string $query
-     * @param array $params
-     * @param  $time
-     * @param  $err
+     * @param string $query sql statement
+     * @param array $params where parameters
+     * @param ?float $time sql execute time
+     * @param ?string $err error message
      * @return void
      */
-    public function logQuery(string $query, array $params, $time = null, $err = null): void
+    public function logQuery(string $query, array $params, float $time = null, string $err = null): void
     {
         if (!Config::get('app.debug')) {
             return;
@@ -351,7 +339,7 @@ class Connection
     /**
      * Get the elapsed time since a given starting point.
      *
-     * @param int $start
+     * @param int $start sql execute start time
      * @return float
      */
     protected function getElapsedTime(int $start): float
@@ -382,7 +370,7 @@ class Connection
     /**
      * Set the PDO connection.
      *
-     * @param PDO $pdo
+     * @param PDO $pdo pdo object
      * @return Connection
      */
     public function setPdo(PDO $pdo): Connection
@@ -394,7 +382,7 @@ class Connection
     /**
      * Set the PDO connection used for reading.
      *
-     * @param PDO $pdo
+     * @param PDO $pdo pdo object
      * @return Connection
      */
     public function setReadPdo(PDO $pdo): Connection
@@ -406,9 +394,9 @@ class Connection
     /**
      * Get the database connection name.
      *
-     * @return string|null
+     * @return ?string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->getConfig('name');
     }
@@ -416,7 +404,7 @@ class Connection
     /**
      * Get an option from the configuration options.
      *
-     * @param string $option
+     * @param string $option config option
      * @return mixed
      */
     public function getConfig(string $option)
@@ -447,7 +435,7 @@ class Connection
     /**
      * Set the default fetch mode for the connection.
      *
-     * @param int $fetchMode
+     * @param int $fetchMode pdo fetch mode
      * @return void
      */
     public function setFetchMode(int $fetchMode): void
@@ -458,9 +446,9 @@ class Connection
     /**
      * Get the default fetch argument for the connection.
      *
-     * @return int|null
+     * @return ?int
      */
-    public function getFetchArgument()
+    public function getFetchArgument(): ?int
     {
         return $this->fetchArgument;
     }
@@ -468,10 +456,10 @@ class Connection
     /**
      * Set the default fetch argument for the connection.
      *
-     * @param int|null $fetchArgument
+     * @param ?int $fetchArgument fetch argument
      * @return void
      */
-    public function setFetchArgument($fetchArgument): void
+    public function setFetchArgument(int $fetchArgument = null): void
     {
         $this->fetchArgument = $fetchArgument;
     }
@@ -489,7 +477,7 @@ class Connection
     /**
      * Set the name of the connected database.
      *
-     * @param string $database
+     * @param string $database database name
      * @return void
      */
     public function setDatabaseName(string $database): void
@@ -508,33 +496,33 @@ class Connection
     }
 
     /**
-     * quote identifier
+     * Quote identifier
      *
-     * @param string $str
+     * @param string $str string will to be quoted
      * @return string
      */
-    function quoteIdentifier(string $str): string
+    public function quoteIdentifier(string $str): string
     {
         $str = trim($str, '`');
         return "`{$str}`";
     }
 
     /**
-     * print query log
+     * Print query log
      *
      * @return string
      */
     public function debug(): string
     {
         if (!Config::get('app.debug')) {
-            return null;
+            return '';
         }
         $totalProcessTime = 0;
         $totalSQL = 0;
 
         $str = json_encode($this->config) . '<br />';
         $str .= <<<EOF
-<table id="debugtable" width="100%" border="0" cellspacing="1" style="background:#DDDDF0;word-break: break-all;">
+<table id="debug_table" width="100%" border="0" cellspacing="1" style="background:#DDDDF0;word-break: break-all;">
 	<tr style="background:#A5BDD8;height:30px;Color:White;">
 		<th>Query</th>
 		<th width=100>Params</th>

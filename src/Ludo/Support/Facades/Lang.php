@@ -15,6 +15,11 @@ use Ludo\Translation\Translator;
  */
 class Lang extends Facade implements FacadeInterface
 {
+    /**
+     * Get facade accessor
+     *
+     * @return string
+     */
     public static function getFacadeAccessor(): string
     {
         return Translator::class;

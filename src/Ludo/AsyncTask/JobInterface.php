@@ -2,6 +2,12 @@
 
 namespace Ludo\AsyncTask;
 
+
+/**
+ * Job Interface
+ *
+ * @package Ludo\AsyncTask
+ */
 interface JobInterface
 {
     /**

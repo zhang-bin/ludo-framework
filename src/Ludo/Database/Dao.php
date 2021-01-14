@@ -7,27 +7,32 @@ use Ludo\Database\Builders\BuilderFactory;
 use Ludo\Database\Builders\Builder;
 use PDO;
 
+
+/**
+ * Class Dao
+ *
+ * @package Ludo\Database
+ */
 abstract class Dao
 {
     /**
-     * Handler of Connection
-     *
-     * @var Connection
+     * @var Connection $connection connection object
      */
-    protected $connection = null;
+    protected Connection $connection;
 
     /**
-     * Instance of LdTable
-     *
-     * @var Builder
+     * @var Builder $builder builder object
      */
-    protected $builder = null;
-
-    protected $tblName = null;
+    protected Builder $builder;
 
     /**
-     * @param string $tblName
-     * @param string $connectionName
+     * @var string $tblName table name
+     */
+    protected string $tblName;
+
+    /**
+     * @param string $tblName table name
+     * @param ?string $connectionName connection name
      */
     public function __construct(string $tblName, string $connectionName = null)
     {
@@ -38,7 +43,7 @@ abstract class Dao
     }
 
     /**
-     * insert data into DB
+     * Insert data into DB
      *
      * @param array $arr array('field'=>value, 'field2'=>value2);
      * @return int Last insert id if insert successful, else SqlException will be throw
@@ -49,7 +54,7 @@ abstract class Dao
     }
 
     /**
-     * identical to LdBaseDao::add($arr);
+     * Identical to LdBaseDao::add($arr);
      *
      * @param array $arr array('field'=>value, 'field2'=>value2);
      * @return int Last insert id if insert successful, else SqlException will be throw
@@ -60,7 +65,7 @@ abstract class Dao
     }
 
     /**
-     * used for batch insert lots data into the table
+     * Used for batch insert lots data into the table
      *
      * @param array $arr 2D array,
      *    assoc array:            array(array('field'=>value, 'field2'=>value2), array('field'=>value, 'field2'=>value2));
@@ -119,10 +124,10 @@ abstract class Dao
     }
 
     /**
-     * update fields of object with id=$id
+     * Update fields of object with id=$id
      *
-     * @param int $id
-     * @param array $arr
+     * @param int $id primary key of current table
+     * @param array $arr update data
      * @return int affected row number
      */
     public function update(int $id, array $arr): int
@@ -131,11 +136,11 @@ abstract class Dao
     }
 
     /**
-     * update fields of object with some conditions
+     * Update fields of object with some conditions
      *
-     * @param array $newData
-     * @param string $condition
-     * @param array $params
+     * @param array $newData update data
+     * @param ?string $condition where condition
+     * @param array $params where parameters
      * @return int affected row
      */
     public function updateWhere(array $newData, string $condition = null, array $params = []): int
@@ -144,9 +149,9 @@ abstract class Dao
     }
 
     /**
-     * delete record with id=$id
+     * Delete record with id=$id
      *
-     * @param int $id
+     * @param int $id primary key of current table
      * @return int affected row
      */
     public function delete(int $id): int
@@ -155,10 +160,10 @@ abstract class Dao
     }
 
     /**
-     * delete record with condition
+     * Delete record with condition
      *
-     * @param string $condition
-     * @param array $params
+     * @param string $condition where condition
+     * @param array $params where parameters
      * @return int affected row
      */
     public function deleteWhere(string $condition, array $params = []): int
@@ -167,11 +172,11 @@ abstract class Dao
     }
 
     /**
-     * get one row from table by ID
+     * Get one row from table by ID
      *
-     * @param int $id
+     * @param int $id primary key of current table
      * @param string $fields fields needs to be fetched, comma separated
-     * @param int $fetchMode
+     * @param int $fetchMode pdo fetch mode
      * @return array key is field name and value is field value.
      */
     public function fetch(int $id, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): array
@@ -186,12 +191,12 @@ abstract class Dao
     }
 
     /**
-     * get one row from table by condition
+     * Get one row from table by condition
      *
-     * @param string $condition
-     * @param array $params
+     * @param string $condition where condition
+     * @param array $params where parameters
      * @param string $fields fields needs to be fetched, comma separated
-     * @param int $fetchMode
+     * @param int $fetchMode pdo fetch mode
      * @return array
      */
     public function find(string $condition, array $params, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): array
@@ -204,11 +209,11 @@ abstract class Dao
     }
 
     /**
-     * get one column string from table by condition
+     * Get one column string from table by condition
      *
-     * @param string $condition
-     * @param string|array $params
-     * @param string $column
+     * @param string $condition where condition
+     * @param array $params where parameters
+     * @param string $column column name
      * @return string
      */
     public function findColumn(string $condition, array $params, string $column): string
@@ -221,10 +226,10 @@ abstract class Dao
     }
 
     /**
-     * get one column string from table by id
+     * Get one column string from table by id
      *
-     * @param int $id
-     * @param string $column
+     * @param int $id primary key of current table
+     * @param string $column column name
      * @return string
      */
     public function fetchColumn(int $id, string $column): string
@@ -237,13 +242,13 @@ abstract class Dao
     }
 
     /**
-     * get record from table
+     * Get record from table
      *
-     * @param int $rows
-     * @param int $start
-     * @param string $order
-     * @param string $fields
-     * @param int $fetchMode
+     * @param int $rows result row number
+     * @param int $start result row start
+     * @param string $order order statement
+     * @param string $fields select fields
+     * @param int $fetchMode pdo fetch mode
      * @return array
      */
     public function fetchAll(int $rows = 0, int $start = 0, string $order = '', string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): array
@@ -252,12 +257,12 @@ abstract class Dao
     }
 
     /**
-     * get one column list from table
+     * Get one column list from table
      *
-     * @param string $fields
-     * @param int $rows
-     * @param int $start
-     * @param string $order
+     * @param string $fields select fields
+     * @param int $rows result row number
+     * @param int $start result row start
+     * @param string $order order statement
      * @return array
      */
     public function fetchAllUnique(string $fields = '*', int $rows = 0, int $start = 0, string $order = ''): array
@@ -266,14 +271,14 @@ abstract class Dao
     }
 
     /**
-     * get record from table by condition
+     * Get record from table by condition
      *
-     * @param string $condition
-     * @param int $rows
-     * @param int $start
-     * @param string $order
-     * @param string $fields
-     * @param int $fetchMode
+     * @param string|array $condition where condition
+     * @param int $rows result row number
+     * @param int $start result row start
+     * @param string $order order statement
+     * @param string $fields select fields
+     * @param int $fetchMode pdo fetch mode
      * @return array
      */
     public function findAll($condition = '', int $rows = 0, int $start = 0, string $order = '', string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): array
@@ -289,13 +294,13 @@ abstract class Dao
     }
 
     /**
-     * get one column list from table by condition
+     * Get one column list from table by condition
      *
-     * @param mixed $condition
-     * @param string $fields
-     * @param int $rows
-     * @param int $start
-     * @param string $order
+     * @param string|array $condition where condition
+     * @param string $fields select fields
+     * @param int $rows result row number
+     * @param int $start result row start
+     * @param string $order order statement
      * @return array
      */
     public function findAllUnique($condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
@@ -311,13 +316,13 @@ abstract class Dao
     }
 
     /**
-     * get key=>value formatted result from table
+     * Get key=>value formatted result from table
      *
-     * @param string $condition
-     * @param string $fields
-     * @param int $rows
-     * @param int $start
-     * @param string $order
+     * @param string|array $condition where condition
+     * @param string $fields select fields
+     * @param int $rows result row number
+     * @param int $start result row start
+     * @param string $order order statement
      * @return array
      */
     public function findAllKvPair($condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
@@ -333,11 +338,11 @@ abstract class Dao
     }
 
     /**
-     * count records
+     * Count records
      *
-     * @param string $condition
-     * @param array $params
-     * @param bool $distinct
+     * @param string $condition where condition
+     * @param array $params where parameters
+     * @param bool $distinct distinct statement
      * @return int
      */
     public function count(string $condition = '', array $params = [], bool $distinct = false): int
@@ -351,8 +356,8 @@ abstract class Dao
     /**
      * Check if the records exists according to the $condition.
      *
-     * @param string $condition
-     * @param array $params
+     * @param string $condition where condition
+     * @param array $params where parameters
      * @return bool
      */
     public function exists(string $condition = '', array $params = []): bool
@@ -362,7 +367,7 @@ abstract class Dao
         }
 
         $cnt = $this->builder->setField('count(*)')->where($condition, $params)->fetchColumn();
-        return $cnt > 0 ? true : false;
+        return $cnt > 0;
     }
 
     /**
@@ -370,9 +375,9 @@ abstract class Dao
      * result[0] is a bool value represent exists or not.
      * If exists, result[1] will store the "1st db row" result
      *
-     * @param string $condition
-     * @param array $params
-     * @param string $fields
+     * @param string $condition where condition
+     * @param array $params where parameters
+     * @param ?string $fields select fields
      * @return array list(exists, row) = Array(0=>true/false, 1=>rowArray/false)
      */
     public function existsRow(string $condition = '', array $params = [], string $fields = null): array
@@ -387,7 +392,7 @@ abstract class Dao
     }
 
     /**
-     * return the max Id from current table
+     * Return the max Id from current table
      *
      * @return int the max id
      */
@@ -397,11 +402,11 @@ abstract class Dao
     }
 
     /**
-     * one to one relation.
+     * One to one relation.
      *
      * @param string $table table name [and alias] which need to be joined. eg. User as Author
      * @param string $fields the fields you need to retrieve. default is all. E.G. Author.uname as authorUname, Author.nickname as nickname.
-     * @param string $foreignKey ForeignKey field name. default is null which will use tableName+Id as its FK. eg. userId, productId
+     * @param ?string $foreignKey ForeignKey field name. default is null which will use tableName+Id as its FK. eg. userId, productId
      * @param string $joinType one of the three [inner, left, right]. default is left.
      * @return $this
      */
@@ -437,16 +442,28 @@ abstract class Dao
         $this->connection->beginTransaction($switchConnection);
     }
 
+    /**
+     * Commit transaction
+     */
     public function commit(): void
     {
         $this->connection->commit();
     }
 
+    /**
+     * Rollback transaction
+     */
     public function rollback(): void
     {
         $this->connection->rollback();
     }
 
+    /**
+     * Save connection debug log
+     *
+     * @param ?string $connection connection name
+     * @return string
+     */
     public function debug(string $connection = null): string
     {
         if (is_null($connection)) {
@@ -455,6 +472,12 @@ abstract class Dao
         return $connection->debug();
     }
 
+    /**
+     * Get last executed sql statement
+     *
+     * @param ?Builder $builder builder object
+     * @return string
+     */
     public function lastSql(Builder $builder = null): string
     {
         if (is_null($builder)) {
@@ -464,7 +487,7 @@ abstract class Dao
     }
 
     /**
-     * return the slave table handler object
+     * Return the slave table handler object
      *
      * @return Builder
      */
@@ -473,26 +496,29 @@ abstract class Dao
         return $this->builder;
     }
 
+    /**
+     * Get current table name
+     *
+     * @return string
+     */
     public function tblName(): string
     {
         return $this->tblName;
     }
 
-    public function daoName(bool $trailingDao = true, bool $lcFirst = false): string
-    {
-        $daoName = get_class($this);
-        if (!$trailingDao) {
-            $daoName = substr($daoName, 0, strpos($daoName, 'Dao'));
-        }
-        if ($lcFirst) $daoName[0] = strtolower($daoName[0]);
-        return $daoName;
-    }
-
+    /**
+     * Truncate table
+     */
     public function truncate(): void
     {
         $this->connection->statement('TRUNCATE ' . $this->tblName);
     }
 
+    /**
+     * Show create table
+     *
+     * @return array
+     */
     public function showCreate(): array
     {
         return $this->connection->select('SHOW CREATE TABLE ' . $this->tblName)[0]['Create Table'];

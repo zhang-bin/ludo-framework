@@ -5,12 +5,18 @@ namespace Ludo\Support;
 use HTMLPurifier_Config;
 use HTMLPurifier;
 
+
+/**
+ * Class Filter
+ *
+ * @package Ludo\Support
+ */
 class Filter
 {
     /**
      * Sanitize int data
      *
-     * @param string $data
+     * @param string $data raw data
      * @return int value
      */
     public static function int(string $data): int
@@ -21,7 +27,7 @@ class Filter
     /**
      * Sanitize float data
      *
-     * @param string $data
+     * @param string $data raw data
      * @return float value
      */
     public static function float(string $data): float
@@ -32,8 +38,8 @@ class Filter
     /**
      * Sanitize Email string
      *
-     * @param string $data url string
-     * @return string clean url string
+     * @param string $data email string
+     * @return string clean email string
      */
     public static function email(string $data): string
     {
@@ -54,7 +60,7 @@ class Filter
     /**
      * Sanitize the String to escape all html tags to HTML entities.
      *
-     * @param string $data
+     * @param string $data raw data
      * @param int $encodeType ENT_QUOTES or ENT_NOQUOTES  or ENT_COMPAT. Default is ENT_QUOTES
      * @return string the clean string with no html tags.
      */
@@ -69,7 +75,7 @@ class Filter
     /**
      * Sanitize the String to escape all html tags and non-ascii strings to HTML entities.
      *
-     * @param string $data
+     * @param string $data raw data
      * @param int $encodeType ENT_QUOTES or ENT_NOQUOTES  or ENT_COMPAT. Default is ENT_QUOTES
      * @return string the clean string with no html tags.
      */

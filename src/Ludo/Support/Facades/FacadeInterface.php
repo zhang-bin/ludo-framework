@@ -2,6 +2,12 @@
 
 namespace Ludo\Support\Facades;
 
+
+/**
+ * Facade Interface
+ *
+ * @package Ludo\Support\Facades
+ */
 interface FacadeInterface
 {
     /**

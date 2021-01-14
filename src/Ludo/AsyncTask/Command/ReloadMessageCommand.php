@@ -9,6 +9,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
+/**
+ * Reload Message Command
+ *
+ * @package Ludo\AsyncTask\Command
+ */
 class ReloadMessageCommand extends Command
 {
     public function __construct()
@@ -16,13 +21,22 @@ class ReloadMessageCommand extends Command
         parent::__construct('channel:reload');
     }
 
-    protected function configure()
+    /**
+     * Configure the current command
+     */
+    protected function configure(): void
     {
         $this->setDescription('Reload all failed message into waiting queue.');
         $this->addOption('channel', 'C', InputOption::VALUE_OPTIONAL, 'The channel name of queue.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Execute the current command
+     *
+     * @param InputInterface $input input handle
+     * @param OutputInterface $output output handle
+     */
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $channel = $input->getOption('channel');
 

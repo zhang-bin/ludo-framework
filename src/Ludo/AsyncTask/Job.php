@@ -2,12 +2,18 @@
 
 namespace Ludo\AsyncTask;
 
+
+/**
+ * Message queue Job
+ *
+ * @package Ludo\AsyncTask
+ */
 abstract class Job implements JobInterface
 {
     /**
      * @var int max handle times
      */
-    protected $maxHandleTimes = 0;
+    protected int $maxHandleTimes = 0;
 
     /**
      * Get current job max handle times

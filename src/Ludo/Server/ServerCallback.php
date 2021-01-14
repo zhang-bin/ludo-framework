@@ -4,31 +4,62 @@ namespace Ludo\Server;
 
 use Swoole\Server;
 
+
+/**
+ * Class ServerCallback
+ *
+ * @package Ludo\Server
+ */
 class ServerCallback
 {
-    protected $config;
-    private $processName;
+    /**
+     * @var array $config server config
+     */
+    protected array $config;
 
     /**
-     * @var Server
+     * @var string $processName process name
      */
-    protected $server;
+    private string $processName;
 
-    public function setConfig($server, $processName, $config)
+    /**
+     * @var Server $server server object
+     */
+    protected Server $server;
+
+    /**
+     * Set server config
+     *
+     * @param Server $server server object
+     * @param string $processName process name
+     * @param array $config server config
+     */
+    public function setConfig(Server $server, string $processName, array $config): void
     {
         $this->config = $config;
         $this->processName = $processName;
         $this->server = $server;
     }
 
-    public function start(Server $server)
+    /**
+     * Start main process
+     *
+     * @param Server $server server object
+     */
+    public function start(Server $server): void
     {
         if (PHP_OS == 'Linux') {
             swoole_set_process_name(sprintf('php %s master', $this->processName));
         }
     }
 
-    public function workerStart(Server $server, int $workerId)
+    /**
+     * Start worker process
+     *
+     * @param Server $server server object
+     * @param int $workerId worker id
+     */
+    public function workerStart(Server $server, int $workerId): void
     {
         if (PHP_OS == 'Linux') {
             if ($workerId >= $this->config['worker_num']) {

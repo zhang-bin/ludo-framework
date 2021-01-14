@@ -2,6 +2,8 @@
 
 namespace Ludo\Config;
 
+use phpDocumentor\Reflection\Types\Mixed_;
+
 /**
  * Class Repository
  *
@@ -12,7 +14,7 @@ class Repository
     /**
      * @var array $config config data
      */
-    public $config = [];
+    public array $config = [];
 
     /**
      * Config constructor.
@@ -26,7 +28,7 @@ class Repository
     /**
      * Read config file
      *
-     * @param string $filename
+     * @param string $filename config filename
      */
     private function readFile(string $filename): void
     {
@@ -42,7 +44,7 @@ class Repository
     /**
      * Read config directory
      *
-     * @param string $dir
+     * @param string $dir config directory
      */
     private function readDirectory(string $dir): void
     {
@@ -64,7 +66,7 @@ class Repository
     /**
      * Get config value by key
      *
-     * @param $name
+     * @param ?string $name config key
      * @return mixed
      */
     public function get(string $name = null)
@@ -75,8 +77,8 @@ class Repository
     /**
      * Set config value
      *
-     * @param string $name
-     * @param $value
+     * @param string $name config key
+     * @param mixed $value default value
      */
     public function set(string $name, $value): void
     {

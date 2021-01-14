@@ -5,17 +5,26 @@ namespace Ludo\Process;
 use Swoole\Process as SwooleProcess;
 use Swoole\Event;
 
+
+/**
+ * Class Process
+ *
+ * @package Ludo\Process
+ */
 abstract class Process implements ProcessInterface
 {
 
-    private $workers = [];
+    /**
+     * @var array $workers worker process
+     */
+    private array $workers = [];
 
     /**
      * 运行程序
      *
      * @return int
      */
-    public function run()
+    public function run(): int
     {
         SwooleProcess::daemon();
         $process = new SwooleProcess([$this, 'handle']);
@@ -50,7 +59,7 @@ abstract class Process implements ProcessInterface
 
         foreach ($this->workers as $process) {
             Event::add($process->pipe, function ($pipe) use ($process) {
-                return;
+
             });
         }
 

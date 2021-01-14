@@ -6,23 +6,21 @@ use RuntimeException;
 use Exception;
 use Ludo\Support\Facades\Config;
 
+
 /**
  * Class Encrypter
+ *
  * @package Ludo\Encrypter
  */
 class Encrypter
 {
     /**
-     * The encryption key
-     *
-     * @var string
+     * @var string $key encryption key
      */
     private static $key;
 
     /**
-     * The algorithm used for encryption
-     *
-     * @var string
+     * @var string $cipher algorithm used for encryption
      */
     private static $cipher;
 
@@ -45,7 +43,7 @@ class Encrypter
     /**
      * Encrypt the given value.
      *
-     * @param $value
+     * @param string $value raw data
      * @return string
      * @throws RuntimeException
      * @throws Exception
@@ -73,7 +71,7 @@ class Encrypter
     /**
      * Decrypt the given value.
      *
-     * @param $payload
+     * @param string $payload encrypted data
      * @return string
      */
     public function decrypt(string $payload): string
@@ -91,8 +89,8 @@ class Encrypter
     /**
      * Determine if the given key and cipher combination is valid.
      *
-     * @param $key
-     * @param $cipher
+     * @param string $key encryption key
+     * @param string $cipher algorithm used for encryption
      * @return bool
      */
     public static function supported(string $key, string $cipher): bool
@@ -106,8 +104,8 @@ class Encrypter
     /**
      * Create a MAC for the given value.
      *
-     * @param $iv
-     * @param $value
+     * @param string $iv iv
+     * @param string $value raw data
      * @return string
      */
     private function hash(string $iv, string $value): string
@@ -118,7 +116,7 @@ class Encrypter
     /**
      * Get the JSON array from the given payload.
      *
-     * @param $payload
+     * @param string $payload payload data
      * @return mixed
      */
     private function getJsonPayload(string $payload): array

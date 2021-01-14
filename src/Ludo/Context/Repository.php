@@ -4,6 +4,7 @@ namespace Ludo\Context;
 
 use Swoole\Coroutine;
 
+
 /**
  * Class Repository
  *
@@ -12,9 +13,9 @@ use Swoole\Coroutine;
 class Repository
 {
     /**
-     * @var array $context
+     * @var array $context context data
      */
-    private $context = [];
+    private array $context = [];
 
     /**
      * Get context data
@@ -40,8 +41,8 @@ class Repository
     /**
      * Set context data
      *
-     * @param string $id
-     * @param $value
+     * @param string $id coroutine id
+     * @param mixed $value need to saved context data
      */
     public function set(string $id, $value)
     {

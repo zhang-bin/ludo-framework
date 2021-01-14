@@ -5,13 +5,23 @@ namespace Ludo\Translation;
 use RuntimeException;
 
 /**
- * Class Repository
+ * Class Translator
  */
 class Translator
 {
-    private $translation = [];
-    private $language;
+    /**
+     * @var array $translation translated data
+     */
+    private array $translation = [];
 
+    /**
+     * @var string $language current language
+     */
+    private string $language;
+
+    /**
+     * Translator constructor.
+     */
     public function __construct()
     {
         if (isset($_COOKIE['lang'])) {
@@ -36,7 +46,7 @@ class Translator
     /**
      * Set current language
      *
-     * @param $lang
+     * @param string $lang language name
      */
     public function setLanguage(string $lang): void
     {
@@ -51,9 +61,9 @@ class Translator
     /**
      * Get the translation for the given key.
      *
-     * @param string $key
-     * @param array $replace
-     * @param string $locale
+     * @param string $key translate key
+     * @param array $replace replace data
+     * @param ?string $locale translation locale
      * @return string
      */
     public function get(string $key, array $replace = [], string $locale = null): string

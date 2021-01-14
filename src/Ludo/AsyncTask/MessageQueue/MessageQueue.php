@@ -6,6 +6,7 @@ use Ludo\AsyncTask\Message;
 use Ludo\AsyncTask\MessageInterface;
 use Throwable;
 
+
 /**
  * Message Queue to consume job
  *

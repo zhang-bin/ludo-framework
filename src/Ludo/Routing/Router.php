@@ -2,9 +2,21 @@
 
 namespace Ludo\Routing;
 
+
+/**
+ * Class Router
+ *
+ * @package Ludo\Routing
+ */
 class Router
 {
-    public static function parse(string $pathInfo)
+    /**
+     * Parse route
+     *
+     * @param string $pathInfo access path
+     * @return array
+     */
+    public static function parse(string $pathInfo): array
     {
         $ctrl = 'Index';
         $act = 'index';

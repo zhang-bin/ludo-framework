@@ -5,22 +5,31 @@ namespace Ludo\Redis;
 use InvalidArgumentException;
 use Ludo\Support\ServiceProvider;
 
+
+/**
+ * Redis Manager
+ *
+ * @package Ludo\Redis
+ */
 class RedisManager
 {
     /**
      * The active connection instances.
      *
-     * @var array
+     * @var BaseRedis[] $connections redis connection
      */
-    protected $connections = [];
+    protected array $connections = [];
 
     /**
-     * Config
-     *
-     * @var array
+     * @var array $config redis config
      */
-    protected $config = [];
+    protected array $config = [];
 
+    /**
+     * RedisManager constructor.
+     *
+     * @param array $config redis config
+     */
     public function __construct(array $config)
     {
         $this->config = $config;
@@ -29,7 +38,7 @@ class RedisManager
     /**
      * Get a redis connection instance.
      *
-     * @param string $name
+     * @param ?string $name connection name
      * @return BaseRedis
      */
     public function connection(string $name = null): BaseRedis
@@ -45,7 +54,7 @@ class RedisManager
     /**
      * Disconnect from the given redis.
      *
-     * @param string $name
+     * @param ?string $name connection name
      * @return void
      */
     public function disconnect(string $name = null): void
@@ -73,7 +82,7 @@ class RedisManager
     /**
      * Get the configuration for a connection.
      *
-     * @param string $name
+     * @param string $name config name
      * @return array
      *
      * @throws InvalidArgumentException

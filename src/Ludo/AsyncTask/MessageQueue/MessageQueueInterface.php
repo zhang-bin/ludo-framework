@@ -4,6 +4,12 @@ namespace Ludo\AsyncTask\MessageQueue;
 
 use Ludo\AsyncTask\JobInterface;
 
+
+/**
+ * Message Queue Interface
+ *
+ * @package Ludo\AsyncTask\MessageQueue
+ */
 interface MessageQueueInterface
 {
 
@@ -55,7 +61,7 @@ interface MessageQueueInterface
     /**
      * Reload failed job into waiting queue
      *
-     * @param string|null $channel queue name
+     * @param ?string $channel channel name
      * @return int
      */
     public function reload(string $channel = null): int;
@@ -63,8 +69,8 @@ interface MessageQueueInterface
     /**
      * Flush all failed message from failed queue
      *
-     * @param string|null $queue failed queue name
+     * @param ?string $channel failed channel name
      * @return bool
      */
-    public function flush(string $queue = null): bool;
+    public function flush(string $channel = null): bool;
 }

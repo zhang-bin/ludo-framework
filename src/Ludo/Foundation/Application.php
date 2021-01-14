@@ -12,15 +12,20 @@ use Ludo\Support\Facades\Config;
 use Throwable;
 
 
+/**
+ * Class Application
+ *
+ * @package Ludo\Foundation
+ */
 class Application
 {
     /**
      * auto route
      *
-     * @param string $path
+     * @param string $path access path
      * @return string|void
      */
-    public function run(string $path = '')
+    public function run(string $path = ''): string
     {
         Context::set('begin-timestamp', microtime(true));
 
@@ -85,7 +90,12 @@ class Application
         }
     }
 
-    public static function debug($lastOutput = '')
+    /**
+     * Save debug log
+     *
+     * @param string $lastOutput output data
+     */
+    public static function debug(string $lastOutput = ''): void
     {
         $debugInfo = '<h2>Time:' . date('Y-m-d H:i:s') . ':' . currentUrl() . '</h2>';
         $debugInfo .= '@@@@error:<pre>' . var_export(error_get_last(), true) . '</pre>@@@@<br />';
@@ -96,9 +106,6 @@ class Application
         $connections = ServiceProvider::getInstance()->getDBManagerHandler()->getConnections();
         if (!empty($connections)) {
             foreach ($connections as $connection) {
-                /**
-                 * @var \Ludo\Database\Connection $connection
-                 */
                 $debugInfo .= $connection->debug();
             }
         }

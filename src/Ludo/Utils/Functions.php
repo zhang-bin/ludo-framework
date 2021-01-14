@@ -6,10 +6,10 @@ use Swoole\Coroutine;
 /**
  * Parallel execute batch tasks
  *
- * @param array $callbacks
+ * @param array $callbacks callback
  * @return array
  */
-function parallel(array $callbacks)
+function parallel(array $callbacks): array
 {
     $parallel = new Parallel();
     foreach ($callbacks as $key => $callback) {
@@ -23,7 +23,7 @@ function parallel(array $callbacks)
  *
  * @return bool
  */
-function inCoroutine()
+function inCoroutine(): bool
 {
     return Coroutine::getCid() > 0;
 }

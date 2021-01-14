@@ -2,17 +2,23 @@
 
 namespace Ludo\AsyncTask;
 
+
+/**
+ * Message payload
+ *
+ * @package Ludo\AsyncTask
+ */
 class Message implements MessageInterface
 {
     /**
-     * @var JobInterface
+     * @var JobInterface $job
      */
-    protected $job;
+    protected JobInterface $job;
 
     /**
      * @var int current handle times
      */
-    public $handleTimes = 0;
+    public int $handleTimes = 0;
 
     /**
      * Message constructor.

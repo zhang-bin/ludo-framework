@@ -10,9 +10,17 @@ use Monolog\Logger as Monolog;
 use Monolog\Handler\StreamHandler;
 
 
+/**
+ * Class Logger
+ *
+ * @package Ludo\Log
+ */
 class Logger
 {
-    private $logger;
+    /**
+     * @var Monolog $logger monnlog object
+     */
+    private Monolog $logger;
 
     /**
      * Logger constructor.
@@ -41,7 +49,7 @@ class Logger
     /**
      * Log a debug message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function debug(string $message): void
     {
@@ -51,7 +59,7 @@ class Logger
     /**
      * Log an information message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function info(string $message): void
     {
@@ -61,7 +69,7 @@ class Logger
     /**
      *  Log a notice message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function notice(string $message): void
     {
@@ -71,7 +79,7 @@ class Logger
     /**
      * Log a warning message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function warning(string $message): void
     {
@@ -81,7 +89,7 @@ class Logger
     /**
      *  Log an error message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function error(string $message): void
     {
@@ -91,7 +99,7 @@ class Logger
     /**
      *  Log a critical message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function critical(string $message): void
     {
@@ -101,7 +109,7 @@ class Logger
     /**
      * Log a alert message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function alert(string $message): void
     {
@@ -111,7 +119,7 @@ class Logger
     /**
      * Log an emergency message to the logs
      *
-     * @param string $message
+     * @param string $message log
      */
     public function emergency(string $message): void
     {
@@ -121,8 +129,8 @@ class Logger
     /**
      * Log message to logs
      *
-     * @param string $level
-     * @param string $message
+     * @param string $level log level
+     * @param string $message log
      */
     protected function write(string $level, string $message): void
     {

@@ -8,13 +8,19 @@ use Ludo\Database\PgSqlConnection;
 use Ludo\Database\Connection;
 use InvalidArgumentException;
 
+
+/**
+ * Connection Factory
+ *
+ * @package Ludo\Database\Connectors
+ */
 class ConnectionFactory
 {
     /**
      * Establish a PDO connection based on the configuration.
      *
-     * @param array $config
-     * @param string $name
+     * @param array $config connection config
+     * @param ?string $name connection name
      * @return Connection
      */
     public function make(array $config, string $name = null): Connection
@@ -30,7 +36,7 @@ class ConnectionFactory
     /**
      * Create a single database connection instance.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return Connection
      */
     protected function createSingleConnection(array $config): Connection
@@ -42,7 +48,7 @@ class ConnectionFactory
     /**
      * Create a single database connection instance.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return Connection
      */
     protected function createReadWriteConnection(array $config): Connection
@@ -54,7 +60,7 @@ class ConnectionFactory
     /**
      * Create a new PDO instance for reading.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return PDO
      */
     protected function createReadPdo(array $config): PDO
@@ -66,7 +72,7 @@ class ConnectionFactory
     /**
      * Get the read configuration for a read / write connection.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return array
      */
     protected function getReadConfig(array $config): array
@@ -78,7 +84,7 @@ class ConnectionFactory
     /**
      * Get the read configuration for a read / write connection.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return array
      */
     protected function getWriteConfig(array $config): array
@@ -90,8 +96,8 @@ class ConnectionFactory
     /**
      * Get a read / write level configuration.
      *
-     * @param array $config
-     * @param string $type
+     * @param array $config connection config
+     * @param string $type connection type
      * @return array
      */
     protected function getReadWriteConfig(array $config, string $type): array
@@ -106,8 +112,8 @@ class ConnectionFactory
     /**
      * Merge a configuration for a read / write connection.
      *
-     * @param array $config
-     * @param array $merge
+     * @param array $config connection config
+     * @param array $merge other connection config
      * @return array
      */
     protected function mergeReadWriteConfig(array $config, array $merge): array
@@ -118,8 +124,8 @@ class ConnectionFactory
     /**
      * Parse and prepare the database configuration.
      *
-     * @param array $config
-     * @param string $name
+     * @param array $config connection config
+     * @param string $name connection name
      * @return array
      */
     protected function parseConfig(array $config, string $name): array
@@ -130,7 +136,7 @@ class ConnectionFactory
     /**
      * Create a connector instance based on the configuration.
      *
-     * @param array $config
+     * @param array $config connection config
      * @return ConnectorInterface
      *
      * @throws InvalidArgumentException
@@ -154,11 +160,11 @@ class ConnectionFactory
     /**
      * Create a new connection instance.
      *
-     * @param string $driver
-     * @param PDO $connection
-     * @param string $database
-     * @param string $prefix
-     * @param array $config
+     * @param string $driver database
+     * @param PDO $connection database connection
+     * @param string $database database name
+     * @param string $prefix prefix of table name
+     * @param array $config connection config
      * @return Connection
      *
      * @throws InvalidArgumentException

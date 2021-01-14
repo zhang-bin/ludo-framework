@@ -2,34 +2,33 @@
 
 namespace Ludo\Support;
 
+
+/**
+ * Class AliasLoader
+ *
+ * @package Ludo\Support
+ */
 class AliasLoader
 {
+    /**
+     * @var array $aliases array of class aliases
+     */
+    protected array $aliases;
 
     /**
-     * The array of class aliases.
-     *
-     * @var array
+     * @var bool $registered Indicates if a loader has been registered
      */
-    protected $aliases;
+    protected bool $registered = false;
 
     /**
-     * Indicates if a loader has been registered.
-     *
-     * @var bool
+     * @var AliasLoader $instance The singleton instance of the loader
      */
-    protected $registered = false;
-
-    /**
-     * The singleton instance of the loader.
-     *
-     * @var AliasLoader
-     */
-    protected static $instance;
+    protected static AliasLoader $instance;
 
     /**
      * Create a new class alias loader instance.
      *
-     * @param array $aliases
+     * @param array $aliases aliases
      */
     public function __construct(array $aliases = [])
     {
@@ -39,7 +38,7 @@ class AliasLoader
     /**
      * Get or create the singleton alias loader instance.
      *
-     * @param array $aliases
+     * @param array $aliases aliases
      * @return AliasLoader
      */
     public static function getInstance(array $aliases = []): AliasLoader
@@ -58,7 +57,7 @@ class AliasLoader
     /**
      * Load a class alias if it is registered.
      *
-     * @param string $alias
+     * @param string $alias aliases
      * @return bool
      */
     public function load(string $alias): bool
@@ -72,8 +71,8 @@ class AliasLoader
     /**
      * Add an alias to the loader.
      *
-     * @param string $class
-     * @param string $alias
+     * @param string $class class name
+     * @param string $alias alias name
      * @return void
      */
     public function alias(string $class, string $alias): void
@@ -117,7 +116,7 @@ class AliasLoader
     /**
      * Set the registered aliases.
      *
-     * @param array $aliases
+     * @param array $aliases aliases
      * @return void
      */
     public function setAliases(array $aliases): void
@@ -138,7 +137,7 @@ class AliasLoader
     /**
      * Set the "registered" state of the loader.
      *
-     * @param bool $value
+     * @param bool $value registered flag
      * @return void
      */
     public function setRegistered(bool $value): void

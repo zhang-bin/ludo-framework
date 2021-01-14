@@ -6,41 +6,39 @@ use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Support\ServiceProvider;
 use InvalidArgumentException;
 
+
+/**
+ * Database Manager
+ *
+ * @package Ludo\Database
+ */
 class DatabaseManager
 {
     /**
-     * The config instance.
-     *
-     * @var array
+     * @var array $app config instance
      */
-    protected $app;
+    protected array $app;
 
     /**
-     * The database connection factory instance.
-     *
-     * @var ConnectionFactory
+     * @var ConnectionFactory $factory database connection factory instance
      */
-    protected $factory;
+    protected ConnectionFactory $factory;
 
     /**
-     * The active connection instances.
-     *
-     * @var array
+     * @var array $connections active connection instances
      */
-    protected $connections = [];
+    protected array $connections = [];
 
     /**
-     * Config
-     *
-     * @var array
+     * @var array $config database config
      */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * Create a new database manager instance.
      *
-     * @param array $config
-     * @param ConnectionFactory $factory
+     * @param array $config database config
+     * @param ConnectionFactory $factory connection factory
      */
     public function __construct(array $config, ConnectionFactory $factory)
     {
@@ -51,7 +49,7 @@ class DatabaseManager
     /**
      * Get a database connection instance.
      *
-     * @param string $name
+     * @param ?string $name connection name
      * @return Connection
      */
     public function connection(string $name = null): Connection
@@ -66,7 +64,7 @@ class DatabaseManager
     /**
      * Reconnect to the given database.
      *
-     * @param string $name
+     * @param ?string $name connection name
      * @return Connection
      */
     public function reconnect(string $name = null): Connection
@@ -81,7 +79,7 @@ class DatabaseManager
     /**
      * Disconnect from the given database.
      *
-     * @param string $name
+     * @param ?string $name connection name
      * @return void
      */
     public function disconnect(string $name = null): void
@@ -98,7 +96,7 @@ class DatabaseManager
     /**
      * Make the database connection instance.
      *
-     * @param string $name
+     * @param string $name connection name
      * @return Connection
      */
     protected function makeConnection(string $name): Connection
@@ -110,7 +108,7 @@ class DatabaseManager
     /**
      * Get the configuration for a connection.
      *
-     * @param string $name
+     * @param string $name connection name
      * @return array
      *
      * @throws InvalidArgumentException
@@ -139,7 +137,7 @@ class DatabaseManager
     /**
      * Set the default connection name.
      *
-     * @param string $name
+     * @param string $name connection name
      * @return void
      */
     public function setDefaultConnection(string $name): void
@@ -150,7 +148,7 @@ class DatabaseManager
     /**
      * Return all of the created connections.
      *
-     * @return array
+     * @return Connection[]
      */
     public function getConnections(): array
     {

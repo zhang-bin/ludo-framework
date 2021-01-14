@@ -5,77 +5,83 @@ namespace Ludo\Database\Builders;
 use Ludo\Database\Connection;
 use PDO;
 
+
+/**
+ * Sql builder
+ *
+ * @package Ludo\Database\Builders
+ */
 class Builder
 {
     /**
-     * @var Connection
+     * @var Connection $db Database connection object
      */
-    protected $db;
+    protected Connection $db;
 
     /**
-     * @var string  table name
+     * @var string $tableName table name
      */
-    protected $tableName = '';
+    protected string $tableName = '';
 
     /**
-     * @var string current table's alias, default is table name without prefix
+     * @var string $tableAlias current table's alias, default is table name without prefix
      */
-    protected $tableAlias = '';
+    protected string $tableAlias = '';
 
     /**
-     * @var array fields part of the select clause, default is '*'
+     * @var array $fields fields part of the select clause, default is '*'
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
-     * @var string Join clause
+     * @var string $join Join clause
      */
-    protected $join = '';
+    protected string $join = '';
 
     /**
-     * @var string condition
+     * @var string $where condition
      */
-    protected $where = '';
+    protected string $where = '';
 
     /**
-     * @var string having
+     * @var string $having having
      */
-    protected $having = '';
+    protected string $having = '';
 
     /**
-     * @var array params used to replace the placeholder in condition
+     * @var array $params params used to replace the placeholder in condition
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
-     * @var string order by
+     * @var string $order order by
      */
-    protected $order = '';
+    protected string $order = '';
 
     /**
-     * @var string group by
+     * @var string $group group by
      */
-    protected $group = '';
+    protected string $group = '';
 
     /**
-     * @var string current sql clause
+     * @var string $sql current sql clause
      */
-    protected $sql = '';
+    protected string $sql = '';
 
     /**
-     * @var string sql clause directly assigned by User
+     * @var string $userSql sql clause directly assigned by User
      */
-    protected $userSql = '';
+    protected string $userSql = '';
 
     /**
-     * @var bool distinct
+     * @var bool $distinct distinct
      */
-    protected $distinct = false;
+    protected bool $distinct = false;
 
     /**
-     * @var string limit rows, start
+     * @var string $limit limit rows, start
      */
-    protected $limit = '';
+    protected string $limit = '';
 
     const LEFT_JOIN = 'LEFT JOIN';
     const INNER_JOIN = 'INNER JOIN';
@@ -108,26 +114,26 @@ class Builder
     }
 
     /**
-     * set or get sql
+     * Set or get sql
      *
      * @param string $sql if empty will return last sql condition
-     * @param array $params
+     * @param array $params where parameters
      * @return $this|String
      */
     public function sql(string $sql = '', array $params = [])
     {
-        if (!empty($sql)) {
+        if (empty($sql)) {
+            return $this->sql;
+        } else {
             $this->sql = '';
             $this->userSql = $sql;
             $this->params = $params;
             return $this;
-        } else {
-            return $this->sql;
         }
     }
 
     /**
-     * set the field part of sql clause
+     * Set the field part of sql clause
      *
      * @param string $fieldName comma separated list: id, User.name, UserType.id
      * @return $this
@@ -247,7 +253,7 @@ class Builder
      */
     public function innerJoin(string $table, string $on = '', string $fields = ''): Builder
     {
-        return $this->join($table, $on, $fields, self::INNER_JOIN);
+        return $this->join($table, $on, $fields);
     }
 
     /**
@@ -325,7 +331,7 @@ class Builder
     /**
      * construct all the given information to a sql clause. often used by read-only query.
      * @param bool $return true: return the sql clause (Default is true). false: assign sql clause to this->sql.
-     * @return mixed
+     * @return string|Builder
      */
     protected function constructSql(bool $return = true)
     {
@@ -348,6 +354,7 @@ class Builder
         } else {
             $sql = $this->userSql;
         }
+
         $this->reset();
         if ($return) {
             return $sql;
@@ -377,7 +384,7 @@ class Builder
      *
      * @return array represent one row in a table, or false if failure
      */
-    public function fetch(int $fetchMode = PDO::FETCH_ASSOC)
+    public function fetch(int $fetchMode = PDO::FETCH_ASSOC): array
     {
         $this->limit(1);
         $this->db->setFetchMode($fetchMode);
@@ -397,7 +404,7 @@ class Builder
      * PDO::FETCH_COLUMN|PDO::FETCH_GROUP: To return an associative array grouped by the values of a specified column
      * @return array represents an table
      */
-    public function fetchAll(int $fetchMode = PDO::FETCH_ASSOC)
+    public function fetchAll(int $fetchMode = PDO::FETCH_ASSOC): array
     {
         return $this->select($fetchMode);
     }
@@ -409,18 +416,9 @@ class Builder
      *
      * @return array represents an table
      */
-    public function fetchAllUnique()
+    public function fetchAllUnique(): array
     {
-        if (PHP_VERSION_ID >= 70000) {
-            return $this->select(PDO::FETCH_COLUMN | PDO::FETCH_UNIQUE, 0);
-        } else {
-            $data = $this->select(PDO::FETCH_COLUMN);
-            $result = [];
-            foreach ($data as $datum) {
-                $result[$datum] = $datum;
-            }
-            return $result;
-        }
+        return $this->select(PDO::FETCH_COLUMN | PDO::FETCH_UNIQUE, 0);
     }
 
     /**
@@ -435,7 +433,7 @@ class Builder
      * </pre>
      *
      */
-    public function fetchAllKvPair()
+    public function fetchAllKvPair(): array
     {
         return $this->select(PDO::FETCH_KEY_PAIR);
     }
@@ -470,7 +468,7 @@ class Builder
      *                      'field2_name' => 'value',
      *                      ...
      *                    );
-     * @return int Last insert id if insert successful, else SqlException will be throwed
+     * @return int Last insert id if insert successful, else SqlException will be throw
      */
     public function insert(array $arr): int
     {
@@ -505,7 +503,7 @@ class Builder
      *                      'field2_name' => 'value',
      *                      ...
      *                    );
-     * @param string $condition The query condition. with following format:<br />
+     * @param ?string $condition The query condition. with following format:<br />
      *        Array:  array('id=? and uname=?', array(2, 'test')); //
      *
      * @param array $params The query parameters
@@ -546,7 +544,7 @@ class Builder
      *        String: if you just need one parameter in above prepared statement. e.g. '1111'
      *        Array: array(2, 'libok') or array(':id'=>2, ':uname'=>'libok')
      *
-     * @return int row nums if insert successful, else SqlException will be throwed
+     * @return int row nums if insert successful, else SqlException will be throw
      * @access public
      */
     public function delete(string $condition = '', $params = null): int
@@ -567,7 +565,7 @@ class Builder
      * reset some data member of LdTable which used to construct a sql clause
      * this method usually called after an DataBase query finished (e.g. $this->select();)
      */
-    protected function reset()
+    protected function reset(): void
     {
         $this->fields = [];
         $this->join = '';

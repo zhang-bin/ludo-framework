@@ -5,9 +5,17 @@ namespace Ludo\Support\Facades;
 use RuntimeException;
 use Ludo\Support\ServiceProvider;
 
+
 abstract class Facade implements FacadeInterface
 {
-    public static function __callStatic($method, $args)
+    /**
+     * Call facade static method
+     *
+     * @param string $method method name
+     * @param array $args method arguments
+     * @return mixed
+     */
+    public static function __callStatic(string $method, array $args)
     {
         $instance = ServiceProvider::getMainInstance()->getRegisteredAbstract(static::getFacadeAccessor());
         if (!$instance) {

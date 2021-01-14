@@ -5,6 +5,7 @@ namespace Ludo\Utils;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine;
 
+
 /**
  * Parallel execute tasks using swoole coroutine
  *
@@ -12,15 +13,18 @@ use Swoole\Coroutine;
  */
 class Parallel
 {
-    private $callbacks = [];
+    /**
+     * @var array $callbacks callback
+     */
+    private array $callbacks = [];
 
     /**
      * Register task
      *
-     * @param callable $callback
-     * @param null $key
+     * @param callable $callback callback
+     * @param ?string $key callback name
      */
-    public function add(callable $callback, $key = null): void
+    public function add(callable $callback, string $key = null): void
     {
         if (is_null($key)) {
             $this->callbacks[] = $callback;

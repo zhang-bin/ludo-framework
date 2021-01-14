@@ -5,17 +5,23 @@ namespace Ludo\Routing;
 use Ludo\Support\ServiceProvider;
 use Ludo\View\View;
 
+
+/**
+ * Class Controller
+ *
+ * @package Ludo\Routing
+ */
 abstract class Controller
 {
     /**
-     * @var String current Ctrl name
+     * @var string $name current Ctrl name
      */
-    protected $name;
+    protected string $name;
 
     /**
-     * @var View
+     * @var View $tpl view object
      */
-    protected $tpl;
+    protected View $tpl;
 
     /**
      * used when you need to specify the http header information. <br>
@@ -23,10 +29,15 @@ abstract class Controller
      * another example is using header("Content-Disposition", "attachment;filename=xxxx.zip"); to popup a SaveAS dialog. <br>
      * when using more than one header common, you should use array here.
      *
-     * @var mixed
+     * @var ?string $httpHeader
      */
-    public $httpHeader = null;
+    public ?string $httpHeader = null;
 
+    /**
+     * Controller constructor.
+     *
+     * @param string $name controller name
+     */
     public function __construct(string $name)
     {
         $this->name = $name;
@@ -34,11 +45,21 @@ abstract class Controller
         $this->tpl = ServiceProvider::getInstance()->getTplHandler();
     }
 
+    /**
+     * Get current controller name
+     *
+     * @return string
+     */
     public function getCurrentCtrlName(): string
     {
         return $this->name;
     }
 
+    /**
+     * Reset $_GET data
+     *
+     * @return string
+     */
     protected function resetGet(): string
     {
         $get = $_GET;
@@ -52,19 +73,24 @@ abstract class Controller
     }
 
     /**
-     * @param string $action
-     * @return string
+     * Called before main handle
+     *
+     * @param string $action action name
+     * @return mixed
      */
-    public function beforeAction($action)
+    public function beforeAction(string $action)
     {
 
     }
 
     /**
+     * Called after main handle
+     *
      * @param string $action
      * @param array $result
+     * @return mixed
      */
-    public function afterAction($action, $result)
+    public function afterAction(string $action, array $result)
     {
 
     }

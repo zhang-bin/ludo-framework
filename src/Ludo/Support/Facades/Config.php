@@ -13,6 +13,11 @@ use Ludo\Config\Repository;
  */
 class Config extends Facade implements FacadeInterface
 {
+    /**
+     * Get facade accessor
+     *
+     * @return string
+     */
     public static function getFacadeAccessor(): string
     {
         return Repository::class;

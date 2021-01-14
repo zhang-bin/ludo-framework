@@ -7,29 +7,29 @@ use Exception;
 class View
 {
     /**
-     * @var string current template file
+     * @var string $tplFile current template file
      */
-    private $tplFile = '';
+    private string $tplFile = '';
 
     /**
-     * @var array all data used in template
+     * @var array $assignValues all data used in template
      */
-    private $assignValues = [];
+    private array $assignValues = [];
 
     /**
-     * @var array  javascript blocks needed by this template
+     * @var array $jsStrings javascript blocks needed by this template
      */
-    private static $jsStrings = [];
+    private static array $jsStrings = [];
 
     /**
-     * @var array  javascript files needed by this template
+     * @var array $jsFiles javascript files needed by this template
      */
-    private static $jsFiles = [];
+    private static array $jsFiles = [];
 
     /**
-     * @var array  css files needed by this template
+     * @var array $cssFiles css files needed by this template
      */
-    private static $cssFiles = [];
+    private static array $cssFiles = [];
 
     public function __construct()
     {
@@ -37,10 +37,11 @@ class View
     }
 
     /**
-     * this is an overloading method, which can have one or two arguments
+     * This is an overloading method, which can have one or two arguments
      * if one: the arg should be a ASSOC array
      * if two: the 1st arg should be the $varName, the 2nd arg should be $varValue
      * assign the key => value pair to template
+     *
      * @param string $varName variable name
      * @param mixed $varValue variable value
      * @return $this
@@ -56,6 +57,11 @@ class View
         return $this;
     }
 
+    /**
+     * Display template file
+     *
+     * @throws Exception
+     */
     public function display(): void
     {
         $templateFileWithFullPath = TPL_ROOT . '/' . $this->tplFile . php;
@@ -80,7 +86,8 @@ class View
     }
 
     /**
-     * add Js, Css files to the template
+     * Add Js, Css files to the template
+     *
      * @param String $type type of file: 'css' or 'js'
      * @param String $file file string
      */
@@ -137,7 +144,7 @@ class View
     }
 
     /**
-     * start to cache js block contents
+     * Start to cache js block contents
      */
     public static function startJs(): void
     {
@@ -145,7 +152,7 @@ class View
     }
 
     /**
-     * start to cache js block contents
+     * Start to cache js block contents
      */
     public static function endJs(): void
     {

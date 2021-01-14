@@ -4,8 +4,9 @@ namespace Ludo\AsyncTask\MessageQueue;
 
 use RuntimeException;
 
+
 /**
- * Class Channel
+ * Message queue channel
  *
  * @package Ludo\AsyncTask
  */
@@ -14,28 +15,33 @@ class Channel
     /**
      * @var string $waiting waiting channel
      */
-    protected $waiting;
+    protected string $waiting;
 
     /**
      * @var string $reserved reserved channel
      */
-    protected $reserved;
+    protected string $reserved;
 
     /**
      * @var string $timeout timeout channel
      */
-    protected $timeout;
+    protected string $timeout;
 
     /**
      * @var string $delayed delayed channel
      */
-    protected $delayed;
+    protected string $delayed;
 
     /**
      * @var string $failed failed channel
      */
-    protected $failed;
+    protected string $failed;
 
+    /**
+     * Channel constructor.
+     *
+     * @param string $channel prefix of channel name
+     */
     public function __construct(string $channel)
     {
         $this->waiting = $channel . '_waiting';
@@ -48,10 +54,10 @@ class Channel
     /**
      * Get channel by name
      *
-     * @param string $channel
+     * @param string $channel channel name
      * @return mixed
      */
-    public function get(string $channel)
+    public function get(string $channel): string
     {
         if (isset($this->{$channel}) && is_string($this->{$channel})) {
             return $this->{$channel};
