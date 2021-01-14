@@ -2,8 +2,6 @@
 
 namespace Ludo\Config;
 
-use phpDocumentor\Reflection\Types\Mixed_;
-
 /**
  * Class Repository
  *

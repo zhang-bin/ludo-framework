@@ -210,9 +210,9 @@ class ServiceProvider
      * Get registered class callback
      *
      * @param string $abstract class name
-     * @return Closure
+     * @return mixed
      */
-    public function getRegisteredAbstract(string $abstract): Closure
+    public function getRegisteredAbstract(string $abstract)
     {
         return $this->bindings[$abstract];
     }
