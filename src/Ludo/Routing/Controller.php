@@ -14,11 +14,6 @@ use Ludo\View\View;
 abstract class Controller
 {
     /**
-     * @var string $name current Ctrl name
-     */
-    protected string $name;
-
-    /**
      * @var View $tpl view object
      */
     protected View $tpl;
@@ -35,24 +30,11 @@ abstract class Controller
 
     /**
      * Controller constructor.
-     *
-     * @param string $name controller name
      */
-    public function __construct(string $name)
+    public function __construct()
     {
-        $this->name = $name;
         $this->httpHeader = 'Content-Type:text/html;charset=' . PROGRAM_CHARSET;
         $this->tpl = ServiceProvider::getInstance()->getTplHandler();
-    }
-
-    /**
-     * Get current controller name
-     *
-     * @return string
-     */
-    public function getCurrentCtrlName(): string
-    {
-        return $this->name;
     }
 
     /**
