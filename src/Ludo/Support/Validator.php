@@ -251,6 +251,6 @@ class Validator
             return false;
         }
 
-        return (preg_match('/^1[34578]\d{9}$/', $data, $match) !== 0);
+        return (preg_match('/^1[0-9]{10}$/', $data, $match) !== 0);
     }
 }
