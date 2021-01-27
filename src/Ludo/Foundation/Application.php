@@ -23,9 +23,9 @@ class Application
      * auto route
      *
      * @param string $path access path
-     * @return string|void
+     * @return mixed
      */
-    public function run(string $path = ''): string
+    public function run(string $path = '')
     {
         Context::set('begin-timestamp', microtime(true));
 
@@ -77,7 +77,7 @@ class Application
                 is_array($output) && $output = json_encode($output);
                 return $output;
             }
-            if (Config::get('app.debug')) {
+            if (Config::get('app.debug') && $output) {
                 self::debug($output);
             }
         } catch (Throwable $ex) {
