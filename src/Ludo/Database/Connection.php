@@ -22,9 +22,9 @@ class Connection
     protected PDO $pdo;
 
     /**
-     * @var PDO $readPdo The active PDO connection used for reads.
+     * @var ?PDO $readPdo The active PDO connection used for reads.
      */
-    protected PDO $readPdo;
+    protected ?PDO $readPdo = null;
 
     /**
      * Decide select sql whether to switch main PDO connection default select use read pdo

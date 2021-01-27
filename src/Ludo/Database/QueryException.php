@@ -3,7 +3,7 @@
 namespace Ludo\Database;
 
 use PDOException;
-use Exception;
+use Throwable;
 
 
 /**
@@ -28,9 +28,9 @@ class QueryException extends PDOException
      *
      * @param string $sql sql statement
      * @param array $params where parameters
-     * @param Exception $previous sql exception
+     * @param Throwable $previous sql exception
      */
-    public function __construct(string $sql, array $params, Exception $previous)
+    public function __construct(string $sql, array $params, Throwable $previous)
     {
         parent::__construct('', 0, $previous);
 
@@ -50,10 +50,10 @@ class QueryException extends PDOException
      *
      * @param string $sql sql statement
      * @param array $params where parameters
-     * @param Exception $previous sql exception
+     * @param Throwable $previous sql exception
      * @return string
      */
-    protected function formatMessage(string $sql, array $params, Exception $previous): string
+    protected function formatMessage(string $sql, array $params, Throwable $previous): string
     {
         return $previous->getMessage() . ' (SQL: ' . str_replace_array('\?', $params, $sql) . ')';
     }
