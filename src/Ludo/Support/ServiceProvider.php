@@ -7,7 +7,6 @@ use Ludo\Database\Connectors\ConnectionFactory;
 use Ludo\Redis\BaseRedis;
 use Ludo\Redis\RedisManager;
 use Ludo\Support\Facades\Config;
-use Ludo\Support\Facades\Log;
 use Ludo\View\View;
 use Ludo\Database\Connection;
 use Closure;
@@ -43,11 +42,6 @@ class ServiceProvider
      * @var BaseRedis[] $redis redis object
      */
     private array $redis = [];
-
-    /**
-     * @var ?Log $log log object
-     */
-    private ?Log $log = null;
 
     /**
      * @var ServiceProvider[] $instance self instances
@@ -176,19 +170,6 @@ class ServiceProvider
             $this->tpl = new View();
         }
         return $this->tpl;
-    }
-
-    /**
-     * Get Log Handler
-     *
-     * @return Log
-     */
-    public function getLogHandler(): Log
-    {
-        if ($this->log == null) {
-            $this->log = new Log();
-        }
-        return $this->log;
     }
 
     /**
