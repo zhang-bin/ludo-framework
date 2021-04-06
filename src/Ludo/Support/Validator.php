@@ -222,21 +222,22 @@ class Validator
      * Whether data is a valid date
      *
      * @param string $data raw data
+     * @param string $format datetime format
      * @return bool
      */
-    public static function date(string $data): bool
+    public static function date(string $data, $format = 'Y-m-d'): bool
     {
         if ($data instanceof DateTime) {
             return true;
         }
 
-        if (strtotime($data) === false) {
+        if (false === strtotime($data)) {
             return false;
         }
 
-        $date = date_parse($data);
+        $d = DateTime::createFromFormat($format, $data);
 
-        return checkdate($date['month'], $date['day'], $date['year']);
+        return $d && $d->format($format) == $data;
     }
 
     /**
