@@ -177,9 +177,9 @@ abstract class Dao
      * @param int $id primary key of current table
      * @param string $fields fields needs to be fetched, comma separated
      * @param int $fetchMode pdo fetch mode
-     * @return array key is field name and value is field value.
+     * @return ?array key is field name and value is field value.
      */
-    public function fetch(int $id, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): array
+    public function fetch(int $id, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): ?array
     {
         if (empty($fields)) {
             $fields = $this->tblName . '.*';
@@ -197,9 +197,9 @@ abstract class Dao
      * @param array $params where parameters
      * @param string $fields fields needs to be fetched, comma separated
      * @param int $fetchMode pdo fetch mode
-     * @return array
+     * @return ?array
      */
-    public function find(string $condition, array $params, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): array
+    public function find(string $condition, array $params, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): ?array
     {
         if (!empty($fields)) {
             $this->builder->setField($fields);
@@ -214,9 +214,9 @@ abstract class Dao
      * @param string $condition where condition
      * @param array $params where parameters
      * @param string $column column name
-     * @return string
+     * @return ?string
      */
-    public function findColumn(string $condition, array $params, string $column): string
+    public function findColumn(string $condition, array $params, string $column): ?string
     {
         if (!empty($column)) {
             $this->builder->setField($column);
@@ -230,9 +230,9 @@ abstract class Dao
      *
      * @param int $id primary key of current table
      * @param string $column column name
-     * @return string
+     * @return ?string
      */
-    public function fetchColumn(int $id, string $column): string
+    public function fetchColumn(int $id, string $column): ?string
     {
         if (!empty($column)) {
             $this->builder->setField($column);
