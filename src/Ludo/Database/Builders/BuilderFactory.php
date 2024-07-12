@@ -14,7 +14,7 @@ use InvalidArgumentException;
 class BuilderFactory
 {
     /**
-     * get a aql builder based on the configuration.
+     * get a sql builder based on the configuration.
      *
      * @param Connection $connection database connection object
      * @param string $tableName table name

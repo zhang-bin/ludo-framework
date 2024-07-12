@@ -18,8 +18,8 @@ class EncryptionServiceProvider implements ServiceProviderInterface
      */
     public function register(): void
     {
-        ServiceProvider::getMainInstance()->register(Encrypter::class, function () {
-            return new Encrypter();
+        ServiceProvider::getMainInstance()->register(Encryptor::class, function () {
+            return new Encryptor();
         });
     }
 }

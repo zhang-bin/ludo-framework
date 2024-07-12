@@ -60,8 +60,6 @@ class Validator
     public static function range(string $data, int $min, int $max): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
-        $min = intval($min);
-        $max = intval($max);
         return $len >= $min && $len <= $max;
     }
 
@@ -75,7 +73,6 @@ class Validator
     public static function len(string $data, int $length): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
-        $length = intval($length);
         return $len == $length;
     }
 
@@ -89,7 +86,6 @@ class Validator
     public static function minLength(string $data, int $min): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
-        $min = intval($min);
         return $len >= $min;
     }
 
@@ -103,7 +99,6 @@ class Validator
     public static function maxLength(string $data, int $max): bool
     {
         $len = mb_strlen($data, PROGRAM_CHARSET);
-        $max = intval($max);
         return $len <= $max;
     }
 
@@ -145,7 +140,7 @@ class Validator
     }
 
     /**
-     * Whether data is an valid private ip
+     * Whether data is a valid private ip
      * 10.0.0.0 through 10.255.255.255 (10/8)
      * 172.16.0.0 through 172.31.255.255 (172.16/12)
      * 192.168.0.0 through 192.168.255.255 (192.168/16)
@@ -156,7 +151,7 @@ class Validator
      * @param bool $includeReserved whether to include reserved ip range (169.254.0.0/16), default is true.
      * @return bool true for private ip, vise versa.
      */
-    public static function privateIp(string $data, $includeReserved = true): bool
+    public static function privateIp(string $data, bool $includeReserved = true): bool
     {
         if (!self::ip($data)) {//kick non-ip off.
             return false;
@@ -190,10 +185,10 @@ class Validator
      * Whether data is a valid url
      *
      * @param string $data raw data
-     * @param bool $schemeRequired whether require scheme
-     * @param bool $hostRequired whether require host
-     * @param bool $pathRequired whether require path
-     * @param bool $queryStringRequired whether require query
+     * @param bool $schemeRequired whether you require scheme
+     * @param bool $hostRequired whether you require host
+     * @param bool $pathRequired whether you require path
+     * @param bool $queryStringRequired whether you require query
      * @return bool
      */
     public static function url(string $data, bool $schemeRequired = false, bool $hostRequired = true, bool $pathRequired = false, bool $queryStringRequired = false): bool
@@ -221,11 +216,11 @@ class Validator
     /**
      * Whether data is a valid date
      *
-     * @param string $data raw data
+     * @param string|DateTime $data raw data
      * @param string $format datetime format
      * @return bool
      */
-    public static function date(string $data, $format = 'Y-m-d'): bool
+    public static function date(string|DateTime $data, string $format = 'Y-m-d'): bool
     {
         if ($data instanceof DateTime) {
             return true;
@@ -252,6 +247,6 @@ class Validator
             return false;
         }
 
-        return (preg_match('/^1[0-9]{10}$/', $data, $match) !== 0);
+        return (preg_match('/^1[0-9]{10}$/', $data) !== 0);
     }
 }

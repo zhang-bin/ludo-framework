@@ -5,7 +5,6 @@ $facades = [
     Ludo\Encryption\EncryptionServiceProvider::class,
     Ludo\Context\ContextServiceProvider::class,
     Ludo\Translation\TranslationServiceProvider::class,
-    Ludo\Log\LogServiceProvider::class,
 ];
 
 foreach ($facades as $facade) {

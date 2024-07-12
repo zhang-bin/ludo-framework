@@ -64,7 +64,7 @@ class ProcessCommand extends Command
                     $doc = DocBlockFactory::createInstance()->create($reflection->getDocComment());
                     $output->writeln(sprintf('<fg=green>%s</> <fg=default>%s</>', $name, $doc->getDescription()));
                 }
-            } catch (ReflectionException $e) {
+            } catch (ReflectionException) {
                 $output->writeln(sprintf('<fg=red>Process %s can not instantiate.</>', $item['class']));
             }
 
@@ -148,9 +148,9 @@ class ProcessCommand extends Command
     /**
      * Get master pid
      *
-     * @return bool|false|string
+     * @return bool|string
      */
-    protected function getPid()
+    protected function getPid(): bool|string
     {
         return file_exists($this->pidFile) ? file_get_contents($this->pidFile) : false;
     }

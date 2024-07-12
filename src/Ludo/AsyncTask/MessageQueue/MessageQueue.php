@@ -34,7 +34,7 @@ abstract class MessageQueue implements MessageQueueInterface
                     }
 
                     $this->ack($data);
-                } catch (Throwable $e) {
+                } catch (Throwable) {
                     if ($message->shouldHandleAgain() && $this->remove($data)) {
                         $this->retry($message);
                     } else {

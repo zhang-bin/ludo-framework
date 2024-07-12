@@ -9,16 +9,13 @@
     }
   ],
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "ezyang/htmlpurifier": ">=4.6",
-    "phpmailer/phpmailer": "5.2.*",
     "ext-redis": "*",
-    "symfony/console": "^4.3",
     "ext-pdo": "*",
     "ext-openssl": "*",
     "ext-json": "*",
-    "monolog/monolog": "^2.0",
-    "phpdocumentor/reflection-docblock": "^4.3"
+    "ext-mbstring": "*"
   },
   "autoload": {
     "files": [
@@ -29,13 +26,5 @@
       "Ludo\\": "src/Ludo/"
     }
   },
-  "autoload-dev": {
-    "psr-4": {
-      "LudoTest\\": "tests/"
-    }
-  },
-  "minimum-stability": "stable",
-  "require-dev": {
-    "phpunit/phpunit": "^8.3"
-  }
+  "minimum-stability": "stable"
 }

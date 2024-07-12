@@ -83,9 +83,9 @@ class Builder
      */
     protected string $limit = '';
 
-    const LEFT_JOIN = 'LEFT JOIN';
-    const INNER_JOIN = 'INNER JOIN';
-    const RIGHT_JOIN = 'RIGHT JOIN';
+    const string LEFT_JOIN = 'LEFT JOIN';
+    const string INNER_JOIN = 'INNER JOIN';
+    const string RIGHT_JOIN = 'RIGHT JOIN';
 
     /**
      * @param Connection $dbObj
@@ -98,7 +98,7 @@ class Builder
         $this->tableName = $this->db->getTablePrefix() . $tableName;
 
         //tableAlias default is the table name without prefix
-        $this->tableAlias = $tableAlias ? $tableAlias : $tableName;
+        $this->tableAlias = $tableAlias ?: $tableName;
     }
 
     /**
@@ -120,7 +120,7 @@ class Builder
      * @param array $params where parameters
      * @return $this|String
      */
-    public function sql(string $sql = '', array $params = [])
+    public function sql(string $sql = '', array $params = []): string|Builder
     {
         if (empty($sql)) {
             return $this->sql;
@@ -135,13 +135,13 @@ class Builder
     /**
      * Set the field part of sql clause
      *
-     * @param string $fieldName comma separated list: id, User.name, UserType.id
+     * @param string $fieldName comma separated list: id, User.name, UserType.name
      * @return $this
      */
     public function setField(string $fieldName): Builder
     {
         if (!empty($fieldName)) {
-            array_push($this->fields, $fieldName);
+            $this->fields[] = $fieldName;
         }
 
         return $this;
@@ -150,7 +150,7 @@ class Builder
     /**
      * identical to setField()
      *
-     * @param String $fieldName comma separated list: id, User.name, UserType.id
+     * @param String $fieldName comma separated list: id, User.name, UserType.name
      * @return $this
      */
     public function field(string $fieldName): Builder
@@ -181,7 +181,7 @@ class Builder
      */
     protected function addJoinField(string $fields): Builder
     {
-        array_push($this->fields, $fields);
+        $this->fields[] = $fields;
         return $this;
     }
 
@@ -197,8 +197,8 @@ class Builder
     public function join(string $table, string $on = '', string $fields = '', string $join = self::INNER_JOIN): Builder
     {
         $as = $table;
-        //if $table have ' ' which means $table have a alias,
-        //so replace the as if have and separate the table name and alias name.
+        //if $table have ' ' which means $table have an alias,
+        //so replace the as if you have and separate the table name and alias name.
         if (strchr($table, ' ')) {
             $tmp = explode(' ', str_replace(' as ', ' ', $table));
             $table = $tmp[0];
@@ -213,7 +213,7 @@ class Builder
 
         $on = $on ? 'ON ' . $on : '';
 
-        $this->join .= " {$join} {$table} {$as} {$on} ";
+        $this->join .= " $join $table $as $on ";
         return $this;
     }
 
@@ -278,7 +278,7 @@ class Builder
      *
      * @param string $condition e.g. 'field1=1 & tableAlias.field3=3' or 'field1=? & tableAlias.field3=?' or
      *                               'field1=:name & tableAlias.field3=:user'
-     * @param array|null $params
+     * @param array $params
      * @return $this
      */
     public function having(string $condition, array $params = []): Builder
@@ -323,7 +323,7 @@ class Builder
         if (empty($rows)) {
             $this->limit = '';
         } else {
-            $this->limit = "LIMIT {$rows} OFFSET {$start}";
+            $this->limit = "LIMIT $rows OFFSET $start";
         }
         return $this;
     }
@@ -333,7 +333,7 @@ class Builder
      * @param bool $return true: return the sql clause (Default is true). false: assign sql clause to this->sql.
      * @return string|Builder
      */
-    protected function constructSql(bool $return = true)
+    protected function constructSql(bool $return = true): Builder|string|static
     {
         if (empty($this->userSql)) {
             $distinct = $this->distinct ? 'DISTINCT' : '';
@@ -350,7 +350,7 @@ class Builder
             } else {
                 $fields = implode(',', $this->fields);
             }
-            $sql = "SELECT $distinct $fields FROM {$this->db->quoteIdentifier($this->tableName)} {$this->tableAlias} {$this->join} {$this->where} {$groupBy} {$order} {$this->limit}";
+            $sql = "SELECT $distinct $fields FROM {$this->db->quoteIdentifier($this->tableName)} $this->tableAlias $this->join $this->where $groupBy $order $this->limit";
         } else {
             $sql = $this->userSql;
         }
@@ -365,13 +365,13 @@ class Builder
     }
 
     /**
-     * do an query directly, which will return a result
+     * do a query directly, which will return a result
      *
      * @param int $fetchMode
-     * @param mixed $fetchArgument
+     * @param mixed|null $fetchArgument
      * @return array
      */
-    public function select(int $fetchMode = PDO::FETCH_ASSOC, $fetchArgument = null): array
+    public function select(int $fetchMode = PDO::FETCH_ASSOC, mixed $fetchArgument = null): array
     {
         $this->db->setFetchMode($fetchMode);
         $this->db->setFetchArgument($fetchArgument);
@@ -402,7 +402,7 @@ class Builder
      * Defaults to PDO::FETCH_BOTH. Other useful options is:
      * PDO::FETCH_COLUMN|PDO::FETCH_UNIQUE: To fetch only the unique values of a single column from the result set
      * PDO::FETCH_COLUMN|PDO::FETCH_GROUP: To return an associative array grouped by the values of a specified column
-     * @return array represents an table
+     * @return array represents a table
      */
     public function fetchAll(int $fetchMode = PDO::FETCH_ASSOC): array
     {
@@ -411,10 +411,10 @@ class Builder
 
     /**
      * get the same column in each rows from table into an 1D array.
-     * eg. select col1 from table limit 0,3.
+     * e.g. select col1 from table limit 0,3.
      * will return: array(row1_col1, row2_col1, row3_col1);
      *
-     * @return array represents an table
+     * @return array represents a table
      */
     public function fetchAllUnique(): array
     {
@@ -425,7 +425,7 @@ class Builder
      * get the same column in each rows from table into an 1D array.
      * note:
      *
-     * @return array represents an table
+     * @return array represents a table
      * @example
      * <pre>
      * select col1, col2 from table limit 0,3. \n
@@ -443,7 +443,7 @@ class Builder
      *
      * @return mixed Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
-    public function fetchColumn()
+    public function fetchColumn(): mixed
     {
         return $this->db->selectColumn($this->constructSql(), $this->params);
     }
@@ -456,7 +456,7 @@ class Builder
      */
     public function recordsCount(string $distinctFields = ''): int
     {
-        array_push($this->fields, $distinctFields ? "count(DISTINCT {$distinctFields})" : 'count(*)');
+        $this->fields[] = $distinctFields ? "count(DISTINCT $distinctFields)" : 'count(*)';
         return $this->fetchColumn();
     }
 
@@ -466,9 +466,8 @@ class Builder
      * @param array $arr key is the field name and value is the field value
      *              array(  'field1_name' => 'value',
      *                      'field2_name' => 'value',
-     *                      ...
-     *                    );
-     * @return int Last insert id if insert successful, else SqlException will be throw
+     *                      ...);
+     * @return int Last insert id if insert successful, else SqlException will be thrown
      */
     public function insert(array $arr): int
     {
@@ -483,14 +482,14 @@ class Builder
         foreach ($arr as $key => $value) {
             $params[] = $value;
             $key = $this->db->quoteIdentifier($key);
-            $setFields .= "{$comma}{$key}";
+            $setFields .= "$comma$key";
             $setValues .= $comma . '?';
             $comma = ',';
         }
         $setFields .= ')';
         $setValues .= ')';
 
-        $sql = "INSERT INTO  {$this->db->quoteIdentifier($this->tableName)} {$setFields} values {$setValues}";
+        $sql = "INSERT INTO  {$this->db->quoteIdentifier($this->tableName)} $setFields values $setValues";
         $this->db->insert($sql, $params);
         return $this->db->lastInsertId();
     }
@@ -501,14 +500,13 @@ class Builder
      * @param array $arr key is the field name and value is the field value
      *              array(  'field1_name' => 'value',
      *                      'field2_name' => 'value',
-     *                      ...
-     *                    );
+     *                      ...);
      * @param ?string $condition The query condition. with following format:<br />
      *        Array:  array('id=? and uname=?', array(2, 'test')); //
      *
      * @param array $params The query parameters
      *
-     * @return int row number if insert successful, else SqlException will be throw
+     * @return int row number if insert successful, else SqlException will be thrown
      */
     public function update(array $arr, string $condition = null, array $params = []): int
     {
@@ -522,10 +520,10 @@ class Builder
         foreach ($arr as $key => $value) {
             $sqlParams[] = $value;
             $key = $this->db->quoteIdentifier($key);
-            $setFields .= "{$comma} {$key}=?";
+            $setFields .= "$comma $key=?";
             $comma = ',';
         }
-        $sql = "UPDATE {$this->db->quoteIdentifier($this->tableName)} set {$setFields}";
+        $sql = "UPDATE {$this->db->quoteIdentifier($this->tableName)} set $setFields";
 
         if (!empty($condition)) {
             $sql .= ' WHERE ' . $condition;
@@ -539,15 +537,15 @@ class Builder
      * delete record from table
      *
      * @param string $condition The query condition. with following format:<br />
-     *        String: 'id=2 and uanme="libok"' or 'id=? and uname=?' or 'id=:id and uname=:uname'
-     * @param string|array $params params which will be used in prepared statement, with following format: <br />
+     *        String: 'id=2 and uname="jack"' or 'id=? and uname=?' or 'id=:id and uname=:uname'
+     * @param array|string|null $params params which will be used in prepared statement, with following format: <br />
      *        String: if you just need one parameter in above prepared statement. e.g. '1111'
-     *        Array: array(2, 'libok') or array(':id'=>2, ':uname'=>'libok')
+     *        Array: array(2, 'jack') or array(':id'=>2, ':uname'=>'jack')
      *
-     * @return int row nums if insert successful, else SqlException will be throw
+     * @return int row nums if insert successful, else SqlException will be thrown
      * @access public
      */
-    public function delete(string $condition = '', $params = null): int
+    public function delete(string $condition = '', array|string $params = null): int
     {
         $sql = "DELETE FROM {$this->db->quoteIdentifier($this->tableName)}";
 

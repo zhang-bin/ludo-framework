@@ -5,9 +5,11 @@ namespace Ludo\AsyncTask\MessageQueue;
 use Ludo\AsyncTask\JobInterface;
 use Ludo\AsyncTask\Message;
 use Ludo\AsyncTask\MessageInterface;
-use Redis;
+use Ludo\Exception\AsyncTaskException;
+use Ludo\Redis\BaseRedis;
 use RuntimeException;
 use Ludo\Support\ServiceProvider;
+use RedisException;
 
 
 /**
@@ -18,24 +20,24 @@ use Ludo\Support\ServiceProvider;
 class RedisMessageQueue extends MessageQueue
 {
     /**
-     * @var Redis $redis
+     * @var BaseRedis $redis
      */
-    protected $redis;
+    protected BaseRedis $redis;
 
     /**
      * @var int $timeout max polling timeout
      */
-    protected $timeout;
+    protected int $timeout;
 
     /**
      * @var int $retryDelaySeconds Retry job delay seconds
      */
-    protected $retryDelaySeconds;
+    protected int $retryDelaySeconds;
 
     /**
      * @var int $handleTimeout Handle job timeout
      */
-    protected $handleTimeout;
+    protected int $handleTimeout;
 
     /**
      * @var Channel $channel Channel object
@@ -63,18 +65,23 @@ class RedisMessageQueue extends MessageQueue
      * Push job into message queue
      *
      * @param JobInterface $job job need to be executed
-     * @param int $delay job to execute delay seconds, 0 if doesn't need delay
+     * @param int $delay job to execute delay seconds, 0 if it doesn't need delay
      * @return bool
+     * @throws AsyncTaskException
      */
     public function push(JobInterface $job, int $delay = 0): bool
     {
         $message = new Message($job);
         $data = serialize($message);
 
-        if ($delay == 0) {
-            return boolval($this->redis->lPush($this->channel->getWaiting(), $data));
-        } else {
-            return boolval($this->redis->zAdd($this->channel->getDelayed(), [], time() + $delay, $data));
+        try {
+            if ($delay == 0) {
+                return boolval($this->redis->lPush($this->channel->getWaiting(), $data));
+            } else {
+                return boolval($this->redis->zAdd($this->channel->getDelayed(), [], time() + $delay, $data));
+            }
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('push job failed', 1, $e);
         }
     }
 
@@ -83,37 +90,47 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param JobInterface $job job need to be executed
      * @return bool
+     * @throws AsyncTaskException
      */
     public function delete(JobInterface $job): bool
     {
         $message = new Message($job);
         $data = serialize($message);
 
-        return boolval($this->redis->zRem($this->channel->getDelayed(), $data));
+        try {
+            return boolval($this->redis->zRem($this->channel->getDelayed(), $data));
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('delete job failed', 2, $e);
+        }
     }
 
     /**
      * Pop job from message queue
      *
      * @return array
+     * @throws AsyncTaskException
      */
     public function pop(): array
     {
         $this->move($this->channel->getDelayed(), $this->channel->getWaiting());
         $this->move($this->channel->getReserved(), $this->channel->getTimeout());
 
-        $result = $this->redis->brPop($this->channel->getWaiting(), $this->timeout);
-        if (empty($result)) {
-            return [false, null];
-        }
+        try {
+            $result = $this->redis->brPop($this->channel->getWaiting(), $this->timeout);
+            if (empty($result)) {
+                return [false, null];
+            }
 
-        $data = $result[1];
-        $message = unserialize($data);
-        if (empty($message)) {
-            return [false, null];
-        }
+            $data = $result[1];
+            $message = unserialize($data);
+            if (empty($message)) {
+                return [false, null];
+            }
 
-        $this->redis->zAdd($this->channel->getReserved(), [], time() + $this->handleTimeout, $data);
+            $this->redis->zAdd($this->channel->getReserved(), [], time() + $this->handleTimeout, $data);
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('pop job failed', 3, $e);
+        }
 
         return [$result[1], $message];
     }
@@ -123,6 +140,7 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param string $data message
      * @return bool
+     * @throws AsyncTaskException
      */
     public function ack(string $data): bool
     {
@@ -134,11 +152,16 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param string $data message
      * @return bool
+     * @throws AsyncTaskException
      */
     public function fail(string $data): bool
     {
         if ($this->remove($data)) {
-            return boolval($this->redis->lPush($this->channel->getFailed(), $data));
+            try {
+                return boolval($this->redis->lPush($this->channel->getFailed(), $data));
+            } catch (RedisException $e) {
+                throw new AsyncTaskException('handle failed job', 4, $e);
+            }
         }
 
         return false;
@@ -149,11 +172,16 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param MessageInterface $message message object
      * @return bool
+     * @throws AsyncTaskException
      */
     public function retry(MessageInterface $message): bool
     {
         $data = serialize($message);
-        return $this->redis->zAdd($this->channel->getDelayed(), [], time() + $this->retryDelaySeconds, $data) > 0;
+        try {
+            return $this->redis->zAdd($this->channel->getDelayed(), [], time() + $this->retryDelaySeconds, $data) > 0;
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('handle job retry', 5, $e);
+        }
     }
 
     /**
@@ -161,6 +189,7 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param ?string $channel channel name
      * @return int
+     * @throws AsyncTaskException
      */
     public function reload(string $channel = null): int
     {
@@ -174,8 +203,12 @@ class RedisMessageQueue extends MessageQueue
         }
 
         $num = 0;
-        while ($this->redis->rpoplpush($channelName, $this->channel->getWaiting())) {
-            ++$num;
+        try {
+            while ($this->redis->rpoplpush($channelName, $this->channel->getWaiting())) {
+                ++$num;
+            }
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('reload failed message failed', 6, $e);
         }
         return $num;
     }
@@ -185,6 +218,7 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param ?string $channel failed channel name
      * @return bool
+     * @throws AsyncTaskException
      */
     public function flush(string $channel = null): bool
     {
@@ -193,7 +227,11 @@ class RedisMessageQueue extends MessageQueue
             $channelName = $this->channel->get($channel);
         }
 
-        return boolval($this->redis->del($channelName));
+        try {
+            return boolval($this->redis->del($channelName));
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('flush message failed', 7, $e);
+        }
     }
 
     /**
@@ -201,10 +239,15 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param string $data message
      * @return bool
+     * @throws AsyncTaskException
      */
     protected function remove(string $data): bool
     {
-        return $this->redis->zRem($this->channel->getReserved(), $data) > 0;
+        try {
+            return $this->redis->zRem($this->channel->getReserved(), $data) > 0;
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('remove message failed', 8, $e);
+        }
     }
 
     /**
@@ -212,17 +255,22 @@ class RedisMessageQueue extends MessageQueue
      *
      * @param string $from original channel name
      * @param string $to target channel name
+     * @throws AsyncTaskException
      */
     protected function move(string $from, string $to): void
     {
         $now = time();
 
-        if ($expiredData = $this->redis->zRevRangeByScore($from, $now, '-inf', ['LIMIT' => [0, 99]])) {
-            foreach ($expiredData as $datum) {
-                if ($this->redis->zRem($from, $datum) > 0) {
-                    $this->redis->lPush($to, $datum);
+        try {
+            if ($expiredData = $this->redis->zRevRangeByScore($from, $now, '-inf', ['LIMIT' => [0, 99]])) {
+                foreach ($expiredData as $datum) {
+                    if ($this->redis->zRem($from, $datum) > 0) {
+                        $this->redis->lPush($to, $datum);
+                    }
                 }
             }
+        } catch (RedisException $e) {
+            throw new AsyncTaskException('move message failed', 9, $e);
         }
     }
 }

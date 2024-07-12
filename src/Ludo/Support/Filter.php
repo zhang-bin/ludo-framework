@@ -61,7 +61,7 @@ class Filter
      * Sanitize the String to escape all html tags to HTML entities.
      *
      * @param string $data raw data
-     * @param int $encodeType ENT_QUOTES or ENT_NOQUOTES  or ENT_COMPAT. Default is ENT_QUOTES
+     * @param int $encodeType ENT_QUOTES or ENT_NO_QUOTES  or ENT_COMPAT. Default is ENT_QUOTES
      * @return string the clean string with no html tags.
      */
     public static function str(string $data, int $encodeType = ENT_QUOTES): string
@@ -76,7 +76,7 @@ class Filter
      * Sanitize the String to escape all html tags and non-ascii strings to HTML entities.
      *
      * @param string $data raw data
-     * @param int $encodeType ENT_QUOTES or ENT_NOQUOTES  or ENT_COMPAT. Default is ENT_QUOTES
+     * @param int $encodeType ENT_QUOTES or ENT_NO_QUOTES  or ENT_COMPAT. Default is ENT_QUOTES
      * @return string the clean string with no html tags.
      */
     public static function entity(string $data, int $encodeType = ENT_QUOTES): string

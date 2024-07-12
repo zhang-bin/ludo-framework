@@ -46,13 +46,13 @@ class View
      * @param mixed $varValue variable value
      * @return $this
      */
-    public function assign(string $varName, $varValue): View
+    public function assign(string $varName, mixed $varValue): View
     {
         $argNumbers = func_num_args();
         if ($argNumbers == 2) {
             $this->assignValues[$varName] = $varValue;
         } else {
-            $this->assignValues = array_merge($this->assignValues, $varName);
+            $this->assignValues = array_merge($this->assignValues, (array)$varName);
         }
         return $this;
     }
@@ -75,7 +75,7 @@ class View
     /**
      * Set template file
      *
-     * @param string $tplFile relative path to TPL_ROOT. eg. user/login, user/register
+     * @param string $tplFile relative path to TPL_ROOT. e.g. user/login, user/register
      * @return $this
      */
     public function setFile(string $tplFile): View

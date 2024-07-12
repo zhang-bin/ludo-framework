@@ -31,7 +31,7 @@ abstract class Process implements ProcessInterface
         $pid = $process->start();
         $this->workers[$pid] = $process;
 
-        SwooleProcess::signal(SIGCHLD, function ($signal) {
+        SwooleProcess::signal(SIGCHLD, function () {
             while (true) {
                 $result = SwooleProcess::wait(false);
                 if (!$result || $result['signal'] == SIGKILL) {
@@ -49,7 +49,7 @@ abstract class Process implements ProcessInterface
             }
         });
 
-        SwooleProcess::signal(SIGTERM, function ($signal) {
+        SwooleProcess::signal(SIGTERM, function () {
             foreach ($this->workers as $pid => $process) {
                 SwooleProcess::kill($pid, SIGKILL);
             }

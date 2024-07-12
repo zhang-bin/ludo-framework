@@ -10,41 +10,41 @@ namespace Ludo\Server;
  */
 class SwooleEvent
 {
-    const ON_START = 'start';
+    const string ON_START = 'start';
 
-    const ON_SHUT_DOWN = 'shutdown';
+    const string ON_SHUT_DOWN = 'shutdown';
 
-    const ON_WORKER_START = 'workerStart';
+    const string ON_WORKER_START = 'workerStart';
 
-    const ON_WORKER_STOP = 'workerStop';
+    const string ON_WORKER_STOP = 'workerStop';
 
-    const ON_WORKER_EXIT = 'workerExit';
+    const string ON_WORKER_EXIT = 'workerExit';
 
-    const ON_CONNECT = 'connect';
+    const string ON_CONNECT = 'connect';
 
-    const ON_REQUEST = 'request';
+    const string ON_REQUEST = 'request';
 
-    const ON_RECEIVE = 'receive';
+    const string ON_RECEIVE = 'receive';
 
-    const ON_PACKET = 'packet';
+    const string ON_PACKET = 'packet';
 
-    const ON_CLOSE = 'close';
+    const string ON_CLOSE = 'close';
 
-    const ON_TASK = 'task';
+    const string ON_TASK = 'task';
 
-    const ON_FINISH = 'finish';
+    const string ON_FINISH = 'finish';
 
-    const ON_PIPE_MESSAGE = 'pipeMessage';
+    const string ON_PIPE_MESSAGE = 'pipeMessage';
 
-    const ON_HAND_SHAKE = 'handshake';
+    const string ON_HAND_SHAKE = 'handshake';
 
-    const ON_OPEN = 'open';
+    const string ON_OPEN = 'open';
 
-    const ON_MESSAGE = 'message';
+    const string ON_MESSAGE = 'message';
 
-    const ON_WORKER_ERROR = 'workerError';
+    const string ON_WORKER_ERROR = 'workerError';
 
-    const ON_MANAGER_START = 'managerStart';
+    const string ON_MANAGER_START = 'managerStart';
 
-    const ON_MANAGER_STOP = 'mangerStop';
+    const string ON_MANAGER_STOP = 'mangerStop';
 }

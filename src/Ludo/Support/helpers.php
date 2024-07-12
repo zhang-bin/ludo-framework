@@ -12,8 +12,8 @@ function ext(string $fileName): string
 }
 
 /**
- * Convert absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
- * to relative path (which is relative to the site root,eg. /uploads/1.html)
+ * Convert absolute location (e.g. /usr/local/www/black_dog/uploads/1.html)
+ * to relative path (which is relative to the site root,e.g. /uploads/1.html)
  *
  * @param string $path path name
  * @return string
@@ -24,8 +24,8 @@ function abs2rel(string $path): string
 }
 
 /**
- * Convert relative path (which is relative to the site root,eg. /uploads/1.html)
- * to absolute location (eg. /usr/local/www/black_dog/uploads/1.html)
+ * Convert relative path (which is relative to the site root,e.g. /uploads/1.html)
+ * to absolute location (e.g. /usr/local/www/black_dog/uploads/1.html)
  *
  * @param string $path path name
  * @return string
@@ -65,7 +65,7 @@ function refineSize(string $size, int $fix = 2): string
  * @param mixed $var raw data
  * @param bool $print_r print or var dump
  */
-function debug($var, $print_r = true): void
+function debug(mixed $var, bool $print_r = true): void
 {
     echo '<pre>';
     $print_r ? print_r($var) : var_dump($var);
@@ -80,7 +80,7 @@ function debug($var, $print_r = true): void
  * @param mixed $value value
  * @return array
  */
-function array_add(array $array, string $key, $value): array
+function array_add(array $array, string $key, mixed $value): array
 {
     if (!isset($array[$key])) $array[$key] = $value;
     return $array;
@@ -118,7 +118,7 @@ function array_dot(array $array, string $prepend = ''): array
 }
 
 /**
- * Get all of the given array except for a specified array of items.
+ * Get all the given array except for a specified array of items.
  *
  * @param array $array original array
  * @param array $keys array keys
@@ -126,7 +126,7 @@ function array_dot(array $array, string $prepend = ''): array
  */
 function array_except(array $array, array $keys): array
 {
-    return array_diff_key($array, array_flip((array)$keys));
+    return array_diff_key($array, array_flip($keys));
 }
 
 /**
@@ -134,10 +134,10 @@ function array_except(array $array, array $keys): array
  *
  * @param array $array original array
  * @param Closure $callback array callback
- * @param mixed $default default value
+ * @param mixed|null $default default value
  * @return mixed
  */
-function array_first(array $array, Closure $callback, $default = null)
+function array_first(array $array, Closure $callback, mixed $default = null): mixed
 {
     foreach ($array as $key => $value) {
         if (call_user_func($callback, $key, $value)) return $value;
@@ -151,10 +151,10 @@ function array_first(array $array, Closure $callback, $default = null)
  *
  * @param array $array original array
  * @param Closure $callback array callback
- * @param mixed $default default value
+ * @param mixed|null $default default value
  * @return mixed
  */
-function array_last(array $array, Closure $callback, $default = null)
+function array_last(array $array, Closure $callback, mixed $default = null): mixed
 {
     return array_first(array_reverse($array), $callback, $default);
 }
@@ -184,11 +184,11 @@ function array_forget(array &$array, string $key): void
  * Get an item from an array using "dot" notation.
  *
  * @param array $array original array
- * @param string $key array key
- * @param mixed $default default value
+ * @param ?string $key array key
+ * @param mixed|null $default default value
  * @return mixed
  */
-function array_get(array $array, string $key, $default = null)
+function array_get(array $array, ?string $key, mixed $default = null): mixed
 {
     if (is_null($key)) {
         return $array;
@@ -211,11 +211,11 @@ function array_get(array $array, string $key, $default = null)
  * Set an item to a given value using "dot" notation
  *
  * @param array $array original array
- * @param string $key array key
+ * @param ?string $key array key
  * @param mixed $value array value
  * @return void
  */
-function array_set(array &$array, string $key, $value): void
+function array_set(array &$array, ?string $key, mixed $value): void
 {
     if (is_null($key)) {
         return;
@@ -239,10 +239,10 @@ function array_set(array &$array, string $key, $value): void
  *
  * @param array $array original array
  * @param string $key array key
- * @param mixed $default default value
+ * @param mixed|null $default default value
  * @return mixed
  */
-function array_pull(array &$array, string $key, $default = null)
+function array_pull(array &$array, string $key, mixed $default = null): mixed
 {
     $value = array_get($array, $key, $default);
     array_forget($array, $key);
@@ -253,13 +253,13 @@ function array_pull(array &$array, string $key, $default = null)
  * Determine if a given string ends with a given substring.
  *
  * @param string $haystack haystack
- * @param string|array $needles needles
+ * @param array|string $needles needles
  * @return bool
  */
-function end_with(string $haystack, $needles): bool
+function end_with(string $haystack, array|string $needles): bool
 {
     foreach ((array)$needles as $needle) {
-        if ($needle == substr($haystack, -strlen($needle))) {
+        if (str_ends_with($haystack, $needle)) {
             return true;
         }
     }
@@ -270,13 +270,13 @@ function end_with(string $haystack, $needles): bool
  * Determine if a given string starts with a given substring.
  *
  * @param string $haystack haystack
- * @param string|array $needles needles
+ * @param array|string $needles needles
  * @return bool
  */
-function start_with(string $haystack, $needles): bool
+function start_with(string $haystack, array|string $needles): bool
 {
     foreach ((array)$needles as $needle) {
-        if ($needle != '' && strpos($haystack, $needle) === 0) {
+        if ($needle != '' && str_starts_with($haystack, $needle)) {
             return true;
         }
     }
@@ -300,7 +300,7 @@ function str_replace_array(string $search, array $replace, string $subject): str
 }
 
 /**
- * Generate a "random" alpha-numeric string.
+ * Generate a "random" alphanumeric string.
  *
  * Should not be considered sufficient for cryptography, etc.
  *

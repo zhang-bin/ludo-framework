@@ -67,7 +67,7 @@ class Repository
      * @param ?string $name config key
      * @return mixed
      */
-    public function get(string $name = null)
+    public function get(string $name = null): mixed
     {
         return array_get($this->config, $name);
     }
@@ -78,7 +78,7 @@ class Repository
      * @param string $name config key
      * @param mixed $value default value
      */
-    public function set(string $name, $value): void
+    public function set(string $name, mixed $value): void
     {
         array_set($this->config, $name, $value);
     }

@@ -15,9 +15,9 @@ use RuntimeException;
 class MessageQueueFactory
 {
     /**
-     * @var MessageInterface
+     * @var MessageQueueInterface|MessageInterface
      */
-    protected $messageQueue;
+    protected MessageQueueInterface|MessageInterface $messageQueue;
 
     /**
      * MessageQueueFactory constructor.

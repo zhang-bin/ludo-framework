@@ -2,7 +2,7 @@
 
 namespace Ludo\Support\Facades;
 
-use Ludo\Encryption\Encrypter;
+use Ludo\Encryption\Encryptor;
 
 
 /**
@@ -20,6 +20,6 @@ class Crypt extends Facade implements FacadeInterface
      */
     public static function getFacadeAccessor(): string
     {
-        return Encrypter::class;
+        return Encryptor::class;
     }
 }

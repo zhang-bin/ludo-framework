@@ -46,7 +46,7 @@ abstract class Dao
      * Insert data into DB
      *
      * @param array $arr array('field'=>value, 'field2'=>value2);
-     * @return int Last insert id if insert successful, else SqlException will be throw
+     * @return int Last insert id if insert successful, else SqlException will be thrown
      */
     public function add(array $arr): int
     {
@@ -57,7 +57,7 @@ abstract class Dao
      * Identical to LdBaseDao::add($arr);
      *
      * @param array $arr array('field'=>value, 'field2'=>value2);
-     * @return int Last insert id if insert successful, else SqlException will be throw
+     * @return int Last insert id if insert successful, else SqlException will be thrown
      */
     public function insert(array $arr): int
     {
@@ -69,10 +69,10 @@ abstract class Dao
      *
      * @param array $arr 2D array,
      *    assoc array:            array(array('field'=>value, 'field2'=>value2), array('field'=>value, 'field2'=>value2));
-     *    or just indexed array:    array(array(value1, value2), array(value1, value2)); //if use indexedNames, the 2nd argument "$fieldNames" must be passed.
-     * @param array|string $fieldNames [Optional] only needed in indexed Data. field names for batch insert
+     *    or just indexed array:    array(array(value1, value2), array(value1, value2)); //if you use indexedNames, the 2nd argument "$fieldNames" must be passed.
+     * @param array $fieldNames [Optional] only needed in indexed Data. field names for batch insert
      * @param bool $ignore
-     * @return int true if insert successful, else SqlException will be throw
+     * @return int true if insert successful, else SqlException will be thrown
      */
     public function batchInsert(array $arr, array $fieldNames = [], bool $ignore = false): int
     {
@@ -105,7 +105,7 @@ abstract class Dao
         if ($ignore) {
             $sql .= ' IGNORE ';
         }
-        $sql .= ' INTO ' . $this->connection->quoteIdentifier($this->tblName) . " {$keys} VALUES ";
+        $sql .= ' INTO ' . $this->connection->quoteIdentifier($this->tblName) . " $keys VALUES ";
 
         $comma = '';
         $params = [];
@@ -273,7 +273,7 @@ abstract class Dao
     /**
      * Get record from table by condition
      *
-     * @param string|array $condition where condition
+     * @param array|string $condition where condition
      * @param int $rows result row number
      * @param int $start result row start
      * @param string $order order statement
@@ -281,7 +281,7 @@ abstract class Dao
      * @param int $fetchMode pdo fetch mode
      * @return array
      */
-    public function findAll($condition = '', int $rows = 0, int $start = 0, string $order = '', string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): array
+    public function findAll(array|string $condition = '', int $rows = 0, int $start = 0, string $order = '', string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): array
     {
         if (is_array($condition)) {
             $where = $condition[0];
@@ -296,14 +296,14 @@ abstract class Dao
     /**
      * Get one column list from table by condition
      *
-     * @param string|array $condition where condition
+     * @param array|string $condition where condition
      * @param string $fields select fields
      * @param int $rows result row number
      * @param int $start result row start
      * @param string $order order statement
      * @return array
      */
-    public function findAllUnique($condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
+    public function findAllUnique(array|string $condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
     {
         if (is_array($condition)) {
             $where = $condition[0];
@@ -318,14 +318,14 @@ abstract class Dao
     /**
      * Get key=>value formatted result from table
      *
-     * @param string|array $condition where condition
+     * @param array|string $condition where condition
      * @param string $fields select fields
      * @param int $rows result row number
      * @param int $start result row start
      * @param string $order order statement
      * @return array
      */
-    public function findAllKvPair($condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
+    public function findAllKvPair(array|string $condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
     {
         if (is_array($condition)) {
             $where = $condition[0];
@@ -387,12 +387,12 @@ abstract class Dao
         }
 
         $row = $this->builder->where($condition, $params)->fetch(PDO::FETCH_BOTH);
-        $exists = empty($row) ? false : true;
+        $exists = !empty($row);
         return [$exists, $row];
     }
 
     /**
-     * Return the max Id from current table
+     * Return the max id from current table
      *
      * @return int the max id
      */
@@ -402,10 +402,10 @@ abstract class Dao
     }
 
     /**
-     * One to one relation.
+     * One-to-one relation.
      *
-     * @param string $table table name [and alias] which need to be joined. eg. User as Author
-     * @param string $fields the fields you need to retrieve. default is all. E.G. Author.uname as authorUname, Author.nickname as nickname.
+     * @param string $table table name [and alias] which need to be joined. e.g. User as Author
+     * @param string $fields the fields you need to retrieve. default is all. E.G. Author uname as authorUname, Author password as password.
      * @param ?string $foreignKey ForeignKey field name. default is null which will use tableName+Id as its FK. eg. userId, productId
      * @param string $joinType one of the three [inner, left, right]. default is left.
      * @return $this
@@ -413,7 +413,7 @@ abstract class Dao
     public function hasA(string $table, string $fields = '', string $foreignKey = null, string $joinType = 'left'): Dao
     {
         //if $table have alias like ('User  author'), extract the table name and alias.
-        if (strpos($table, ' ') !== false) {
+        if (str_contains($table, ' ')) {
             $tmp = preg_split('/\s+/', str_replace(' as ', ' ', $table));
             $tblName = ucfirst($tmp[0]);
             $tblAlias = $tmp[1];
@@ -422,7 +422,7 @@ abstract class Dao
             $tblAlias = $table;
         }
 
-        $foreignKey = $foreignKey ? $foreignKey : lcfirst($tblName) . 'Id';
+        $foreignKey = $foreignKey ?: lcfirst($tblName) . 'Id';
         $foreignKey = $this->connection->quoteIdentifier($foreignKey);
         $joinType = $joinType . ' JOIN';
 
@@ -456,20 +456,6 @@ abstract class Dao
     public function rollback(): void
     {
         $this->connection->rollback();
-    }
-
-    /**
-     * Save connection debug log
-     *
-     * @param ?string $connection connection name
-     * @return string
-     */
-    public function debug(string $connection = null): string
-    {
-        if (is_null($connection)) {
-            $connection = $this->connection;
-        }
-        return $connection->debug();
     }
 
     /**

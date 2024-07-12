@@ -3,6 +3,7 @@
 namespace Ludo\Redis;
 
 use Redis;
+use RedisException;
 
 
 /**
@@ -16,6 +17,7 @@ class BaseRedis extends Redis
      * BaseRedis constructor.
      *
      * @param array $config redis config
+     * @throws RedisException
      */
     public function __construct(array $config)
     {
@@ -47,6 +49,7 @@ class BaseRedis extends Redis
      *
      * @param string $key redis key
      * @param int $seconds expire seconds
+     * @throws RedisException
      */
     public function randExpire(string $key, int $seconds)
     {
@@ -58,6 +61,7 @@ class BaseRedis extends Redis
      *
      * @param string $key redis key
      * @param int $timestamp expire timestamp
+     * @throws RedisException
      */
     public function randExpireAt(string $key, int $timestamp)
     {

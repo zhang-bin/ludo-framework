@@ -56,7 +56,7 @@ class ClassLoader
     }
 
     /**
-     * Register the given class loader on the auto-loader stack.
+     * Register the given class loader on the autoloader stack.
      *
      * @return void
      */
@@ -70,10 +70,10 @@ class ClassLoader
     /**
      * Add directories to the class loader.
      *
-     * @param string|array $directories class directory
+     * @param array|string $directories class directory
      * @return void
      */
-    public static function addDirectories($directories): void
+    public static function addDirectories(array|string $directories): void
     {
         self::$directories = array_merge(self::$directories, (array)$directories);
         self::$directories = array_unique(self::$directories);
@@ -82,10 +82,10 @@ class ClassLoader
     /**
      * Remove directories from the class loader.
      *
-     * @param string|array $directories class directory
+     * @param array|string|null $directories class directory
      * @return void
      */
-    public static function removeDirectories($directories = null): void
+    public static function removeDirectories(array|string $directories = null): void
     {
         if (is_null($directories)) {
             static::$directories = [];

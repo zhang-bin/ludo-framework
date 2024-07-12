@@ -68,7 +68,7 @@ class ServerCommand extends Command
                     }
                     $output->writeln($message);
                 }
-            } catch (ReflectionException $e) {
+            } catch (ReflectionException) {
                 $output->writeln(sprintf('<fg=red>Server %s can not instantiate.</>', $input['class']));
             }
 
@@ -178,9 +178,9 @@ class ServerCommand extends Command
     /**
      * Get master pid
      *
-     * @return bool|false|string
+     * @return bool|string
      */
-    protected function getPid()
+    protected function getPid(): bool|string
     {
         return file_exists($this->pidFile) ? file_get_contents($this->pidFile) : false;
     }

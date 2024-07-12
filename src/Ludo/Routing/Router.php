@@ -35,7 +35,6 @@ class Router
             if (!empty($pathInfo[1])) {
                 if (is_numeric($pathInfo[1])) {
                     $_REQUEST['id'] = $_GET['id'] = $pathInfo[1];
-                    $act = 'index';
                 } else {
                     $act = $pathInfo[1];
                 }

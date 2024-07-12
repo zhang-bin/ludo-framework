@@ -8,24 +8,24 @@ use Ludo\Support\Facades\Config;
 
 
 /**
- * Class Encrypter
+ * Class Encryptor
  *
  * @package Ludo\Encrypter
  */
-class Encrypter
+class Encryptor
 {
     /**
      * @var string $key encryption key
      */
-    private static $key;
+    private static string $key;
 
     /**
      * @var string $cipher algorithm used for encryption
      */
-    private static $cipher;
+    private static string $cipher;
 
     /**
-     * Encrypter constructor.
+     * Encryptor constructor.
      *
      * @throws RuntimeException
      */

@@ -4,7 +4,7 @@ namespace Ludo\Database\Builders;
 
 
 /**
- * PostgreSql Builder
+ * PostgresSql Builder
  *
  * @package Ludo\Database\Builders
  */

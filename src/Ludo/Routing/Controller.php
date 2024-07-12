@@ -20,8 +20,8 @@ abstract class Controller
 
     /**
      * used when you need to specify the http header information. <br>
-     * e.g.: when you sent gbk data back to ajax request, it should using header('Content-Type: text/html;charset:GBK') to prevent mash code.<br>
-     * another example is using header("Content-Disposition", "attachment;filename=xxxx.zip"); to popup a SaveAS dialog. <br>
+     * e.g.: when you sent gbk data back to ajax request, it should use header('Content-Type: text/html;charset:GBK') to prevent mash code.<br>
+     * another example is using header("Content-Disposition", "attachment;filename=xx.zip"); to pop up a SaveAS dialog. <br>
      * when using more than one header common, you should use array here.
      *
      * @var ?string $httpHeader
@@ -58,11 +58,11 @@ abstract class Controller
      * Called before main handle
      *
      * @param string $action action name
-     * @return mixed
+     * @return array
      */
-    public function beforeAction(string $action)
+    public function beforeAction(string $action): array
     {
-
+        return [];
     }
 
     /**
@@ -70,9 +70,9 @@ abstract class Controller
      *
      * @param string $action
      * @param array $result
-     * @return mixed
+     * @return void
      */
-    public function afterAction(string $action, array $result)
+    public function afterAction(string $action, array $result): void
     {
 
     }

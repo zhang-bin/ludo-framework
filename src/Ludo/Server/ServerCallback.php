@@ -43,10 +43,8 @@ class ServerCallback
 
     /**
      * Start main process
-     *
-     * @param Server $server server object
      */
-    public function start(Server $server): void
+    public function start(): void
     {
         if (PHP_OS == 'Linux') {
             swoole_set_process_name(sprintf('php %s master', $this->processName));
@@ -56,10 +54,9 @@ class ServerCallback
     /**
      * Start worker process
      *
-     * @param Server $server server object
      * @param int $workerId worker id
      */
-    public function workerStart(Server $server, int $workerId): void
+    public function workerStart(int $workerId): void
     {
         if (PHP_OS == 'Linux') {
             if ($workerId >= $this->config['worker_num']) {

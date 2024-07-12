@@ -11,6 +11,7 @@ use Ludo\View\View;
 use Ludo\Database\Connection;
 use Closure;
 use Swoole\Coroutine;
+use RedisException;
 
 
 /**
@@ -125,6 +126,7 @@ class ServiceProvider
      *
      * @param ?string $name redis name
      * @return BaseRedis
+     * @throws RedisException
      */
     public function getRedisHandler(string $name = null): BaseRedis
     {
@@ -193,7 +195,7 @@ class ServiceProvider
      * @param string $abstract class name
      * @return mixed
      */
-    public function getRegisteredAbstract(string $abstract)
+    public function getRegisteredAbstract(string $abstract): mixed
     {
         return $this->bindings[$abstract];
     }

@@ -4,6 +4,7 @@ namespace Ludo\Redis;
 
 use InvalidArgumentException;
 use Ludo\Support\ServiceProvider;
+use RedisException;
 
 
 /**
@@ -40,6 +41,7 @@ class RedisManager
      *
      * @param ?string $name connection name
      * @return BaseRedis
+     * @throws RedisException
      */
     public function connection(string $name = null): BaseRedis
     {
@@ -56,6 +58,7 @@ class RedisManager
      *
      * @param ?string $name connection name
      * @return void
+     * @throws RedisException
      */
     public function disconnect(string $name = null): void
     {
@@ -63,10 +66,7 @@ class RedisManager
         $this->connections[$name]->close();
         $this->connections[$name] = null;
 
-        $provider = ServiceProvider::getInstance();
-        if (is_object($provider)) {
-            $provider->delRedisHandler($name);
-        }
+        ServiceProvider::getInstance()->delRedisHandler($name);
     }
 
     /**
@@ -99,7 +99,7 @@ class RedisManager
     }
 
     /**
-     * Return all of the created connections.
+     * Return all the created connections.
      *
      * @return array
      */

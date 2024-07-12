@@ -19,17 +19,17 @@ class Server implements ServerInterface
     /**
      * tcp server
      */
-    const SERVER_TCP = 1;
+    const int SERVER_TCP = 1;
 
     /**
      * http server
      */
-    const SERVER_HTTP = 2;
+    const int SERVER_HTTP = 2;
 
     /**
      * web socket server
      */
-    const SERVER_WEB_SOCKET = 3;
+    const int SERVER_WEB_SOCKET = 3;
 
     /**
      * @var string $processName process name
@@ -114,17 +114,13 @@ class Server implements ServerInterface
      * @param int $sockType socket type
      * @return SwooleHttpServer|SwooleServer|SwooleWebSocketServer
      */
-    protected function makeServer(int $type, string $host, string $port, int $mode, int $sockType)
+    protected function makeServer(int $type, string $host, string $port, int $mode, int $sockType): SwooleHttpServer|SwooleServer|SwooleWebSocketServer
     {
-        switch ($type) {
-            case self::SERVER_TCP:
-                return new SwooleServer($host, $port, $mode, $sockType);
-            case self::SERVER_HTTP:
-                return new SwooleHttpServer($host, $port, $mode, $sockType);
-            case self::SERVER_WEB_SOCKET:
-                return new SwooleWebSocketServer($host, $port, $mode, $sockType);
-            default:
-                throw new RuntimeException('Server type is invalid');
-        }
+        return match ($type) {
+            self::SERVER_TCP => new SwooleServer($host, $port, $mode, $sockType),
+            self::SERVER_HTTP => new SwooleHttpServer($host, $port, $mode, $sockType),
+            self::SERVER_WEB_SOCKET => new SwooleWebSocketServer($host, $port, $mode, $sockType),
+            default => throw new RuntimeException('Server type is invalid'),
+        };
     }
 }

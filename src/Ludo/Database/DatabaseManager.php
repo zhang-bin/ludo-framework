@@ -87,10 +87,7 @@ class DatabaseManager
         $name = $name ?: $this->getDefaultConnection();
         $this->connections[$name] = null;
 
-        $provider = ServiceProvider::getInstance();
-        if (is_object($provider)) {
-            $provider->delDBHandler($name);
-        }
+        ServiceProvider::getInstance()->delDBHandler($name);
     }
 
     /**
@@ -146,7 +143,7 @@ class DatabaseManager
     }
 
     /**
-     * Return all of the created connections.
+     * Return all the created connections.
      *
      * @return Connection[]
      */

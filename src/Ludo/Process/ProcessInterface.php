@@ -18,5 +18,5 @@ interface ProcessInterface
      * @param Process $process process object
      * @return mixed
      */
-    public function handle(Process $process);
+    public function handle(Process $process): mixed;
 }

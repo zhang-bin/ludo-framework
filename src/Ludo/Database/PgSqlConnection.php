@@ -4,7 +4,7 @@ namespace Ludo\Database;
 
 
 /**
- * PostgreSql Connection
+ * PostgresSql Connection
  *
  * @package Ludo\Database
  */

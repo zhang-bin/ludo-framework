@@ -34,7 +34,7 @@ class Connection
     protected bool $switchConnection = false;
 
     /**
-     * @var array $queryLog All of the queries run against the connection.
+     * @var array $queryLog All the queries run against the connection.
      */
     protected array $queryLog = [];
 
@@ -86,7 +86,7 @@ class Connection
      * @param array $params where parameters
      * @return mixed
      */
-    public function selectColumn(string $query, array $params = [])
+    public function selectColumn(string $query, array $params = []): mixed
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -105,7 +105,7 @@ class Connection
      * @param array $params where parameters
      * @return mixed
      */
-    public function selectOne(string $query, array $params = [])
+    public function selectOne(string $query, array $params = []): mixed
     {
         return $this->run($query, $params, function ($me, $query, $params) {
             /**
@@ -282,7 +282,7 @@ class Connection
      *
      * @throws QueryException
      */
-    protected function run(string $query, array $params, Closure $callback)
+    protected function run(string $query, array $params, Closure $callback): mixed
     {
         $start = microtime(true);
 
@@ -294,10 +294,10 @@ class Connection
             return $callback($this, $query, $params);
         } catch (Throwable $e) {
             $err = $e->getMessage();
-            if (strpos($err, 'server has gone away') !== false) {//if mysql server has gone away, try reconnect
+            if (str_contains($err, 'server has gone away')) {//if mysql server has gone away, try reconnect
                 $dbManager = ServiceProvider::getInstance()->getDBManagerHandler();
 
-                //because we didn't know current connection belongs to who, so we reconnect all connections
+                //because we didn't know current connection belongs to whom, so we reconnect all connections
                 $connections = $dbManager->getConnections();
                 foreach ($connections as $name => $connection) {
                     $dbManager->reconnect($name);
@@ -307,10 +307,10 @@ class Connection
             }
             $time = '[' . date('Y-m-d H:i:s') . ']    ';
             error_log($time . $e->getTraceAsString());
-            throw new QueryException($query, (array)$params, $e);
+            throw new QueryException($query, $params, $e);
         } finally {
             // Once we have run the query we will calculate the time that it took to run and
-            // then log the query, bindings, and execution time so we will report them on
+            // then log the query, bindings, and execution time, so we will report them on
             // the event that the developer needs them. We'll log time in milliseconds.
             $time = $this->getElapsedTime($start);
 
@@ -407,7 +407,7 @@ class Connection
      * @param string $option config option
      * @return mixed
      */
-    public function getConfig(string $option)
+    public function getConfig(string $option): mixed
     {
         return array_get($this->config, $option);
     }
@@ -459,7 +459,7 @@ class Connection
      * @param ?int $fetchArgument fetch argument
      * @return void
      */
-    public function setFetchArgument(int $fetchArgument = null): void
+    public function setFetchArgument(?int $fetchArgument = null): void
     {
         $this->fetchArgument = $fetchArgument;
     }
@@ -504,53 +504,6 @@ class Connection
     public function quoteIdentifier(string $str): string
     {
         $str = trim($str, '`');
-        return "`{$str}`";
-    }
-
-    /**
-     * Print query log
-     *
-     * @return string
-     */
-    public function debug(): string
-    {
-        if (!Config::get('app.debug')) {
-            return '';
-        }
-        $totalProcessTime = 0;
-        $totalSQL = 0;
-
-        $str = json_encode($this->config) . '<br />';
-        $str .= <<<EOF
-<table id="debug_table" width="100%" border="0" cellspacing="1" style="background:#DDDDF0;word-break: break-all;">
-	<tr style="background:#A5BDD8;height:30px;Color:White;">
-		<th>Query</th>
-		<th width=100>Params</th>
-		<th width=50>Error</th>
-		<th width=100>ProcessTime</th>
-	 </tr>
-EOF;
-        foreach ($this->queryLog as $log) {
-            $str .= '<tr style="background:#EEEEEE;Height:25px;Text-Align:center;">
-						<td align=left>' . HtmlSpecialChars($log['query']) . '</td>
-						<td align=left>' . var_export($log['params'], true) . '</td>
-						<td>' . @$log['err'] . '</td>
-						<td>' . sprintf('%.4f', $log['time']) . '</td>
-					 </tr>';
-            $totalProcessTime += (double)$log["time"];
-            $totalSQL++;
-        }
-
-        $str .= "<tr style='background:#EEEEEE;Height:30px;text-align:center'>
-					<td colspan=5>
-						Total execute queries: " . $totalSQL
-            . "&nbsp;Total ProcessTime:"
-            . sprintf('%.4f', $totalProcessTime)
-            . "</td>
-				 </tr>\n";
-
-        $str .= "</table>";
-
-        return $str;
+        return "`$str`";
     }
 }

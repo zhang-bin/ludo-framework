@@ -81,7 +81,7 @@ class AliasLoader
     }
 
     /**
-     * Register the loader on the auto-loader stack.
+     * Register the loader on the autoloader stack.
      *
      * @return void
      */
@@ -94,7 +94,7 @@ class AliasLoader
     }
 
     /**
-     * Prepend the load method to the auto-loader stack.
+     * Prepend the load method to the autoloader stack.
      *
      * @return void
      */
