@@ -339,10 +339,10 @@ class Connection
     /**
      * Get the elapsed time since a given starting point.
      *
-     * @param int $start sql execute start time
+     * @param float $start sql execute start time
      * @return float
      */
-    protected function getElapsedTime(int $start): float
+    protected function getElapsedTime(float $start): float
     {
         return microtime(true) - $start;
     }
