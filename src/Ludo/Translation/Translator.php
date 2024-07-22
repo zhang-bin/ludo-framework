@@ -36,7 +36,7 @@ class Translator
             $language = substr($language, 0, $pos);
 
             if (PHP_SAPI != 'cli') {
-                setcookie('lang', $language, null, '/');
+                setcookie('lang', $language, [], '/');
             }
         }
 
