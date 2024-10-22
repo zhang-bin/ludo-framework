@@ -398,7 +398,7 @@ abstract class Dao
      */
     public function maxId(): int
     {
-        return $this->builder->setField('id')->orderby('id DESC')->fetchColumn();
+        return $this->builder->setField('id')->orderby('id DESC')->limit(1)->fetchColumn();
     }
 
     /**
