@@ -294,6 +294,10 @@ function start_with(string $haystack, array|string $needles): bool
 function str_replace_array(string $search, array $replace, string $subject): string
 {
     foreach ($replace as $value) {
+        if (empty($value)) {
+            continue;
+        }
+
         $subject = preg_replace('/' . $search . '/', $value, $subject, 1);
     }
     return $subject;
