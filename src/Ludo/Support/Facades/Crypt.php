@@ -8,8 +8,8 @@ use Ludo\Encryption\Encryptor;
 /**
  * @see Encrypter
  *
- * @method static encrypt($value)
- * @method static decrypt($payload)
+ * @method static string encrypt($value)
+ * @method static string decrypt($payload)
  */
 class Crypt extends Facade implements FacadeInterface
 {

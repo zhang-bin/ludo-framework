@@ -8,10 +8,10 @@ use Ludo\Translation\Translator;
 /**
  * @see Translator
  *
- * @method static setLanguage($lang)
- * @method static get(string $key, array $replace = [], string $locale = null)
- * @method static diff(string $base, string $baseLang, string $diffLang)
- * @method static merge(string $base, string $lang, array $data)
+ * @method static void setLanguage(string $lang)
+ * @method static string get(string $key, array $replace = [], string $locale = null)
+ * @method static array diff(string $base, string $baseLang, string $diffLang)
+ * @method static void merge(string $base, string $lang, array $data)
  */
 class Lang extends Facade implements FacadeInterface
 {

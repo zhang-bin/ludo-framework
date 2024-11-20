@@ -8,8 +8,8 @@ use Ludo\Config\Repository;
 /**
  * @see Repository
  *
- * @method static get(string $name)
- * @method static set(string $name, $value)
+ * @method static mixed get(string $name)
+ * @method static void set(string $name, $value)
  */
 class Config extends Facade implements FacadeInterface
 {

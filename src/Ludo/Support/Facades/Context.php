@@ -8,8 +8,8 @@ use Ludo\Context\Repository;
 /**
  * @see Repository
  *
- * @method static get(string $id, $default = null, $coroutineId = null)
- * @method static set(string $id, $value)
+ * @method static mixed get(string $id, $default = null, $coroutineId = null)
+ * @method static void set(string $id, $value)
  */
 class Context extends Facade implements FacadeInterface
 {
