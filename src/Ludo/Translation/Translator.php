@@ -73,12 +73,12 @@ class Translator
         }
 
         list($group, $item) = explode('.', $key);
-        if (!isset($this->translation[$group])) {
+        if (!isset($this->translation[$locale][$group])) {
             $filename = LD_LANGUAGE_PATH . DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR . $group . '.lang.php';
-            file_exists($filename) && $this->translation[$group] = include $filename;
+            file_exists($filename) && $this->translation[$locale][$group] = include $filename;
         }
 
-        $value = $this->translation[$group][$item];
+        $value = $this->translation[$locale][$group][$item];
         if (is_null($value)) {
             throw new RuntimeException(sprintf('language key [%s] does not exit.', $key));
         }

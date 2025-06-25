@@ -120,7 +120,9 @@ abstract class Dao
             $sql .= ')';
             $comma = ',';
         }
-        return $this->builder->exec($sql, $params);
+
+        $this->builder->exec($sql, $params);
+        return $this->connection->lastInsertId();
     }
 
     /**
