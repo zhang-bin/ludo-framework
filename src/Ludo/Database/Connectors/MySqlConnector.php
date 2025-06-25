@@ -27,14 +27,10 @@ class MySqlConnector extends Connector implements ConnectorInterface
         // connection's behavior, and some might be specified by the developers.
         $options = $this->getOptions($config);
 
-        $connection = $this->createConnection($dsn, $config, $options);
+        $names = "set names {$config['charset']}" . (is_null($config['collation']) ? '' : " collate {$config['collation']}");
+        $options[PDO::MYSQL_ATTR_INIT_COMMAND] = $names;
 
-        $collation = $config['collation'];
-        $charset = $config['charset'];
-        $names = "set names {$charset}" . (is_null($collation) ? '' : " collate {$collation}");
-        $connection->prepare($names)->execute();
-
-        return $connection;
+        return $this->createConnection($dsn, $config, $options);
     }
 
     /**
