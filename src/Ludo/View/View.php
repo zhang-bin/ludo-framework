@@ -64,7 +64,7 @@ class View
      */
     public function display(): void
     {
-        $templateFileWithFullPath = TPL_ROOT . '/' . $this->tplFile . php;
+        $templateFileWithFullPath = LD_TPL_ROOT . '/' . $this->tplFile . php;
         if (!file_exists($templateFileWithFullPath)) {
             throw new Exception("File [$templateFileWithFullPath] Not Found");
         }
