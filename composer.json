@@ -10,12 +10,13 @@
   ],
   "require": {
     "php": ">=8.0",
-    "ezyang/htmlpurifier": ">=4.6",
     "ext-redis": "*",
     "ext-pdo": "*",
     "ext-openssl": "*",
     "ext-json": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ezyang/htmlpurifier": "*",
+    "symfony/console": "^7.3"
   },
   "autoload": {
     "files": [

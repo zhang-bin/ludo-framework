@@ -12,6 +12,7 @@ use Ludo\Translation\Translator;
  * @method static string get(string $key, array $replace = [], ?string $locale = null)
  * @method static array diff(string $base, string $baseLang, string $diffLang)
  * @method static void merge(string $base, string $lang, array $data)
+ * @method static array getLang(string $base, string $lang)
  */
 class Lang extends Facade implements FacadeInterface
 {

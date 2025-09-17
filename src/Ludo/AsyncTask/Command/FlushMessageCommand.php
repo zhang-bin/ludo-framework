@@ -36,7 +36,7 @@ class FlushMessageCommand extends Command
      * @param InputInterface $input input handle
      * @param OutputInterface $output output handle
      */
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $channel = $input->getOption('channel');
 
