@@ -508,7 +508,7 @@ class Builder
      *
      * @return int row number if insert successful, else SqlException will be thrown
      */
-    public function update(array $arr, string $condition = null, array $params = []): int
+    public function update(array $arr, ?string $condition = null, array $params = []): int
     {
         if (empty($arr)) {
             return false;

@@ -43,7 +43,7 @@ class RedisManager
      * @return BaseRedis
      * @throws RedisException
      */
-    public function connection(string $name = null): BaseRedis
+    public function connection(?string $name = null): BaseRedis
     {
         $name = $name ?: $this->getDefaultConnection();
         if (!isset($this->connections[$name])) {
@@ -60,7 +60,7 @@ class RedisManager
      * @return void
      * @throws RedisException
      */
-    public function disconnect(string $name = null): void
+    public function disconnect(?string $name = null): void
     {
         $name = $name ?: $this->getDefaultConnection();
         $this->connections[$name]->close();

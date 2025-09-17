@@ -327,7 +327,7 @@ class Connection
      * @param ?string $err error message
      * @return void
      */
-    public function logQuery(string $query, array $params, float $time = null, string $err = null): void
+    public function logQuery(string $query, array $params, ?float $time = null, string $err = null): void
     {
         if (!Config::get('app.debug')) {
             return;

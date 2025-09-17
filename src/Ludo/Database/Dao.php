@@ -34,7 +34,7 @@ abstract class Dao
      * @param string $tblName table name
      * @param ?string $connectionName connection name
      */
-    public function __construct(string $tblName, string $connectionName = null)
+    public function __construct(string $tblName, ?string $connectionName = null)
     {
         $this->tblName = $tblName;
         $this->connection = ServiceProvider::getInstance()->getDBHandler($connectionName);
@@ -145,7 +145,7 @@ abstract class Dao
      * @param array $params where parameters
      * @return int affected row
      */
-    public function updateWhere(array $newData, string $condition = null, array $params = []): int
+    public function updateWhere(array $newData, ?string $condition = null, array $params = []): int
     {
         return $this->builder->update($newData, $condition, $params);
     }
@@ -382,7 +382,7 @@ abstract class Dao
      * @param ?string $fields select fields
      * @return array list(exists, row) = Array(0=>true/false, 1=>rowArray/false)
      */
-    public function existsRow(string $condition = '', array $params = [], string $fields = null): array
+    public function existsRow(string $condition = '', array $params = [], ?string $fields = null): array
     {
         if (!empty($fields)) {
             $this->builder->setField($fields);
@@ -412,7 +412,7 @@ abstract class Dao
      * @param string $joinType one of the three [inner, left, right]. default is left.
      * @return $this
      */
-    public function hasA(string $table, string $fields = '', string $foreignKey = null, string $joinType = 'left'): Dao
+    public function hasA(string $table, string $fields = '', ?string $foreignKey = null, string $joinType = 'left'): Dao
     {
         //if $table have alias like ('User  author'), extract the table name and alias.
         if (str_contains($table, ' ')) {
@@ -466,7 +466,7 @@ abstract class Dao
      * @param ?Builder $builder builder object
      * @return string
      */
-    public function lastSql(Builder $builder = null): string
+    public function lastSql(?Builder $builder = null): string
     {
         if (is_null($builder)) {
             $builder = $this->builder;

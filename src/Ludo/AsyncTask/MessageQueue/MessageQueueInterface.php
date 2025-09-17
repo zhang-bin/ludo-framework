@@ -64,7 +64,7 @@ interface MessageQueueInterface
      * @param ?string $channel channel name
      * @return int
      */
-    public function reload(string $channel = null): int;
+    public function reload(?string $channel = null): int;
 
     /**
      * Flush all failed message from failed queue
@@ -72,5 +72,5 @@ interface MessageQueueInterface
      * @param ?string $channel failed channel name
      * @return bool
      */
-    public function flush(string $channel = null): bool;
+    public function flush(?string $channel = null): bool;
 }

@@ -66,7 +66,7 @@ class Translator
      * @param ?string $locale translation locale
      * @return string
      */
-    public function get(string $key, array $replace = [], string $locale = null): string
+    public function get(string $key, array $replace = [], ?string $locale = null): string
     {
         if (is_null($locale)) {
             $locale = $this->language;

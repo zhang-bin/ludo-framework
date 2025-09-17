@@ -191,7 +191,7 @@ class RedisMessageQueue extends MessageQueue
      * @return int
      * @throws AsyncTaskException
      */
-    public function reload(string $channel = null): int
+    public function reload(?string $channel = null): int
     {
         $channelName = $this->channel->getFailed();
         if ($channel) {
@@ -220,7 +220,7 @@ class RedisMessageQueue extends MessageQueue
      * @return bool
      * @throws AsyncTaskException
      */
-    public function flush(string $channel = null): bool
+    public function flush(?string $channel = null): bool
     {
         $channelName = $this->channel->getFailed();
         if ($channel) {

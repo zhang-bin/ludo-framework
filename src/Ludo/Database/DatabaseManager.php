@@ -52,7 +52,7 @@ class DatabaseManager
      * @param ?string $name connection name
      * @return Connection
      */
-    public function connection(string $name = null): Connection
+    public function connection(?string $name = null): Connection
     {
         $name = $name ?: $this->getDefaultConnection();
         if (!isset($this->connections[$name])) {
@@ -67,7 +67,7 @@ class DatabaseManager
      * @param ?string $name connection name
      * @return Connection
      */
-    public function reconnect(string $name = null): Connection
+    public function reconnect(?string $name = null): Connection
     {
         $name = $name ?: $this->getDefaultConnection();
 
@@ -82,7 +82,7 @@ class DatabaseManager
      * @param ?string $name connection name
      * @return void
      */
-    public function disconnect(string $name = null): void
+    public function disconnect(?string $name = null): void
     {
         $name = $name ?: $this->getDefaultConnection();
         $this->connections[$name] = null;

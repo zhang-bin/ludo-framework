@@ -23,7 +23,7 @@ class ConnectionFactory
      * @param ?string $name connection name
      * @return Connection
      */
-    public function make(array $config, string $name = null): Connection
+    public function make(array $config, ?string $name = null): Connection
     {
         $config = $this->parseConfig($config, $name);
         if (isset($config['read'])) {

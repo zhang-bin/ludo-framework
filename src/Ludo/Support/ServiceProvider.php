@@ -60,7 +60,7 @@ class ServiceProvider
      * @param ?int $cid coroutine id
      * @return ServiceProvider
      */
-    public static function getInstance(int $cid = null): ServiceProvider
+    public static function getInstance(?int $cid = null): ServiceProvider
     {
         if (is_null($cid)) {
             $cid = Coroutine::getCid();
@@ -88,7 +88,7 @@ class ServiceProvider
      * @param ?string $name db instance in database config
      * @return Connection an instance of DBHandler
      */
-    public function getDBHandler(string $name = null): Connection
+    public function getDBHandler(?string $name = null): Connection
     {
         $this->getDBManagerHandler();
         $name = $name ?: $this->dbManager->getDefaultConnection();
@@ -103,7 +103,7 @@ class ServiceProvider
      *
      * @param ?string $name db instance
      */
-    public function delDBHandler(string $name = null): void
+    public function delDBHandler(?string $name = null): void
     {
         $this->db[$name] = null;
     }
@@ -128,7 +128,7 @@ class ServiceProvider
      * @return BaseRedis
      * @throws RedisException
      */
-    public function getRedisHandler(string $name = null): BaseRedis
+    public function getRedisHandler(?string $name = null): BaseRedis
     {
         $this->getRedisManagerHandler();
         $name = $name ?: $this->redisManager->getDefaultConnection();
@@ -143,7 +143,7 @@ class ServiceProvider
      *
      * @param ?string $name redis name
      */
-    public function delRedisHandler(string $name = null): void
+    public function delRedisHandler(?string $name = null): void
     {
         $this->redis[$name] = null;
     }

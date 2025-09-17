@@ -24,7 +24,7 @@ class Parallel
      * @param callable $callback callback
      * @param ?string $key callback name
      */
-    public function add(callable $callback, string $key = null): void
+    public function add(callable $callback, ?string $key = null): void
     {
         if (is_null($key)) {
             $this->callbacks[] = $callback;
