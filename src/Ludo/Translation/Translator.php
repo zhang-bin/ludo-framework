@@ -176,4 +176,34 @@ class Translator
 
         return $languages;
     }
+
+    /**
+     * Get language data
+     *
+     * @param string $base base directory of language files
+     * @param string $lang language short name
+     * @return array
+     */
+    public static function getLang(string $base, string $lang): array
+    {
+        $baseLangDir = $base . DIRECTORY_SEPARATOR . $lang . DIRECTORY_SEPARATOR;
+        $baseLanguages = $diffLanguages = [];
+        $files = scandir($baseLangDir);
+        foreach ($files as $file) {
+            if ($file[0] == '.') {
+                continue;
+            }
+            $filename = $baseLangDir . $file;
+            $ext = ext($filename);
+            if ($ext != 'php') {
+                continue;
+            }
+            $file = explode('.', $file)[0];
+            $baseLanguages[$file] = require $filename;
+        }
+
+        return array_map(function ($languages) {
+            return $languages;
+        }, $baseLanguages);
+    }
 }
