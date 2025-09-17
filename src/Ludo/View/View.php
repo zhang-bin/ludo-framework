@@ -75,7 +75,7 @@ class View
     /**
      * Set template file
      *
-     * @param string $tplFile relative path to TPL_ROOT. e.g. user/login, user/register
+     * @param string $tplFile relative path to LD_TPL_ROOT. e.g. user/login, user/register
      * @return $this
      */
     public function setFile(string $tplFile): View
