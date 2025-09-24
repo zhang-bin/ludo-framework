@@ -3,6 +3,7 @@
 namespace Ludo\Database\Connectors;
 
 use PDO;
+use PDOException;
 
 
 /**
@@ -49,7 +50,12 @@ class Connector
     {
         $username = array_get($config, 'username');
         $password = array_get($config, 'password');
-        return new PDO($dsn, $username, $password, $options);
+        try {
+            return new PDO($dsn, $username, $password, $options);
+        } catch (PDOException) {
+            usleep(200000);
+            return new PDO($dsn, $username, $password, $options);
+        }
     }
 
     /**
