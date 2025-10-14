@@ -78,7 +78,7 @@ class Application
                 is_array($output) && $output = json_encode($output);
                 return $output;
             }
-            return;
+            return null;
         } catch (Throwable $e) {
             error_log($e);
             throw new ApplicationException($e->getMessage(), $e->getCode(), $e);

@@ -85,7 +85,7 @@ class ClassLoader
      * @param array|string|null $directories class directory
      * @return void
      */
-    public static function removeDirectories(array|string $directories = null): void
+    public static function removeDirectories(null|array|string $directories = null): void
     {
         if (is_null($directories)) {
             static::$directories = [];
