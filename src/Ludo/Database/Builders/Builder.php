@@ -545,7 +545,7 @@ class Builder
      * @return int row nums if insert successful, else SqlException will be thrown
      * @access public
      */
-    public function delete(string $condition = '', array|string $params = null): int
+    public function delete(string $condition = '', array|string|null $params = null): int
     {
         $sql = "DELETE FROM {$this->db->quoteIdentifier($this->tableName)}";
 
