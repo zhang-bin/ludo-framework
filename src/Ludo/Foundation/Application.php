@@ -5,8 +5,10 @@ namespace Ludo\Foundation;
 use Ludo\Exception\ApplicationException;
 use Ludo\Routing\Router;
 use Ludo\Routing\Controller;
+use Ludo\Routing\RouteParserInterface;
 use ReflectionMethod;
 use BadMethodCallException;
+use InvalidArgumentException;
 use Ludo\Support\Facades\Context;
 use Ludo\Support\Facades\Config;
 use Throwable;
@@ -19,6 +21,65 @@ use Throwable;
  */
 class Application
 {
+    /**
+     * Custom route parser. A callable of signature `fn(string $pathInfo): array`,
+     * or null to use the default resolution (config / Router::parse).
+     *
+     * @var callable|null
+     */
+    protected $routeParser = null;
+
+    /**
+     * Set a custom route parser.
+     *
+     * Accepts a {@see RouteParserInterface} instance or any callable with the
+     * signature `fn(string $pathInfo): array` returning [string $ctrl, string $act].
+     *
+     * @param RouteParserInterface|callable $parser
+     * @return $this
+     */
+    public function setRouteParser(RouteParserInterface|callable $parser): static
+    {
+        $this->routeParser = $parser instanceof RouteParserInterface ? [$parser, 'parse'] : $parser;
+        return $this;
+    }
+
+    /**
+     * Resolve the route parser to use.
+     *
+     * Resolution order:
+     *   1. Parser set via {@see setRouteParser()}.
+     *   2. The `app.route_parser` config item (a class name, a
+     *      {@see RouteParserInterface} instance, or a callable).
+     *   3. The built-in {@see Router::parse()}.
+     *
+     * @return callable
+     * @throws InvalidArgumentException when the configured parser is invalid
+     */
+    protected function resolveRouteParser(): callable
+    {
+        if ($this->routeParser !== null) {
+            return $this->routeParser;
+        }
+
+        $custom = Config::get('app.route_parser');
+        if (!empty($custom)) {
+            is_string($custom) && $custom = new $custom();
+
+            if ($custom instanceof RouteParserInterface) {
+                return [$custom, 'parse'];
+            }
+
+            if (is_callable($custom)) {
+                return $custom;
+            }
+
+            throw new InvalidArgumentException('app.route_parser must be a RouteParserInterface instance or a callable');
+        }
+
+        return [Router::class, 'parse'];
+    }
+
     /**
      * auto route
      *
@@ -37,7 +98,8 @@ class Application
                 $pathInfo = $path;
             }
 
-            [$ctrl, $act] = Router::parse($pathInfo);
+            $parser = $this->resolveRouteParser();
+            [$ctrl, $act] = $parser($pathInfo);
 
             Context::set('current-controller', $ctrl);
             Context::set('current-action', $act);
@@ -50,12 +112,12 @@ class Application
             $action = $act;
 
             if (!method_exists($controller, $action)) {
-                throw new BadMethodCallException(sprintf('Method [%s] Not Found', $ctrl->$action));
+                throw new BadMethodCallException(sprintf('Method [%s] Not Found', $ctrl . '::' . $action));
             }
 
             $method = new ReflectionMethod($ctrl, $action);
             if ($method->isStatic()) {
-                throw new BadMethodCallException(sprintf('Method [%s] Can not Static', $ctrl->$action));
+                throw new BadMethodCallException(sprintf('Method [%s] Can not Static', $ctrl . '::' . $action));
             }
 
             $output = $controller->beforeAction($action);
