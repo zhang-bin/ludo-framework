@@ -358,10 +358,10 @@ abstract class Dao
      *
      * @param string $condition where condition
      * @param array $params where parameters
-     * @param ?string $fields select fields
+     * @param string $fields select fields
      * @return array list(exists, row) = Array(0=>true/false, 1=>rowArray/false)
      */
-    public function existsRow(string $condition = '', array $params = [], ?string $fields = null): array
+    public function existsRow(string $condition = '', array $params = [], string $fields = '*'): array
     {
         $row = $this->builder->setField($fields)->where($condition, $params)->fetch(PDO::FETCH_BOTH);
         $exists = !empty($row);
