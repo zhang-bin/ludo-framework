@@ -181,15 +181,9 @@ abstract class Dao
      * @param int $fetchMode pdo fetch mode
      * @return ?array key is field name and value is field value.
      */
-    public function fetch(int $id, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): ?array
+    public function fetch(int $id, string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): ?array
     {
-        if (empty($fields)) {
-            $fields = $this->tblName . '.*';
-        }
-
-        $this->builder->setField($fields);
-        $this->builder->where($this->tblName . '.id = ?', [$id]);
-        return $this->builder->fetch($fetchMode);
+        return $this->builder->setField($fields)->where($this->tblName . '.id = ?', [$id])->fetch($fetchMode);
     }
 
     /**
@@ -201,13 +195,9 @@ abstract class Dao
      * @param int $fetchMode pdo fetch mode
      * @return ?array
      */
-    public function find(string $condition, array $params, string $fields = '', int $fetchMode = PDO::FETCH_ASSOC): ?array
+    public function find(string $condition, array $params, string $fields = '*', int $fetchMode = PDO::FETCH_ASSOC): ?array
     {
-        if (!empty($fields)) {
-            $this->builder->setField($fields);
-        }
-
-        return $this->builder->where($condition, $params)->fetch($fetchMode);
+        return $this->builder->setField($fields)->where($condition, $params)->fetch($fetchMode);
     }
 
     /**
@@ -220,11 +210,7 @@ abstract class Dao
      */
     public function findColumn(string $condition, array $params, string $column): ?string
     {
-        if (!empty($column)) {
-            $this->builder->setField($column);
-        }
-
-        return $this->builder->where($condition, $params)->fetchColumn();
+        return $this->builder->setField($column)->where($condition, $params)->fetchColumn();
     }
 
     /**
@@ -236,11 +222,7 @@ abstract class Dao
      */
     public function fetchColumn(int $id, string $column): ?string
     {
-        if (!empty($column)) {
-            $this->builder->setField($column);
-        }
-
-        return $this->builder->where($this->tblName . '.id = ?', [$id])->fetchColumn();
+        return $this->builder->setField($column)->where($this->tblName . '.id = ?', [$id])->fetchColumn();
     }
 
     /**
@@ -305,7 +287,7 @@ abstract class Dao
      * @param string $order order statement
      * @return array
      */
-    public function findAllUnique(array|string $condition = '', string $fields = '', int $rows = 0, int $start = 0, string $order = ''): array
+    public function findAllUnique(array|string $condition = '', string $fields = '*', int $rows = 0, int $start = 0, string $order = ''): array
     {
         if (is_array($condition)) {
             $where = $condition[0];
@@ -349,10 +331,7 @@ abstract class Dao
      */
     public function count(string $condition = '', array $params = [], bool $distinct = false): int
     {
-        if (!empty($condition)) {
-            $this->builder->where($condition, $params);
-        }
-        return $this->builder->recordsCount($distinct);
+        return $this->builder->where($condition, $params)->recordsCount($distinct);
     }
 
     /**
@@ -384,11 +363,7 @@ abstract class Dao
      */
     public function existsRow(string $condition = '', array $params = [], ?string $fields = null): array
     {
-        if (!empty($fields)) {
-            $this->builder->setField($fields);
-        }
-
-        $row = $this->builder->where($condition, $params)->fetch(PDO::FETCH_BOTH);
+        $row = $this->builder->setField($fields)->where($condition, $params)->fetch(PDO::FETCH_BOTH);
         $exists = !empty($row);
         return [$exists, $row];
     }

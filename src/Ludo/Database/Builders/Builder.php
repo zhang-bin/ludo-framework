@@ -266,10 +266,8 @@ class Builder
      */
     public function where(string $condition, array $params = []): Builder
     {
-        if (!empty($condition)) {
-            $this->where = 'WHERE ' . $condition;
-            $this->params = $params;
-        }
+        $this->where = (empty($condition)) ? '' : ' WHERE ' . $condition;
+        $this->params = $params;
         return $this;
     }
 
