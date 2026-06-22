@@ -417,10 +417,10 @@ abstract class Dao
         //if $table have alias like ('User  author'), extract the table name and alias.
         if (str_contains($table, ' ')) {
             $tmp = preg_split('/\s+/', str_replace(' as ', ' ', $table));
-            $tblName = ucfirst($tmp[0]);
+            $tblName = $tmp[0];
             $tblAlias = $tmp[1];
         } else {
-            $tblName = ucfirst($table);
+            $tblName = $table;
             $tblAlias = $table;
         }
 
