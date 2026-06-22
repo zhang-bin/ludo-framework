@@ -80,7 +80,7 @@ class Application
             }
             return null;
         } catch (Throwable $e) {
-            error_log($e);
+            error_log((string)$e);
             throw new ApplicationException($e->getMessage(), $e->getCode(), $e);
         }
     }
