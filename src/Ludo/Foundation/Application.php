@@ -22,62 +22,28 @@ use Throwable;
 class Application
 {
     /**
-     * Custom route parser. A callable of signature `fn(string $pathInfo): array`,
-     * or null to use the default resolution (config / Router::parse).
-     *
-     * @var callable|null
-     */
-    protected $routeParser = null;
-
-    /**
-     * Set a custom route parser.
-     *
-     * Accepts a {@see RouteParserInterface} instance or any callable with the
-     * signature `fn(string $pathInfo): array` returning [string $ctrl, string $act].
-     *
-     * @param RouteParserInterface|callable $parser
-     * @return $this
-     */
-    public function setRouteParser(RouteParserInterface|callable $parser): static
-    {
-        $this->routeParser = $parser instanceof RouteParserInterface ? [$parser, 'parse'] : $parser;
-        return $this;
-    }
-
-    /**
      * Resolve the route parser to use.
      *
-     * Resolution order:
-     *   1. Parser set via {@see setRouteParser()}.
-     *   2. The `app.route_parser` config item (a class name, a
-     *      {@see RouteParserInterface} instance, or a callable).
-     *   3. The built-in {@see Router::parse()}.
+     * Reads the `app.route_parser` config item (a {@see RouteParserInterface}
+     * class name or instance). Falls back to the built-in {@see Router::parse()}
+     * when it is not configured.
      *
      * @return callable
      * @throws InvalidArgumentException when the configured parser is invalid
      */
     protected function resolveRouteParser(): callable
     {
-        if ($this->routeParser !== null) {
-            return $this->routeParser;
+        $parser = Config::get('app.route_parser');
+        if (empty($parser)) {
+            return [Router::class, 'parse'];
         }
 
-        $custom = Config::get('app.route_parser');
-        if (!empty($custom)) {
-            is_string($custom) && $custom = new $custom();
-
-            if ($custom instanceof RouteParserInterface) {
-                return [$custom, 'parse'];
-            }
-
-            if (is_callable($custom)) {
-                return $custom;
-            }
-
-            throw new InvalidArgumentException('app.route_parser must be a RouteParserInterface instance or a callable');
+        is_string($parser) && $parser = new $parser();
+        if (!$parser instanceof RouteParserInterface) {
+            throw new InvalidArgumentException('app.route_parser must implement ' . RouteParserInterface::class);
         }
 
-        return [Router::class, 'parse'];
+        return [$parser, 'parse'];
     }
 
     /**
