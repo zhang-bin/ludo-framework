@@ -46,5 +46,6 @@ class FlushMessageCommand extends Command
         $messageQueue->flush($channel);
 
         $output->writeln('<fg=red>Flush all message.</>');
+        return Command::SUCCESS;
     }
 }

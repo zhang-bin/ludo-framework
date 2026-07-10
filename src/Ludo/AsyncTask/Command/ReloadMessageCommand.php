@@ -46,5 +46,6 @@ class ReloadMessageCommand extends Command
         $num = $messageQueue->reload($channel);
 
         $output->writeln(sprintf('<fg=green>Reload %d failed message into waiting queue.</>', $num));
+        return Command::SUCCESS;
     }
 }

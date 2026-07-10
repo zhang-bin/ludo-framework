@@ -53,26 +53,16 @@ class ServerCommand extends Command
      * @param InputInterface $input input handle
      * @param OutputInterface $output output handle
      */
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $config = Config::get('servers');
 
         if (!empty($input->getOption('list'))) {
-            try {
-                foreach ($config['servers'] as $name => $item) {
-                    $message = sprintf('<fg=green>%s</>', $name);
-                    if (!empty($item['class'])) {
-                        $reflection = new ReflectionClass($item['class']);
-                        $doc = DocBlockFactory::createInstance()->create($reflection->getDocComment());
-                        $message .= sprintf(' <fg=default>%s</>', $doc->getDescription());
-                    }
-                    $output->writeln($message);
-                }
-            } catch (ReflectionException) {
-                $output->writeln(sprintf('<fg=red>Server %s can not instantiate.</>', $input['class']));
+            foreach ($config['servers'] as $name => $item) {
+                $message = sprintf('<fg=green>%s</>', $name);
+                $output->writeln($message);
             }
-
-            return;
+            return Command::SUCCESS;
         }
 
         $serverName = $input->getArgument('name');
@@ -106,6 +96,8 @@ class ServerCommand extends Command
                 $output->writeln('<fg=red>Command not found.</>');
                 break;
         }
+
+        return Command::SUCCESS;
     }
 
     /**

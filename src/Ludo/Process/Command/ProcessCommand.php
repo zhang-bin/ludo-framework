@@ -53,22 +53,16 @@ class ProcessCommand extends Command
      * @param InputInterface $input input handle
      * @param OutputInterface $output output handle
      */
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $config = Config::get('processes');
 
         if (!empty($input->getOption('list'))) {
-            try {
-                foreach ($config['processes'] as $name => $item) {
-                    $reflection = new ReflectionClass($item['class']);
-                    $doc = DocBlockFactory::createInstance()->create($reflection->getDocComment());
-                    $output->writeln(sprintf('<fg=green>%s</> <fg=default>%s</>', $name, $doc->getDescription()));
-                }
-            } catch (ReflectionException) {
-                $output->writeln(sprintf('<fg=red>Process %s can not instantiate.</>', $item['class']));
+            foreach ($config['processes'] as $name => $item) {
+                $message = sprintf('<fg=green>%s</>', $name);
+                $output->writeln($message);
             }
-
-            return;
+            return Command::SUCCESS;
         }
 
         $processName = $input->getArgument('name');
@@ -93,6 +87,8 @@ class ProcessCommand extends Command
                 $output->writeln('<fg=red>Command not found.</>');
                 break;
         }
+
+        return Command::SUCCESS;
     }
 
     /**
