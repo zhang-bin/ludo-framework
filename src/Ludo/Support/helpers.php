@@ -137,13 +137,15 @@ function array_except(array $array, array $keys): array
  * @param mixed|null $default default value
  * @return mixed
  */
-function array_first(array $array, Closure $callback, mixed $default = null): mixed
-{
-    foreach ($array as $key => $value) {
-        if (call_user_func($callback, $key, $value)) return $value;
-    }
+if (!function_exists('array_first')) {
+    function array_first(array $array, Closure $callback, mixed $default = null): mixed
+    {
+        foreach ($array as $key => $value) {
+            if (call_user_func($callback, $key, $value)) return $value;
+        }
 
-    return $default;
+        return $default;
+    }
 }
 
 /**
@@ -154,9 +156,11 @@ function array_first(array $array, Closure $callback, mixed $default = null): mi
  * @param mixed|null $default default value
  * @return mixed
  */
-function array_last(array $array, Closure $callback, mixed $default = null): mixed
-{
-    return array_first(array_reverse($array), $callback, $default);
+if (!function_exists('array_last')) {
+    function array_last(array $array, Closure $callback, mixed $default = null): mixed
+    {
+        return array_first(array_reverse($array), $callback, $default);
+    }
 }
 
 /**
